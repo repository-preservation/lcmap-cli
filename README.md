@@ -27,6 +27,7 @@ Command line interface for the LCMAP system
 | `lcmap conus ccdc not-classified`  | list unclassified tiles   |
 | `lcmap conus ccdc classify`        | classify a tile           |
 | `lcmap conus ccdc download`        | download ccdc results     |
+| `lcmap conus products maps`        | create map products       |
 | `lcmap alaska tile lookup`         | resolve h/v to x/y        |
 | `lcmap alaska tile reverse-lookup` | resolve x/y to h/v        |
 | `lcmap alaska tile status`         | display tile status       |
@@ -49,6 +50,7 @@ Command line interface for the LCMAP system
 | `lcmap alaska ccdc not-classified` | list unclassified tiles   |
 | `lcmap alaska ccdc classify`       | classify a tile           |
 | `lcmap alaska ccdc download`       | download ccdc results     |
+| `lcmap alaska products maps`       | create map products       |
 | `lcmap hawaii tile lookup`         | resolve h/v to x/y        |
 | `lcmap hawaii tile reverse-lookup` | resolve x/y to h/v        |
 | `lcmap hawaii tile status`         | display tile status       |
@@ -71,4 +73,4 @@ Command line interface for the LCMAP system
 | `lcmap hawaii ccdc not-classified` | list unclassified tiles   |
 | `lcmap hawaii ccdc classify`       | classify a tile           |
 | `lcmap hawaii ccdc download`       | download ccdc results     |
-
+| `lcmap hawaii products maps`       | create map products       |
