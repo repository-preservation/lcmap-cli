@@ -6,7 +6,7 @@ Command line interface for the LCMAP system
 | Command                                                                                                | Description               |
 | -------------------------------------------------------------------------------------------------------| ------------------------- |
 | `lcmap grid`                                                                                           | list configured grids     |
-| `lcmap grid --id conus|alaska|hawaii`                                                                  | display grid configuration|
+| `lcmap grid --id [conus|alaska|hawaii]`                                                                  | display grid configuration|
 | `lcmap grid snap --id conus --x 123.0 --y 456.0`                                                       | snap point to tile/chip   |
 | `lcmap grid near --id conus --x 123.0 --y 456.0`                                                       | tile/chip xys near point  |
 | `lcmap tile xy --grid conus --id 001001`                                                               | look up tile xy from id   |
