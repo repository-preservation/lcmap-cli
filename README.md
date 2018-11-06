@@ -3,25 +3,25 @@ Command line interface for the LCMAP system
 
 ## Commands
 
-| Command                                                                                            | Description               |
-| ---------------------------------------------------------------------------------------------------| ------------------------- |
-| `lcmap grid`                                                                                       | list configured grids     |
-| `lcmap grid --id [conus,alaska,hawaii]`                                                            | display grid configuration|
-| `lcmap snap --grid conus --x 123.0 --y 456.0`                                                      | snap point to tile/chip   |
-| `lcmap near --grid conus --x 123.0 --y 456.0`                                                      | tile/chip xys near point  |
-| `lcmap tile xy --grid conus --id 001001`                                                           | look up tile xy from id   |
-| `lcmap tile id --grid conus --x 67.2 --y 63.3`                                                     | look up tile id from xy   |
-| `lcmap chips --grid conus --tile 001001`                                                           | list chip xys for tile id |
-| `lcmap ingest execute --grid conus --source layerN.tiff`                                           | ingest a layer            |
-| `lcmap ingest available --grid conus --tile 001001 [--start 1999/01/01 --end 2018/01/01 --verbose]`| list ingestable layers    |
-| `lcmap ingest complete --grid conus --tile 001001 [--start 1999/01/01 --end 2018/01/01 --verbose]` | list ingested layers   |
-| `lcmap detect execute --grid conus --tile 001001`                                                  | detect changed in tile    |
-| `lcmap detect available --grid conus --verbose`                                                    | list detectable tiles     |
-| `lcmap detect complete --grid conus --verbose`                                                     | listed detected tiles     |
-| `lcmap train execute --grid conus --tile 001001`                                                   | train a model for a tile  |
-| `lcmap train available --grid conus --verbose`                                                     | list trainable tiles      | 
-| `lcmap train complete --grid conus --verbose`                                                      | list trained tiles        |
-| `lcmap predict execute --grid conus --tile 001001`                                                 | classify a tile           |
-| `lcmap predict available --grid conus --verbose`                                                   | classify a tile           |
-| `lcmap predict complete --grid conus --verbose`                                                    | classify a tile           |
-| `lcmap products maps`                                                                              | create map products       |
+| Command                                                                                                 | Description               |
+| ------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `lcmap grid`                                                                                            | list configured grids     |
+| `lcmap grid show --grid [conus,alaska,hawaii]`                                                          | show grid configuration   |
+| `lcmap grid snap --grid conus --x 123.0 --y 456.0`                                                      | snap point to tile/chip   |
+| `lcmap grid near --grid conus --x 123.0 --y 456.0`                                                      | tile/chip xys near point  |
+| `lcmap tile lookup --grid conus --tile 001001`                                                          | look up tile x&y from tile|
+| `lcmap tile lookup --grid conus --x 67.2 --y 63.3`                                                      | look up tile id from xy   |
+| `lcmap tile chips  --grid conus --tile 001001`                                                          | list chip xys for tile    |
+| `lcmap ingest --grid conus --source layerN.tiff`                                                        | ingest a layer            |
+| `lcmap ingest list available --grid conus --tile 001001 [--start 1999/01/01 --end 2018/01/01 --verbose]`| list ingestable layers    |
+| `lcmap ingest list completed --grid conus --tile 001001 [--start 1999/01/01 --end 2018/01/01 --verbose]`| list ingested layers      |
+| `lcmap detect --grid conus --tile 001001`                                                               | detect changes in tile    |
+| `lcmap detect list available --grid conus --verbose`                                                    | list detectable tiles     |
+| `lcmap detect list completed --grid conus --verbose`                                                    | listed detected tiles     |
+| `lcmap train --grid conus --tile 001001`                                                                | train a model for a tile  |
+| `lcmap train list available --grid conus --verbose`                                                     | list trainable tiles      | 
+| `lcmap train list completed --grid conus --verbose`                                                     | list trained tiles        |
+| `lcmap predict --grid conus --tile 001001`                                                              | predict a tile            |
+| `lcmap predict list available --grid conus --verbose`                                                   | list predictable tiles    |
+| `lcmap predict list completed --grid conus --verbose`                                                   | list predicted tiles      |
+| `lcmap product maps --grid conus --other-opts --verbose`                                                | create map products       |
