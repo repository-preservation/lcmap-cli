@@ -8,7 +8,6 @@
 (comment
   (decode @(client :get :conus :ard :grid nil))
   (decode @(client :get :conus :ard :snap {:query-params {:x 1 :y 2}}))
-
   (grid :conus :ard)
   (snap :conus :ard 1 2)
   (near :conus :ard 1 2)
@@ -31,7 +30,6 @@
   [x]
   x)
 
-
 (defmulti client
   (fn [a b c d e]
     (keyword a)))
@@ -47,7 +45,6 @@
 (defmethod client :default
   [action grid src resource options]
   (str action "not supported"))
-
 
 (defn grid
   [grid src]
