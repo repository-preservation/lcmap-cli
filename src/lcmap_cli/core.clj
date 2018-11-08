@@ -8,6 +8,10 @@
 (comment
   (decode @(client :get :conus :ard :grid nil))
   (decode @(client :get :conus :ard :snap {:query-params {:x 1 :y 2}}))
+
+  (grid :conus :ard)
+  (snap :conus :ard 1 2)
+  (near :conus :ard 1 2)
 )
 
 (defn url
@@ -47,19 +51,21 @@
 
 (defn grid
   [grid src]
-  (json/decode (:body @(client :get grid src :grid nil)) true))
+  (-> @(client :get grid src :grid nil)
+      decode
+      :body))
 
 (defn snap
   [grid src x y]
   (-> @(client :get grid src :snap {:query-params {:x x :y y}})
-      :body
-      (json/decode true)))
+      decode
+      :body))
 
 (defn near
   [grid src x y]
   (-> @(client :get grid src :near {:query-params {:x x :y y}})
-      :body
-      (json/decode true)))
+      decode
+      :body))
 
 (defn tile
   []
@@ -68,9 +74,6 @@
 (defn chips
   []
   nil)
-
-
-
 
 (defn -main
   "I don't do a whole lot ... yet."
