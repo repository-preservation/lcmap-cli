@@ -65,12 +65,31 @@
       :body))
 
 (defn tile
-  []
-  nil)
+  ([grid src tile] nil)
+  ([grid src x y] nil))
 
 (defn chips
-  []
+  [grid tile]
   nil)
+
+(defn ingest
+  [grid layer]
+  nil)
+
+(defn detect
+  ([grid x y]
+   (-> @(client :post grid :ccdc :segment {:query-params {:cx x :cy y}})
+       decode
+       :body))
+  ([grid tile] nil))
+  
+(defn train
+  [grid tile]
+  nil)
+
+(defn predict
+  ([grid x y] nil)
+  ([grid tile] nil))
 
 (defn -main
   "I don't do a whole lot ... yet."
