@@ -144,12 +144,10 @@
        not-empty))
 
 (defn -main [& args]  
-  (let [{:keys [arguments options summary errors]} (parse-opts args [])]
-    (if errors
-      (exit 0 "exiting")
-      (let [target (or (-> arguments first action) "_")
-            func   (or (-> target symbol resolve) usage)]
-        (apply func options)))))
+  (let [{:keys [arguments options summary errors]} (parse-opts args [])
+        target (or (-> arguments first action) "_")
+        func   (or (-> target symbol resolve) usage)]
+            (apply func options)))
 
 (comment
       (case (action arguments)
