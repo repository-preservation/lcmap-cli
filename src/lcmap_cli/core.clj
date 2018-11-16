@@ -109,26 +109,27 @@
 (comment https://github.com/clojure/tools.cli#example-usage)
 
 (def cli-options
-  [;; First three strings describe a short-option, long-option with optional
-   ;; example argument description, and a description. All three are optional
-   ;; and positional.
-   ["-p" "--port PORT" "Port number"
-    :default 80
-    :parse-fn #(Integer/parseInt %)
-    :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
-   
-   ;; If no required argument description is given, the option is assumed to
-   ;; be a boolean option defaulting to nil
-   [nil "--detach" "Detach from controlling process"]
-   ["-v" nil "Verbosity level; may be specified multiple times to increase value"
-    ;; If no long-option is specified, an option :id must be given
-    :id :verbosity
-    :default 0
-    ;; Use :update-fn to create non-idempotent options (:default is applied first)
-    :update-fn inc]
-   ;; A boolean option that can explicitly be set to false
-   ["-d" "--[no-]daemon" "Daemonize the process" :default true]
-   ["-h" "--help"]])
+  {:all [["-h" "--help"] ["-v" "--verbose"]]
+   :grid []
+   :grid-show []
+   :grid-snap []
+   :grid-near []
+   :tile-lookup []
+   :tile-chips []
+   :ingest []
+   :ingest-list-available []
+   :ingest-list-completed []
+   :detect []
+   :detect-list-available []
+   :detect-list-completed []
+   :train []
+   :train-list-available []
+   :train-list-completed []
+   :predict []
+   :predict-list-available []
+   :predict-list-completed []
+   :product-maps []
+   })
 
 (defn usage
   []
