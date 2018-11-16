@@ -130,6 +130,10 @@
    ["-d" "--[no-]daemon" "Daemonize the process" :default true]
    ["-h" "--help"]])
 
+(defn usage
+  []
+  "command not found")
+
 (defn action
   [arguments]
   (->> (string/split arguments #" ")
@@ -144,8 +148,7 @@
     (if errors
       (exit 0 "exiting")
       (let [target (or (-> arguments first action) "_")
-            func   (or (resolve (symbol target))
-                       (partial str "command not found"))]
+            func   (or (-> target symbol resolve) usage)]
         (apply func options)))))
 
 (comment
