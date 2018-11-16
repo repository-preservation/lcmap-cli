@@ -3,7 +3,9 @@
 (def environment
   nil)
 
-
+(def http-options
+  {:timeout 12000})
+  
 (def grids
   {:conus {:ard "http://lcmap-test.cr.usgs.gov/ard_cu_c01_v01"
            :aux "http://lcmap-test.cr.usgs.gov/aux_cu_c01_v01"
