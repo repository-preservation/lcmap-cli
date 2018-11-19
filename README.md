@@ -3,28 +3,21 @@ Command line interface for the LCMAP system
 
 ## Commands
 
-| Command                      | Required Parameters  | Optional Parameters | Description               |
-| ---------------------------- | ---------------------|---------------------| ------------------------- |
-| lcmap grid                   |                      |                     | list configured grids     |
-| lcmap grid show              | -g                   |                     | show grid configuration   |
-| lcmap grid snap              | -g -x -y             |                     | snap point to tile/chip   |
-| lcmap grid near              | -g -x -y             |                     | tile/chip xys near point  |
-| lcmap tile lookup            | -g -t                |                     | look up tile x&y from tile|
-| lcmap tile lookup            | -g -x -y             |                     | look up tile id from xy   |
-| lcmap tile chips             | -g -t                |                     | list chip xys for tile    |
-| lcmap ingest                 | -g -f                |                     | ingest a layer            |
-| lcmap ingest list available  | -g -t                | -s -e -v            | list ingestable layers    |
-| lcmap ingest list completed  | -g -t                | -s -e -v            | list ingested layers      |
-| lcmap detect                 | -g -t                |                     | detect changes in tile    |
-| lcmap detect list available  | -g                   | -v                  | list detectable tiles     |
-| lcmap detect list completed  | -g                   | -v                  | listed detected tiles     |
-| lcmap train                  | -g -t                |                     | train a model for a tile  |
-| lcmap train list available   | -g                   | -v                  | list trainable tiles      | 
-| lcmap train list completed   | -g                   | -v                  | list trained tiles        |
-| lcmap predict                | -g -t                |                     | predict a tile            |
-| lcmap predict list available | -g                   | -v                  | list predictable tiles    |
-| lcmap predict list completed | -g                   | -v                  | list predicted tiles      |
-| lcmap product maps           | -g --other-opts      | -v                  | create map products       |
+| Command                      | Required Parameters  | Optional Parameters | Description                     |
+| ---------------------------- | ---------------------|---------------------| ------------------------------- |
+| lcmap grids                  |                      |                     | list configured grids           |
+| lcmap grid                   | -g                   |                     | show grid configuration         |
+| lcmap snap                   | -g -x -y             |                     | snap point to tile/chip         |
+| lcmap near                   | -g -x -y             |                     | tile/chip xys near point        |
+| lcmap tile                   | -g -t | -g -x -y     |                     | look up a tile id or xy         |
+| lcmap chips                  | -g -t                |                     | list chip xys for tile          |
+| lcmap ingest                 | -g -f                |                     | ingest a layer                  |
+| lcmap ingest-list-available  | -g -t                | -s -e -v            | list ingestable layers          |
+| lcmap ingest-list-completed  | -g -t                | -s -e -v            | list ingested layers            |
+| lcmap detect                 | -g -t | -g -x -y     |                     | detect changes for tile or chip |
+| lcmap train                  | -g -t                |                     | train a model for a tile        |
+| lcmap predict                | -g -t | -g -x -y     |                     | predict a tile or chip          |
+| lcmap products               | -g --other-opts      | -v                  | create map products             |
 
 
 ### Parameters

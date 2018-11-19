@@ -55,17 +55,15 @@
   ([grid x y] nil)
   ([grid tile] nil)))
 
+(defn grids [_] (keys cfg/grids))
 
-
-(defn grid [_] (keys cfg/grids))
-
-(defn grid-show
+(defn grid
   [{:keys [grid dataset]}]
   (-> @(http/client :get (keyword grid) (keyword dataset) :grid nil)
       (http/decode)
       :body))
 
-(defn grid-snap [{:keys [grid dataset x y]}]
+(defn snap [{:keys [grid dataset x y]}]
   (-> @(http/client :get
                     (keyword grid)
                     (keyword dataset)
@@ -74,11 +72,11 @@
       (http/decode)
       :body))
 
-(defn grid-near [] nil)
+(defn near [] nil)
 
-(defn tile-lookup [] nil)
+(defn tile [] nil)
 
-(defn tile-chips [] nil)
+(defn chips [] nil)
 
 (defn ingest [] nil)
 
@@ -88,21 +86,9 @@
 
 (defn detect [] nil)
 
-(defn detect-list-available [] nil)
-
-(defn detect-list-completed [] nil)
-
 (defn train [] nil)
 
-(defn train-list-available [] nil)
-
-(defn train-list-completed [] nil)
-
 (defn predict [] nil)
-
-(defn predict-list-available [] nil)
-
-(defn predict-list-completed [] nil)
 
 (defn product-maps [] nil)
 
@@ -132,24 +118,18 @@
 
 (def cli-options
   {:all [(options [:help :verbose])]
-   :grid []
-   :grid-show (into [] (options [:grid :dataset]))
-   :grid-snap (into [] (options [:grid :dataset :x :y]))
-   :grid-near [(options [:grid :x :y])]
-   :tile-lookup [(options [:grid :tile :x :y])]
-   :tile-chips [(options [:grid :tile])]
+   :grids []
+   :grid (into [] (options [:grid :dataset]))
+   :snap (into [] (options [:grid :dataset :x :y]))
+   :near [(options [:grid :x :y])]
+   :tile [(options [:grid :tile :x :y])]
+   :chips [(options [:grid :tile])]
    :ingest [(options [:grid :source])]
    :ingest-list-available [(options [:grid :start :end])]
    :ingest-list-completed [(options [:grid :start :end])]
    :detect [(options [:grid :tile])]
-   :detect-list-available [(options [:grid])]
-   :detect-list-completed [(options [:grid])]
    :train [(options [:grid :tile])]
-   :train-list-available [(options [:grid])]
-   :train-list-completed [(options [:grid])]
    :predict [(options [:grid :tile])]
-   :predict-list-available [(options [:grid])]
-   :predict-list-completed [(options [:grid])]
    :product-maps [(options [:grid])]
    })
 
@@ -157,28 +137,25 @@
   [x]
   (str "command not found: " x))
 
-
 (defn -main [& args]  
   (let [{arguments :arguments} (parse-opts args [])
         target (first arguments)
         func   (or (->> target (symbol "lcmap-cli.core") resolve) usage)
         opts   ((keyword target) cli-options)
         {aa :args oo :options ee :errors ss :summary} (parse-opts args opts)
-        clean-opts (reduce-kv (fn [m k v] (assoc m k (string/trim v))) {} oo)]
+        clean (reduce-kv (fn [m k v] (assoc m k (string/trim v))) {} oo)]
 
-    
     (comment
       (println "target:" target)
-    (println "opts: " opts)
-    (println "aa: " aa)
-    (println "oo: " oo)
-    (println "ee: " ee)
-    (println "ss: " ss)
-    (println "func: " func)
-    (println "clean: " clean-opts))
+      (println "opts: " opts)
+      (println "aa: " aa)
+      (println "oo: " oo)
+      (println "ee: " ee)
+      (println "ss: " ss)
+      (println "func: " func)
+      (println "clean: " clean-opts))
     
     (try
-      (println (func clean-opts))
+      (println (func clean))
       (catch  Exception e
         (println (str "caught exception: " e))))))
-
