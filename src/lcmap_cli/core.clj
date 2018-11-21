@@ -109,7 +109,7 @@
            :verbose ["-v" "--verbose"]
            :grid ["-g" "--grid GRID" "grid id"]
            :dataset ["-d" "--dataset DATASET" "dataset id"]
-           :x ["-x" "--x X" "projection x coordinate" ] :parse-fn numberize
+           :x ["-x" "--x X" "projection x coordinate"  :parse-fn numberize]
            :y ["-y" "--y Y" "projection y coordinate" :parse-fn numberize]
            :tile ["-t" "--tile TILE" "tile id"]
            :source ["-f" "--source"]
@@ -134,6 +134,7 @@
    :product-maps (into [] (options [:help :grid]))
    })
 
+
  (defn usage [action options-summary]
   (->> ["This is my program. There are many like it, but this one is mine."
         ""
@@ -146,7 +147,7 @@
        (string/join \newline)))
 
 (def actions
-  (str "Available actions: " (keys cli-options)))
+  (str "Available actions: " (into [] (map name (keys cli-options)))))
 
 (defn error-msg [errors]
   (str "The following errors occurred while parsing your command:\n\n"
@@ -162,31 +163,28 @@
     (string/trim v)
     v))
 
-0(defn parameters
+(defn parameters
   [args]
   (let [p (parse-opts args (-> args first keyword cli-options))]
         (assoc p :options (reduce-kv (fn [m k v] (assoc m k (->trim v)))
                                      {}
                                      (:options p)))))
 
-(comment 
-(defn -main [& args]
-
-  (let [func (or (-> args first function) nil)
-        parm (-> args parameters)
-        _ (println parm)]
-
-    (if (or (:errors parm) (nil? func))
-      (println (:summary parm))
-      (try (println (func (:options parm)))
-           (catch  Exception e
-             (binding [*out* *err*](println "caught exception: " e)))))))
-)
-
 
 (defn validate-args
   [args]
-  (let [{:keys [options arguments errors summary]} (parse-opts args (-> args first keyword cli-options))]
+  (let [{:keys [options arguments errors summary]} (parse-opts args (-> args first keyword cli-options))
+
+        cmds (into #{} (map name (keys cli-options)))
+
+        cmd  (-> arguments first)]
+
+    (comment (println options)
+    (println arguments)
+    (println errors)
+    (println summary)
+    (println "==="))
+
     
     (cond
       (:help options)
@@ -195,8 +193,13 @@
       errors
       {:exit-message (error-msg errors)}
 
-      (and (= 1 arguments) (into #{} (keys cli-options)) (-> arguments first keyword))
-      {:action (first arguments) :options options}
+      (nil? (cmds cmd))
+      {:exit-message actions}
+
+      
+      
+      (and (= 1 (count arguments)) (cmds cmd))
+      {:action cmd :options options}
 
       :else
       {:exit-message (usage (-> args first) summary)})))
@@ -209,11 +212,6 @@
 
 (defn -main [& args]
   (let [{:keys [action options exit-message ok?]} (validate-args args)]
-    (println action)
-    (println options)
-    (println exit-message)
-    (println ok?)
-    (println "===")
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (try
