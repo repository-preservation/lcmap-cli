@@ -14,22 +14,22 @@
 
   ; -------------------------------------------------------------------------------------------------------
   ; The cli will automatically resolve functions at the command prompt to functions
-  ; contained within this namespace.  In order to resolve them, they must exist here and
-  ; they must have options described in cli-options.
-
+  ; contained within the lcmap-cli.core namespace.  In order to be resolved, they (obviously) must be defined
+  ; and must exist in cli-options.
+  ;
   ; Validation works pretty well when a key is provided but a value is missing or incorrect.
-
+  ;
   ; Validation currently does not work very well when a required key is missing.  In order
   ; to handle this, a series of clojure specs should be written for each function and
   ; then applied to the function prior to invoking it.  If validation fails then a good
   ; error message can be returned to the command prompt.  This spec mechanism is not in place.
-
+  ;
   ; Current TODO:
-  ; - Fill out xy-to-tile, tile-to-xy & chips
+  ; - Fill out xy-to-tile, tile-to-xy & chips (done)
   ; - Wire up detect, run detect concurrently based on configuration.
   ; - Push the configuration into an edn or json file using the default location of ~/.lcmap/lcmap-cli.edn
   ; - Clean up the error messages returned to the user when an exception occurs.
-  ; - Write tests
+  ; - WRITE TESTS
   ; -------------------------------------------------------------------------------------------------------
 
 (defn transform-matrix
