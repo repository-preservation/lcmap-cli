@@ -9,6 +9,26 @@
             [lcmap.commons.numbers :refer :all])
   (:gen-class :main true))
 
+(comment
+
+  The cli will automatically resolve functions at the command prompt to functions
+  contained within this namespace.  In order to resolve them, they must exist here and
+  they must have options described in cli-options.
+
+  Validation works pretty well when a key is provided but a value is missing or incorrect.
+
+  Validation currently does not work very well when a required key is missing.  In order
+  to handle this, a series of clojure specs should be written for each function and
+  then applied to the function prior to invoking it.  If validation fails then a good
+  error message can be returned to the command prompt.  This spec mechanism is not in place.
+
+  Current TODO:
+  - Wire up chips & detect & run detect concurrently based on configuration.
+  - Push the configuration into an edn or json file using the default location of ~/.lcmap/lcmap-cli.edn
+  - Clean up the error messages returned to the user when an exception occurs.
+  
+  )
+
 (comment 
 (defn detect
   ([grid src x y]
@@ -19,7 +39,7 @@
    "Find all chips in tile, run them concurrently based on config"
    (chips grid tile)
    nil)))
--
+
 (defn grids
   ([] (json/encode (map name (keys cfg/grids))))
   ([_](grids)))
@@ -179,12 +199,15 @@
 
         cmd  (-> arguments first)]
 
-    (comment (println options)
+    (comment
+    (println options)
     (println arguments)
     (println errors)
     (println summary)
+    (println (str "cmd:" cmd ":"))
+    (println (str "cmds:" cmds":"))
+    (println "yas:" (cmds cmd))
     (println "==="))
-
     
     (cond
       (:help options)
@@ -195,9 +218,7 @@
 
       (nil? (cmds cmd))
       {:exit-message actions}
-
-      
-      
+            
       (and (= 1 (count arguments)) (cmds cmd))
       {:action cmd :options options}
 
@@ -212,6 +233,11 @@
 
 (defn -main [& args]
   (let [{:keys [action options exit-message ok?]} (validate-args args)]
+    (comment 
+    (println "action:" action)
+    (println "options:" options)
+    (println "ok?:" ok?)
+    (println "exit-message:" exit-message))
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (try
