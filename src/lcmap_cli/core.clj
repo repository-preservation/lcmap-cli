@@ -9,25 +9,26 @@
             [lcmap.commons.numbers :refer :all])
   (:gen-class :main true))
 
-(comment
+  ; -------------------------------------------------------------------------------------------------------
+  ; The cli will automatically resolve functions at the command prompt to functions
+  ; contained within this namespace.  In order to resolve them, they must exist here and
+  ; they must have options described in cli-options.
 
-  The cli will automatically resolve functions at the command prompt to functions
-  contained within this namespace.  In order to resolve them, they must exist here and
-  they must have options described in cli-options.
+  ; Validation works pretty well when a key is provided but a value is missing or incorrect.
 
-  Validation works pretty well when a key is provided but a value is missing or incorrect.
+  ; Validation currently does not work very well when a required key is missing.  In order
+  ; to handle this, a series of clojure specs should be written for each function and
+  ; then applied to the function prior to invoking it.  If validation fails then a good
+  ; error message can be returned to the command prompt.  This spec mechanism is not in place.
 
-  Validation currently does not work very well when a required key is missing.  In order
-  to handle this, a series of clojure specs should be written for each function and
-  then applied to the function prior to invoking it.  If validation fails then a good
-  error message can be returned to the command prompt.  This spec mechanism is not in place.
-
-  Current TODO:
-  - Wire up chips & detect & run detect concurrently based on configuration.
-  - Push the configuration into an edn or json file using the default location of ~/.lcmap/lcmap-cli.edn
-  - Clean up the error messages returned to the user when an exception occurs.
+  ; Current TODO:
+  ; - Fill out xy-to-tile, tile-to-xy & chips
+  ; - Wire up detect, run detect concurrently based on configuration.
+  ; - Push the configuration into an edn or json file using the default location of ~/.lcmap/lcmap-cli.edn
+  ; - Clean up the error messages returned to the user when an exception occurs.
+  ; - Write tests
+  ; -------------------------------------------------------------------------------------------------------
   
-  )
 
 (comment 
 (defn detect
@@ -81,6 +82,7 @@
       (string/join t))))
 
 (comment Create spec for tile id string... length 6, containing nums only)
+
 (defn string->tile
   [tile-id]
   {:h (lstrip0 (subs tile-id 0 3))
@@ -90,7 +92,6 @@
   [h v]
   (format "%03d%03d" h v))
 
-
 (s/def ::x #(numberize %))
 (s/def ::y #(numberize %))
 (s/def ::tile (s/and string? #(re-matches #"\d{6}" %)))
@@ -98,7 +99,6 @@
 (s/def ::dataset string?)
 (s/def :tile/dispatch (s/or :xy   (s/keys :req-un [::grid ::dataset ::x ::y])
                             :tile (s/keys :req-un [::grid ::dataset ::tile])))                        
-
 
 (defn xy-to-tile
   [{g :grid d :dataset x :x y :y :as all}]
@@ -154,16 +154,15 @@
    :product-maps (into [] (options [:help :grid]))
    })
 
-
  (defn usage [action options-summary]
-  (->> ["This is my program. There are many like it, but this one is mine."
+  (->> ["lcmap command line interface"
         ""
         (str "Usage: lcmap " action " [options]" )
         ""
         "Options:"
         options-summary
         ""
-        "Please refer to the manual page for more information."]
+        "Please refer https://github.com/usgs-eros/lcmap-cli for more information."]
        (string/join \newline)))
 
 (def actions
@@ -194,20 +193,8 @@
 (defn validate-args
   [args]
   (let [{:keys [options arguments errors summary]} (parse-opts args (-> args first keyword cli-options))
-
         cmds (into #{} (map name (keys cli-options)))
-
         cmd  (-> arguments first)]
-
-    (comment
-    (println options)
-    (println arguments)
-    (println errors)
-    (println summary)
-    (println (str "cmd:" cmd ":"))
-    (println (str "cmds:" cmds":"))
-    (println "yas:" (cmds cmd))
-    (println "==="))
     
     (cond
       (:help options)
@@ -244,4 +231,4 @@
         (println ((function action) options))
         (catch Exception e
           (binding [*out* *err*]
-            (println "caught exception: " e)))))))
+            (println "caught exception: " (.toString e))))))))
