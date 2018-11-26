@@ -8,16 +8,18 @@ Command line interface for the LCMAP system
 | lcmap grids                  |                      |                     | list configured grids           |
 | lcmap grid                   | -g -d                |                     | show grid configuration         |
 | lcmap snap                   | -g -d -x -y          |                     | snap point to tile/chip         |
-| lcmap near                   | -g -x -y             |                     | tile/chip xys near point        |
+| lcmap near                   | -g -d -x -y          |                     | tile/chip xys near point        |
 | lcmap tile-to-xy             | -g -d -t             |                     | look up a tile xy from id       |
 | lcmap xy-to-tile             | -g -d -x -y          |                     | look up a tile id from xy       | 
 | lcmap chips                  | -g -d -t             |                     | list chip xys for tile          |
 | lcmap ingest                 | -g -f                |                     | ingest a layer                  |
 | lcmap ingest-list-available  | -g -t                | -s -e -v            | list ingestable layers          |
 | lcmap ingest-list-completed  | -g -t                | -s -e -v            | list ingested layers            |
-| lcmap detect                 | -g -t | -g -x -y     |                     | detect changes for tile or chip |
+| lcmap detect-tile            | -g -t                |                     | detect changes for a tile       |
+| lcmap detect-chip            | -g -x -y             |                     | detect changes for a chip       |
 | lcmap train                  | -g -t                |                     | train a model for a tile        |
-| lcmap predict                | -g -t | -g -x -y     |                     | predict a tile or chip          |
+| lcmap predict-tile           | -g -t                |                     | predict a tile                  |
+| lcmap predict-chip           | -g -x -y             |                     | predict a chip                  |
 | lcmap products               | -g --other-opts      | -v                  | create map products             |
 
 
