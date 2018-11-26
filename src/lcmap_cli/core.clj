@@ -12,6 +12,26 @@
 
 (matrix/set-current-implementation :vectorz)
 
+  ; -------------------------------------------------------------------------------------------------------
+  ; The cli will automatically resolve functions at the command prompt to functions
+  ; contained within this namespace.  In order to resolve them, they must exist here and
+  ; they must have options described in cli-options.
+
+  ; Validation works pretty well when a key is provided but a value is missing or incorrect.
+
+  ; Validation currently does not work very well when a required key is missing.  In order
+  ; to handle this, a series of clojure specs should be written for each function and
+  ; then applied to the function prior to invoking it.  If validation fails then a good
+  ; error message can be returned to the command prompt.  This spec mechanism is not in place.
+
+  ; Current TODO:
+  ; - Fill out xy-to-tile, tile-to-xy & chips
+  ; - Wire up detect, run detect concurrently based on configuration.
+  ; - Push the configuration into an edn or json file using the default location of ~/.lcmap/lcmap-cli.edn
+  ; - Clean up the error messages returned to the user when an exception occurs.
+  ; - Write tests
+  ; -------------------------------------------------------------------------------------------------------
+
 (defn transform-matrix
   "Produce transform matrix from given grid-spec."
   [grid-spec]
@@ -42,28 +62,6 @@
     {:x (ffirst m)
      :y (first (second m))}))
     
-
-  ; -------------------------------------------------------------------------------------------------------
-  ; The cli will automatically resolve functions at the command prompt to functions
-  ; contained within this namespace.  In order to resolve them, they must exist here and
-  ; they must have options described in cli-options.
-
-  ; Validation works pretty well when a key is provided but a value is missing or incorrect.
-
-  ; Validation currently does not work very well when a required key is missing.  In order
-  ; to handle this, a series of clojure specs should be written for each function and
-  ; then applied to the function prior to invoking it.  If validation fails then a good
-  ; error message can be returned to the command prompt.  This spec mechanism is not in place.
-
-  ; Current TODO:
-  ; - Fill out xy-to-tile, tile-to-xy & chips
-  ; - Wire up detect, run detect concurrently based on configuration.
-  ; - Push the configuration into an edn or json file using the default location of ~/.lcmap/lcmap-cli.edn
-  ; - Clean up the error messages returned to the user when an exception occurs.
-  ; - Write tests
-  ; -------------------------------------------------------------------------------------------------------
-  
-
 (comment 
 (defn detect
   ([grid src x y]
@@ -76,7 +74,7 @@
    nil)))
 
 (defn grids
-  ([] (json/encode (map name (keys cfg/grids))))
+  ([] (keys cfg/grids))
   ([_](grids)))
 
 (defn grid
@@ -108,10 +106,20 @@
        (filter #(= "tile" (:name %)))
        first))
 
+(defn chip-grid
+  [{g :grid d :dataset :as all}]
+  (->> all
+       grid
+       json/decode
+       keywordize-keys
+       (filter #(= "chip" (:name %)))
+       first))
+
 (defn lstrip0
+  "Remove leading zeros from a string."
   [t]
   (loop [t t]
-    (if (= "0" (str (first t)))
+    (if (and (= "0" (str (first t))) (> 1 (count t)))
       (recur (rest t))
       (string/join t))))
 
@@ -133,7 +141,6 @@
 (s/def ::dataset string?)
 (s/def :tile/dispatch (s/or :xy   (s/keys :req-un [::grid ::dataset ::x ::y])
                             :tile (s/keys :req-un [::grid ::dataset ::tile])))                        
-
 (defn xy-to-tile
   [{g :grid d :dataset x :x y :y :as all}]
   (let [{:keys [:grid-pt]} (:tile (-> all snap json/decode keywordize-keys))
@@ -146,14 +153,24 @@
   (let [tg (tile-grid all)
         {:keys [:rx :ry :tx :ty :sx :sy]} tg
         {:keys [:h :v]} (string->tile t)]
-    (-> (tile->projection {:h h :v v :grid tg})
-        stringify-keys
-        json/encode)))
-
+    (tile->projection {:h h :v v :grid tg})))
     
+(defn chips
+  [{g :grid d :dataset t :tile :as all}]
+  (let [point (-> all tile-to-xy)
+        cgrid (chip-grid all)
+        tgrid (tile-grid all)
+        x-start (:x point)
+        y-start (:y point)
+        x-stop  (+ x-start (* (:rx tgrid) (:sx tgrid)))
+        y-stop  (+ y-start (* (:ry tgrid) (:sy tgrid)))
+        x-interval (* (:rx cgrid) (:sx cgrid))
+        y-interval (* (:ry cgrid) (:sy cgrid))]
 
+    (for [x (range x-start x-stop x-interval)
+          y (range y-start y-stop y-interval)]
+      {:x x :y y})))
 
-(defn chips [] nil)
 (defn ingest [] nil)
 (defn ingest-list-available [] nil)
 (defn ingest-list-completed [] nil)
@@ -185,7 +202,7 @@
    :near       (into [] (options [:help :grid :dataset :x :y]))
    :xy-to-tile (into [] (options [:help :grid :dataset :x :y]))
    :tile-to-xy (into [] (options [:help :grid :dataset :tile]))
-   :chips      (into [] (options [:help :grid :tile]))
+   :chips      (into [] (options [:help :grid :dataset :tile]))
    :ingest     (into [] (options [:help :grid :source]))
    :ingest-list-available (into [] (options [:help :grid :start :end]))
    :ingest-list-completed (into [] (options [:help :grid :start :end]))
@@ -230,7 +247,6 @@
                                      {}
                                      (:options p)))))
 
-
 (defn validate-args
   [args]
   (let [{:keys [options arguments errors summary]} (parse-opts args (-> args first keyword cli-options))
@@ -253,11 +269,9 @@
       :else
       {:exit-message (usage (-> args first) summary)})))
 
-
 (defn exit [status msg]
   (println msg)
   (System/exit status))
-
 
 (defn -main [& args]
   (let [{:keys [action options exit-message ok?]} (validate-args args)]
@@ -269,7 +283,9 @@
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (try
-        (println ((function action) options))
+        (println (-> ((function action) options)
+                 stringify-keys
+                 json/encode))
         (catch Exception e
           (binding [*out* *err*]
             (println "caught exception: " (.toString e))))))))
