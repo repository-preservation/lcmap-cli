@@ -1,5 +1,6 @@
 (ns lcmap-cli.core
   (:require [cheshire.core :as json]
+            [clojure.core.matrix :as matrix]
             [clojure.spec.alpha :as s]
             [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]]
@@ -8,6 +9,39 @@
             [lcmap-cli.http :as http]
             [lcmap.commons.numbers :refer :all])
   (:gen-class :main true))
+
+(matrix/set-current-implementation :vectorz)
+
+(defn transform-matrix
+  "Produce transform matrix from given grid-spec."
+  [grid-spec]
+  (let [rx (grid-spec :rx)
+        ry (grid-spec :ry)
+        sx (grid-spec :sx)
+        sy (grid-spec :sy)
+        tx (grid-spec :tx)
+        ty (grid-spec :ty)]
+    [[(/ rx sx)        0  (/ tx sx)]
+     [       0  (/ ry sy) (/ ty sy)]
+     [       0         0       1.0 ]]))
+
+(defn point-matrix
+  "Produce a homogeneous matrix from a map containing an :x and :y point."
+  [params]
+  (let [x (-> params :x numberize)
+        y (-> params :y numberize)]
+    [[x]
+     [y]
+     [1]]))
+
+(defn tile->projection
+  [{:keys [:h :v :grid]}]
+  (let [pm (point-matrix {:x h :y v})
+        tm (transform-matrix grid)
+        m  (matrix/mmul (matrix/inverse tm) pm)]
+    {:x (ffirst m)
+     :y (first (second m))}))
+    
 
   ; -------------------------------------------------------------------------------------------------------
   ; The cli will automatically resolve functions at the command prompt to functions
@@ -85,8 +119,8 @@
 
 (defn string->tile
   [tile-id]
-  {:h (lstrip0 (subs tile-id 0 3))
-   :v (lstrip0 (subs tile-id 3))})
+  {:h (numberize (lstrip0 (subs tile-id 0 3)))
+   :v (numberize (lstrip0 (subs tile-id 3)))})
 
 (defn tile->string
   [h v]
@@ -102,14 +136,21 @@
 
 (defn xy-to-tile
   [{g :grid d :dataset x :x y :y :as all}]
-  (let [{:keys [:rx :ry :tx :ty :sx :sy]} (tile-grid all)]
-    :tile))
+  (let [{:keys [:grid-pt]} (:tile (-> all snap json/decode keywordize-keys))
+        h (int (first grid-pt))
+        v (int (second grid-pt))]
+    (tile->string h v)))
 
 (defn tile-to-xy
   [{g :grid d :dataset t :tile :as all}]
-  (let [{:keys [:rx :ry :tx :ty :sx :sy]} (tile-grid all)
+  (let [tg (tile-grid all)
+        {:keys [:rx :ry :tx :ty :sx :sy]} tg
         {:keys [:h :v]} (string->tile t)]
-    :xy))
+    (-> (tile->projection {:h h :v v :grid tg})
+        stringify-keys
+        json/encode)))
+
+    
 
 
 (defn chips [] nil)
