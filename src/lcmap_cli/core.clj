@@ -1,5 +1,6 @@
 (ns lcmap-cli.core
   (:require [cheshire.core :as json]
+            [clojure.core.async :as async :refer :all]
             [clojure.core.matrix :as matrix]
             [clojure.spec.alpha :as s]
             [clojure.string :as string]
@@ -11,6 +12,10 @@
   (:gen-class :main true))
 
 (matrix/set-current-implementation :vectorz)
+
+(def stdout (chan))
+(def stderr (chan))
+(go (while true (-> (<! stdout) stringify-keys json/encode println)))
 
   ; -------------------------------------------------------------------------------------------------------
   ; The cli will automatically resolve functions at the command prompt to functions
@@ -169,36 +174,46 @@
 
     (for [x (range x-start x-stop x-interval)
           y (range y-start y-stop y-interval)]
-      {:x x :y y})))
+      {:cx x :cy y})))
 
 (defn ingest [] nil)
 (defn ingest-list-available [] nil)
 (defn ingest-list-completed [] nil)
 
 (defn detect
-  [{g :grid x :x y :y}]
-  
-  ;; @(h/post "http://lcmap-test.cr.usgs.gov/ard_cu_c01_v01_aux_cu_v01_ccdc_1_0/segment"
-  ;;          {:body (json/encode {:cx 1184415 :cy 2264805})
-  ;;           :timeout 12000
-  ;;           :headers {"Content-Type" "application/json"}})
+  [{g :grid cx :cx cy :cy}]
+  (http/client :post
+               (keyword g)
+               :ccdc
+               :segment
+               {:body (json/encode {:cx cx :cy cy})
+                :headers {"Content-Type" "application/json"}}))
 
-  (http/client :post (keyword g) :ccdc :segment {:body (json/encode {:cx x :cy y})
-                                                 :headers {"Content-Type" "application/json"}}))
-
-(defn detect-tile
-  [{g :grid d :dataset t :tile :as all}]
-  (let [xys        (chips all)
+(defn detect-tile-orig
+  [{g :grid t :tile :as all}]
+  (let [xys        (chips (assoc all :dataset "ard"))
         chunk-size (get-in cfg/grids [(keyword g) :segment-instance-count])
         chunks     (partition chunk-size chunk-size nil xys)]
     (for [chunk chunks]
-      (-> (map #({:grid g :dataset d :x (:x %) :y (:y %)}) chunk)
-          (map detect)
-          (doall)
-          (map deref)
-          (map http/decode)
-          (map :body)
-          (into [])))))
+      ;;(-> (vector (map detect (map #({:grid g :x (:x %) :y (:y %)}) chunk)))
+      ;;    (map #(-> % deref http/decode :body))))))
+      (->> (map (fn [v] {:grid g :cx (:cx v) :cy (:cy v)}) chunk)
+           (map detect)
+           (vec)
+           (pmap (fn [r]
+                   (-> r deref http/decode :body)))))))
+
+;;(defn detect-tile
+;;  [{g :grid t :tile :as all}]
+;;  (let [xys        (chips (assoc all :dataset "ard"))
+;;        chunk-size (get-in cfg/grids [(keyword g) :segment-instance-count])
+;;        channel    (chan chunk-size)]
+
+;;    (go (while true (>! stdout (-> (<! channel) deref http/decode :body))))
+    
+;;    (for [xy xys]
+;;      (>!! channel (detect {:grid g :cx (:cx xy) :cy (:cy xy)})))))
+
 
 (defn detect-chip
   [{g :grid d :dataset x :x y :y :as all}]
@@ -218,6 +233,8 @@
            :dataset ["-d" "--dataset DATASET" "dataset id"]
            :x ["-x" "--x X" "projection x coordinate"  :parse-fn numberize]
            :y ["-y" "--y Y" "projection y coordinate" :parse-fn numberize]
+           :cx ["-cx" "--cx X" "chip projection x coordinate"  :parse-fn numberize]
+           :cy ["-cy" "--cy Y" "chip projection y coordinate" :parse-fn numberize]
            :tile ["-t" "--tile TILE" "tile id"]
            :source ["-f" "--source"]
            :start ["-s" "--start"]
@@ -235,7 +252,7 @@
    :ingest                (into [] (options [:help :grid :source]))
    :ingest-list-available (into [] (options [:help :grid :start :end]))
    :ingest-list-completed (into [] (options [:help :grid :start :end]))
-   :detect-chip           (into [] (options [:help :grid :x :y]))
+   :detect-chip           (into [] (options [:help :grid :cx :cy]))
    :detect-tile           (into [] (options [:help :grid :tile]))
    :train                 (into [] (options [:help :grid :tile]))
    :predict               (into [] (options [:help :grid :tile]))

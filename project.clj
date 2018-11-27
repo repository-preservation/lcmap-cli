@@ -9,6 +9,7 @@
                  [net.mikera/core.matrix "0.62.0"]
                  [net.mikera/vectorz-clj "0.48.0"]
                  [org.clojure/clojure "1.9.0"]
+                 [org.clojure/core.async "0.4.490"]
                  [org.clojure/data.json "0.2.6"]
                  [org.clojure/tools.cli "0.4.1"]]
   :main ^:skip-aot lcmap-cli.core
