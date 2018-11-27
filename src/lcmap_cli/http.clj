@@ -43,6 +43,7 @@
 
 (defmethod client :post
   [verb grid src resource options]
+  (println "options:" (http-options options))
   (http-kit/post (url grid src resource) (http-options options)))
 
 (defmethod client :default

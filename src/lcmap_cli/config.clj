@@ -4,7 +4,7 @@
   nil)
 
 (def http-options
-  {:timeout 12000})
+  {:timeout 1200000})
   
 (def grids
   {:conus {:ard "http://lcmap-test.cr.usgs.gov/ard_cu_c01_v01"
@@ -19,7 +19,8 @@
            :chip "/chip"
            :pixel "/pixel"
            :segment "/segment"
-           :annual-prediction "/annual_prediction"}
+           :annual-prediction "/annual_prediction"
+           :segment-instance-count 1}
    :alaska {:ard "http://host:port/ard_ak_c01_v01"
             :aux "http://host:port/aux_ak_v01"
             :ccdc "http://host:port/ard_ak_c01_v01_aux_ak_v01_ccdc_1_0"
@@ -32,7 +33,8 @@
             :chip "/chip"
             :pixel "/pixel"
             :segment "/segment"
-            :annual-prediction "/annual_prediction"}
+            :annual-prediction "/annual_prediction"
+            :segment-instance-count 1}
    :hawaii {:ard "http://host:port/ard_hi_c01_v01"
             :aux "http://host:port/aux_hi_v01"
             :ccdc "http://host:port/ard_hi_c01_v01_aux_hi_v01_ccdc_1_0"
@@ -45,4 +47,5 @@
             :chip "/chip"
             :pixel "/pixel"
             :segment "/segment"
-            :annual-prediction "/annual_prediction"}})
+            :annual-prediction "/annual_prediction"
+            :segment-instance-count 1}})

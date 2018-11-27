@@ -174,7 +174,36 @@
 (defn ingest [] nil)
 (defn ingest-list-available [] nil)
 (defn ingest-list-completed [] nil)
-(defn detect [] nil)
+
+(defn detect
+  [{g :grid x :x y :y}]
+  
+  ;; @(h/post "http://lcmap-test.cr.usgs.gov/ard_cu_c01_v01_aux_cu_v01_ccdc_1_0/segment"
+  ;;          {:body (json/encode {:cx 1184415 :cy 2264805})
+  ;;           :timeout 12000
+  ;;           :headers {"Content-Type" "application/json"}})
+
+  (http/client :post (keyword g) :ccdc :segment {:body (json/encode {:cx x :cy y})
+                                                 :headers {"Content-Type" "application/json"}}))
+
+(defn detect-tile
+  [{g :grid d :dataset t :tile :as all}]
+  (let [xys        (chips all)
+        chunk-size (get-in cfg/grids [(keyword g) :segment-instance-count])
+        chunks     (partition chunk-size chunk-size nil xys)]
+    (for [chunk chunks]
+      (-> (map #({:grid g :dataset d :x (:x %) :y (:y %)}) chunk)
+          (map detect)
+          (doall)
+          (map deref)
+          (map http/decode)
+          (map :body)
+          (into [])))))
+
+(defn detect-chip
+  [{g :grid d :dataset x :x y :y :as all}]
+  (:body (http/decode (deref (detect all)))))  
+
 (defn train [] nil)
 (defn predict [] nil)
 (defn product-maps [] nil)
@@ -196,20 +225,21 @@
     (vals (select-keys o keys))))
 
 (def cli-options
-  {:grids      (into [] (options [:help]))
-   :grid       (into [] (options [:help :grid :dataset]))
-   :snap       (into [] (options [:help :grid :dataset :x :y]))
-   :near       (into [] (options [:help :grid :dataset :x :y]))
-   :xy-to-tile (into [] (options [:help :grid :dataset :x :y]))
-   :tile-to-xy (into [] (options [:help :grid :dataset :tile]))
-   :chips      (into [] (options [:help :grid :dataset :tile]))
-   :ingest     (into [] (options [:help :grid :source]))
+  {:grids                 (into [] (options [:help]))
+   :grid                  (into [] (options [:help :grid :dataset]))
+   :snap                  (into [] (options [:help :grid :dataset :x :y]))
+   :near                  (into [] (options [:help :grid :dataset :x :y]))
+   :xy-to-tile            (into [] (options [:help :grid :dataset :x :y]))
+   :tile-to-xy            (into [] (options [:help :grid :dataset :tile]))
+   :chips                 (into [] (options [:help :grid :dataset :tile]))
+   :ingest                (into [] (options [:help :grid :source]))
    :ingest-list-available (into [] (options [:help :grid :start :end]))
    :ingest-list-completed (into [] (options [:help :grid :start :end]))
-   :detect  (into [] (options [:help :grid :tile]))
-   :train   (into [] (options [:help :grid :tile]))
-   :predict (into [] (options [:help :grid :tile]))
-   :product-maps (into [] (options [:help :grid]))
+   :detect-chip           (into [] (options [:help :grid :x :y]))
+   :detect-tile           (into [] (options [:help :grid :tile]))
+   :train                 (into [] (options [:help :grid :tile]))
+   :predict               (into [] (options [:help :grid :tile]))
+   :product-maps          (into [] (options [:help :grid]))
    })
 
  (defn usage [action options-summary]
@@ -288,4 +318,5 @@
                  json/encode))
         (catch Exception e
           (binding [*out* *err*]
+            (println e)
             (println "caught exception: " (.toString e))))))))
