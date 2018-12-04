@@ -1,6 +1,6 @@
 (ns lcmap-cli.core
   (:require [cheshire.core :as json]
-            [clojure.core.async :as async :refer :all]
+            [clojure.core.async :as async]
             [clojure.core.matrix :as matrix]
             [clojure.spec.alpha :as s]
             [clojure.string :as string]
@@ -8,14 +8,19 @@
             [clojure.walk :refer [stringify-keys keywordize-keys]]
             [lcmap-cli.config :as cfg]
             [lcmap-cli.http :as http]
-            [lcmap.commons.numbers :refer :all])
+            [lcmap.commons.numbers :refer [numberize]])
   (:gen-class :main true))
 
 (matrix/set-current-implementation :vectorz)
 
-(def stdout (chan))
-(def stderr (chan))
-(go (while true (-> (<! stdout) stringify-keys json/encode println)))
+(def run-threads? (atom true))
+(def stdout (async/chan))
+(def stderr (async/chan))
+(def detect-tile-in (async/chan))
+(def detect-tile-out (async/chan))
+(def stdout-writer (async/thread (while (true? @run-threads?) (-> (async/<!! stdout) stringify-keys json/encode println))))
+
+(def stderr-writer (binding [*out* *err*] (async/thread (while (true? @run-threads?) (-> (async/<!! stderr) stringify-keys json/encode println)))))
 
   ; -------------------------------------------------------------------------------------------------------
   ; The cli will automatically resolve functions at the command prompt to functions
@@ -67,17 +72,6 @@
     {:x (ffirst m)
      :y (first (second m))}))
     
-(comment 
-(defn detect
-  ([grid src x y]
-   (-> @(client :post grid :ccdc :segment {:query-params {:cx x :cy y}})
-       decode
-       :body))
-  ([grid tile]
-   "Find all chips in tile, run them concurrently based on config"
-   (chips grid tile)
-   nil)))
-
 (defn grids
   ([] (keys cfg/grids))
   ([_](grids)))
@@ -128,8 +122,6 @@
       (recur (rest t))
       (string/join t))))
 
-(comment Create spec for tile id string... length 6, containing nums only)
-
 (defn string->tile
   [tile-id]
   {:h (numberize (lstrip0 (subs tile-id 0 3)))
@@ -174,14 +166,14 @@
 
     (for [x (range x-start x-stop x-interval)
           y (range y-start y-stop y-interval)]
-      {:cx x :cy y})))
+      {:x x :y y})))
 
 (defn ingest [] nil)
 (defn ingest-list-available [] nil)
 (defn ingest-list-completed [] nil)
 
 (defn detect
-  [{g :grid cx :cx cy :cy}]
+  [{g :grid cx :x cy :y}]
   (http/client :post
                (keyword g)
                :ccdc
@@ -189,41 +181,76 @@
                {:body (json/encode {:cx cx :cy cy})
                 :headers {"Content-Type" "application/json"}}))
 
-(defn detect-tile-orig
+(defn detect-handler
+  [{:keys [:response :x :y :grid]}]
+
+  (let [r (try {:response @response}
+               (catch Exception e {:error e}))]
+    
+    (cond (:error r)
+          {:x x :y y :error (:error r)}
+
+          (contains? (set (range 200 300))(get-in r [:response :status]))
+          (-> (:response r) http/decode :body)
+          
+          :else {:x x :y y :error r})))
+
+(defn start-detect-consumers
+  [number in-chan out-chan]
+  (dotimes [_ number]
+    (async/thread
+      (while (true? @run-threads?)
+        (let [input  (async/<!! in-chan)
+              result (detect-handler (assoc input :response (detect input)))]
+          (async/>!! out-chan result))))))
+
+(defn start-detect-aggregator
+  [in-chan]
+  (async/thread
+    (while (true? @run-threads?)
+      (let [result (async/<!! in-chan)]
+        (if (:error result)
+          (async/>!! stderr result)
+          (async/>!! stdout (or result "no response")))))))
+
+(defn detect-tile
   [{g :grid t :tile :as all}]
   (let [xys        (chips (assoc all :dataset "ard"))
         chunk-size (get-in cfg/grids [(keyword g) :segment-instance-count])
-        chunks     (partition chunk-size chunk-size nil xys)]
-    (for [chunk chunks]
-      ;;(-> (vector (map detect (map #({:grid g :x (:x %) :y (:y %)}) chunk)))
-      ;;    (map #(-> % deref http/decode :body))))))
-      (->> (map (fn [v] {:grid g :cx (:cx v) :cy (:cy v)}) chunk)
-           (map detect)
-           (vec)
-           (pmap (fn [r]
-                   (-> r deref http/decode :body)))))))
-
-;;(defn detect-tile
-;;  [{g :grid t :tile :as all}]
-;;  (let [xys        (chips (assoc all :dataset "ard"))
-;;        chunk-size (get-in cfg/grids [(keyword g) :segment-instance-count])
-;;        channel    (chan chunk-size)]
-
-;;    (go (while true (>! stdout (-> (<! channel) deref http/decode :body))))
-    
-;;    (for [xy xys]
-;;      (>!! channel (detect {:grid g :cx (:cx xy) :cy (:cy xy)})))))
-
-
+        in-chan    detect-tile-in
+        out-chan   detect-tile-out
+        consumers  (start-detect-consumers chunk-size in-chan out-chan)
+        aggregator (start-detect-aggregator out-chan)
+        sleep-for  10000]
+             
+    (doseq [xy xys]
+      (Thread/sleep sleep-for)
+      (async/>!! in-chan {:x (:x xy)
+                          :y (:y xy)
+                          :grid g})))
+  all)
+  
 (defn detect-chip
-  [{g :grid d :dataset x :x y :y :as all}]
-  (:body (http/decode (deref (detect all)))))  
-
+  [{g :grid x :x y :y :as all}]
+  (detect-handler (assoc all :response (detect all))))
+  
 (defn train [] nil)
 (defn predict [] nil)
 (defn product-maps [] nil)
 
-(comment https://github.com/clojure/tools.cli#example-usage)
+;;(defn detect-tile-orig
+;;  [{g :grid t :tile :as all}]
+;;  (let [xys        (chips (assoc all :dataset "ard"))
+;;        chunk-size (get-in cfg/grids [(keyword g) :segment-instance-count])
+;;        chunks     (partition chunk-size chunk-size nil xys)]
+;;    (for [chunk chunks]
+      ;;(-> (vector (map detect (map #({:grid g :x (:x %) :y (:y %)}) chunk)))
+      ;;    (map #(-> % deref http/decode :body))))))
+;;      (->> (map (fn [v] {:grid g :cx (:cx v) :cy (:cy v)}) chunk)
+;;           (map detect)
+;;           (vec)
+;;           (pmap (fn [r]
+;;                   (-> r deref http/decode :body)))))))
 
 (defn options
   [keys]
@@ -233,8 +260,6 @@
            :dataset ["-d" "--dataset DATASET" "dataset id"]
            :x ["-x" "--x X" "projection x coordinate"  :parse-fn numberize]
            :y ["-y" "--y Y" "projection y coordinate" :parse-fn numberize]
-           :cx ["-cx" "--cx X" "chip projection x coordinate"  :parse-fn numberize]
-           :cy ["-cy" "--cy Y" "chip projection y coordinate" :parse-fn numberize]
            :tile ["-t" "--tile TILE" "tile id"]
            :source ["-f" "--source"]
            :start ["-s" "--start"]
@@ -252,7 +277,7 @@
    :ingest                (into [] (options [:help :grid :source]))
    :ingest-list-available (into [] (options [:help :grid :start :end]))
    :ingest-list-completed (into [] (options [:help :grid :start :end]))
-   :detect-chip           (into [] (options [:help :grid :cx :cy]))
+   :detect-chip           (into [] (options [:help :grid :x :y]))
    :detect-tile           (into [] (options [:help :grid :tile]))
    :train                 (into [] (options [:help :grid :tile]))
    :predict               (into [] (options [:help :grid :tile]))
@@ -299,7 +324,7 @@
   (let [{:keys [options arguments errors summary]} (parse-opts args (-> args first keyword cli-options))
         cmds (into #{} (map name (keys cli-options)))
         cmd  (-> arguments first)]
-    
+       
     (cond
       (:help options)
       {:exit-message (usage (-> args first) summary) :ok? true}
@@ -320,19 +345,32 @@
   (println msg)
   (System/exit status))
 
+(defn finalize
+  []
+  (do
+    (swap! run-threads? false)
+    (async/close! stdout)
+    (async/close! stderr)
+    (async/close! detect-tile-in)
+    (async/close! detect-tile-out)))
+
+(defn add-shutdown-hook
+  []
+  (.addShutdownHook (java.lang.Runtime/getRuntime)
+                    (Thread. #(finalize) "shutdown-handler")))
+
+
 (defn -main [& args]
   (let [{:keys [action options exit-message ok?]} (validate-args args)]
-    (comment 
-    (println "action:" action)
-    (println "options:" options)
-    (println "ok?:" ok?)
-    (println "exit-message:" exit-message))
+
+    (add-shutdown-hook)
+
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (try
         (println (-> ((function action) options)
-                 stringify-keys
-                 json/encode))
+                     stringify-keys
+                     json/encode))
         (catch Exception e
           (binding [*out* *err*]
             (println e)

@@ -1,6 +1,8 @@
 (ns lcmap-cli.config)
 
-(def environment
+(defn read-cfg
+  "Read config file from ~/.usgs/lcmap-cli.edn"
+  []
   nil)
 
 (def http-options
@@ -20,7 +22,8 @@
            :pixel "/pixel"
            :segment "/segment"
            :annual-prediction "/annual_prediction"
-           :segment-instance-count 50}
+           :segment-instance-count 20
+           }
    :alaska {:ard "http://host:port/ard_ak_c01_v01"
             :aux "http://host:port/aux_ak_v01"
             :ccdc "http://host:port/ard_ak_c01_v01_aux_ak_v01_ccdc_1_0"

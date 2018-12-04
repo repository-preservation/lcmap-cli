@@ -14,8 +14,12 @@
                  [org.clojure/tools.cli "0.4.1"]]
   :main ^:skip-aot lcmap-cli.core
   :target-path "target/%s"
+  :repl-options {:init-ns user}
   :profiles {:uberjar {:aot :all}
-             :dev {:plugins [[lein-binplus "0.6.4"]]}}
+             :dev {:resource-paths ["dev"]
+                   :plugins [[lein-binplus "0.6.4"]]}
+             :test {:resource-paths ["test"]}}
+  
   :bin {:name "lcmap"
         :bin-path "~/bin"
         :bootclasspath false
