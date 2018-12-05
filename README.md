@@ -41,25 +41,27 @@ Not all commands accept all parameters.  Use lcmap <command> <subcommand> -h for
 | -h --help     | display help                                 |
 
 
-## Example Usage Ideas
+## Example Change Detection Workflow
 
 ```bash
+
     # Detect changes in a tile
-	# Successful chips go to standard out
-	# Errors go to standard error
+    # Successful chips go to standard out
+    # Errors go to standard error
 	
-	$ lcmap detect-tile --grid CONUS --tile 025007 >> 025007-success.txt 2>> 025007-error.txt
+    $ lcmap detect-tile --grid CONUS --tile 025007 >> 025007-success.txt 2>> 025007-error.txt
 	
-	# Fill in any chips that experienced errors without re-running the whole tile
+    # Fill in any chips that experienced errors without re-running the whole tile
 	
-	# Get chips x and y coordinates as bash arrays
-	$ xs=(`cat 025007-error.txt | jq .[.x]`)
-	$ ys=(`cat 025007-error.txt | jq .[.y]`)
-	
-	# TODO: get length to use as index to arrays
-	# TODO: iterate and dynamically build 
-	
-	# Run these to fill in gaps
-	$ lcmap detect-chip --grid CONUS --cx $cx --cy $cy >> $cx_$cy-success.txt 2>> $cx_$cy-error.txt
-	
+    # Get chips x and y coordinates as bash arrays
+    $ xs=(`cat 025007-error.txt | jq .[.x]`)
+    $ ys=(`cat 025007-error.txt | jq .[.y]`)
+
+    # Iterate and run individual chips
+    for index in $(seq 0 $((${#xs[@]} - 1)));
+    do
+        cx=${xs[$index]}
+        cy=${xy]$index]}
+        lcmap detect-chip --grid CONUS --cx $cx --cy $cy >> $cx_$cy-success.txt 2>> $cx_$cy-error.txt;
+    done	
 ```
