@@ -166,14 +166,14 @@
 
     (for [x (range x-start x-stop x-interval)
           y (range y-start y-stop y-interval)]
-      {:x x :y y})))
+      {:cx x :cy y})))
 
 (defn ingest [] nil)
 (defn ingest-list-available [] nil)
 (defn ingest-list-completed [] nil)
 
 (defn detect
-  [{g :grid cx :x cy :y}]
+  [{g :grid cx :cx cy :cy}]
   (http/client :post
                (keyword g)
                :ccdc
@@ -182,18 +182,18 @@
                 :headers {"Content-Type" "application/json"}}))
 
 (defn detect-handler
-  [{:keys [:response :x :y :grid]}]
+  [{:keys [:response :cx :cy :grid]}]
 
   (let [r (try {:response @response}
                (catch Exception e {:error e}))]
     
     (cond (:error r)
-          {:x x :y y :error (:error r)}
+          {:cx cx :cy cy :error (:error r)}
 
           (contains? (set (range 200 300))(get-in r [:response :status]))
           (-> (:response r) http/decode :body)
           
-          :else {:x x :y y :error r})))
+          :else {:cx cx :cy cy :error r})))
 
 (defn start-detect-consumers
   [number in-chan out-chan]
@@ -225,13 +225,13 @@
              
     (doseq [xy xys]
       (Thread/sleep sleep-for)
-      (async/>!! in-chan {:x (:x xy)
-                          :y (:y xy)
+      (async/>!! in-chan {:cx (:cx xy)
+                          :cy (:cy xy)
                           :grid g})))
   all)
   
 (defn detect-chip
-  [{g :grid x :x y :y :as all}]
+  [{g :grid cx :cx cy :cy :as all}]
   (detect-handler (assoc all :response (detect all))))
   
 (defn train [] nil)
@@ -254,16 +254,18 @@
 
 (defn options
   [keys]
-  (let [o {:help ["-h" "--help"]
-           :verbose ["-v" "--verbose"]
-           :grid ["-g" "--grid GRID" "grid id"]
-           :dataset ["-d" "--dataset DATASET" "dataset id"]
-           :x ["-x" "--x X" "projection x coordinate"  :parse-fn numberize]
-           :y ["-y" "--y Y" "projection y coordinate" :parse-fn numberize]
-           :tile ["-t" "--tile TILE" "tile id"]
-           :source ["-f" "--source"]
-           :start ["-s" "--start"]
-           :end ["-e" "--end"]}]
+  (let [o {:help    ["-h" "--help"]
+           :verbose [nil  "--verbose"]
+           :grid    [nil  "--grid GRID" "grid id"]
+           :dataset [nil  "--dataset DATASET" "dataset id"]
+           :x       [nil  "--x X" "projection x coordinate"  :parse-fn numberize]
+           :y       [nil  "--y Y" "projection y coordinate" :parse-fn numberize]
+           :cx      [nil  "--cx CX" "chip x coordinate" :parse-fn numberize]
+           :cy      [nil  "--cy CY" "chip y coordinate" :parse-fn numberize]
+           :tile    [nil  "--tile TILE" "tile id"]
+           :source  [nil  "--source"]
+           :start   [nil  "--start"]
+           :end     [nil  "--end"]}]
     (vals (select-keys o keys))))
 
 (def cli-options
@@ -277,7 +279,7 @@
    :ingest                (into [] (options [:help :grid :source]))
    :ingest-list-available (into [] (options [:help :grid :start :end]))
    :ingest-list-completed (into [] (options [:help :grid :start :end]))
-   :detect-chip           (into [] (options [:help :grid :x :y]))
+   :detect-chip           (into [] (options [:help :grid :cx :cy]))
    :detect-tile           (into [] (options [:help :grid :tile]))
    :train                 (into [] (options [:help :grid :tile]))
    :predict               (into [] (options [:help :grid :tile]))
@@ -348,7 +350,7 @@
 (defn finalize
   []
   (do
-    (swap! run-threads? false)
+    (swap! run-threads? #(boolean false))
     (async/close! stdout)
     (async/close! stderr)
     (async/close! detect-tile-in)
@@ -368,10 +370,6 @@
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (try
-        (println (-> ((function action) options)
-                     stringify-keys
-                     json/encode))
+        (->> ((function action) options) (async/>!! stdout))
         (catch Exception e
-          (binding [*out* *err*]
-            (println e)
-            (println "caught exception: " (.toString e))))))))
+          (async/>!! stderr (.toString e)))))))

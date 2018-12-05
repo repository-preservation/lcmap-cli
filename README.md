@@ -39,3 +39,27 @@ Not all commands accept all parameters.  Use lcmap <command> <subcommand> -h for
 | -e --end      | end date (YYYY/MM/DD)                        |
 | -v --verbose  | display additional information               |
 | -h --help     | display help                                 |
+
+
+## Example Usage Ideas
+
+```bash
+    # Detect changes in a tile
+	# Successful chips go to standard out
+	# Errors go to standard error
+	
+	$ lcmap detect-tile --grid CONUS --tile 025007 >> 025007-success.txt 2>> 025007-error.txt
+	
+	# Fill in any chips that experienced errors without re-running the whole tile
+	
+	# Get chips x and y coordinates as bash arrays
+	$ xs=(`cat 025007-error.txt | jq .[.x]`)
+	$ ys=(`cat 025007-error.txt | jq .[.y]`)
+	
+	# TODO: get length to use as index to arrays
+	# TODO: iterate and dynamically build 
+	
+	# Run these to fill in gaps
+	$ lcmap detect-chip --grid CONUS --cx $cx --cy $cy >> $cx_$cy-success.txt 2>> $cx_$cy-error.txt
+	
+```
