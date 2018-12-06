@@ -6,7 +6,7 @@
   nil)
 
 (def http-options
-  {:timeout 1200000})
+  {:timeout 2400000})
   
 (def grids
   {:conus {:ard "http://lcmap-test.cr.usgs.gov/ard_cu_c01_v01"
@@ -22,7 +22,7 @@
            :pixel "/pixel"
            :segment "/segment"
            :annual-prediction "/annual_prediction"
-           :segment-instance-count 20
+           :segment-instance-count 25
            }
    :alaska {:ard "http://host:port/ard_ak_c01_v01"
             :aux "http://host:port/aux_ak_v01"

@@ -56,8 +56,8 @@ Not all commands accept all parameters.  Use lcmap <command> <subcommand> -h for
     # Fill in any chips that experienced errors without re-running the whole tile
 	
     # Get chips x and y coordinates as bash arrays
-    $ xs=(`cat 025007-error.txt | jq .[.x]`)
-    $ ys=(`cat 025007-error.txt | jq .[.y]`)
+    $ xs=(`cat 025007-error.txt | jq '.cx'`)
+    $ ys=(`cat 025007-error.txt | jq '.cy'`)
 
     # Iterate and run individual chips
     for index in $(seq 0 $((${#xs[@]} - 1)));

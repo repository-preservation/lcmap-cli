@@ -221,7 +221,7 @@
         out-chan   detect-tile-out
         consumers  (start-detect-consumers chunk-size in-chan out-chan)
         aggregator (start-detect-aggregator out-chan)
-        sleep-for  10000]
+        sleep-for  5000]
              
     (doseq [xy xys]
       (Thread/sleep sleep-for)
@@ -348,7 +348,7 @@
   (System/exit status))
 
 (defn finalize
-  []
+  [& args]
   (do
     (swap! run-threads? #(boolean false))
     (async/close! stdout)
