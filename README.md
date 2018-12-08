@@ -63,7 +63,7 @@ Not all commands accept all parameters.  Use lcmap <command> <subcommand> -h for
     for index in $(seq 0 $((${#xs[@]} - 1)));
     do
         cx=${xs[$index]}
-        cy=${xy]$index]}
+        cy=${xy[$index]}
         lcmap detect-chip --grid CONUS --cx $cx --cy $cy >> $cx_$cy-success.txt 2>> $cx_$cy-error.txt;
     done	
 ```
