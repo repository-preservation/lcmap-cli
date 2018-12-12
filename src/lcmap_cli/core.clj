@@ -1,20 +1,13 @@
 (ns lcmap-cli.core
   (:require [cheshire.core :as json]
-            [clojure.core.async :as async]
-            [clojure.core.matrix :as matrix]
-            [clojure.spec.alpha :as s]
             [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]]
             [clojure.walk :refer [stringify-keys keywordize-keys]]
-            [lcmap-cli.config :as cfg]            
             [lcmap-cli.functions :as f]
-            [lcmap-cli.http :as http]
             [lcmap-cli.changedetection]
             [lcmap-cli.state :as state]
             [lcmap.commons.numbers :refer [numberize]])
   (:gen-class :main true))
-
-(matrix/set-current-implementation :vectorz)
 
 (defn options
   [keys]
@@ -80,10 +73,6 @@
 (defn error-msg [errors]
   (str "The following errors occurred while parsing your command:\n\n"
        (string/join \newline errors)))
-
-;;(defn function
-;;  [args]
-;;  (->> args str (symbol "lcmap-cli.core") resolve))
 
 (defn function
   [args]

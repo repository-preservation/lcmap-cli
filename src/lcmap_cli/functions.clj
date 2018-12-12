@@ -8,6 +8,8 @@
             [lcmap-cli.http :as http]
             [lcmap.commons.numbers :refer [numberize]]))
 
+(matrix/set-current-implementation :vectorz)
+
 (defn ->trim
   [v]
   (if (string? v)
