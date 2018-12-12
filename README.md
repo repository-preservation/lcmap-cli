@@ -65,8 +65,8 @@ Not all commands accept all parameters.  Use lcmap <command> -h for usage
         cy=${xy[$index]};
 	lcmap detect-chip --cx $cx \
 	                  --cy $cy \
-					  --grid conus \
-					  --acquired 1982-01-01/2017-12-31 >> $cx_$cy-success.txt 2>> $cx_$cy-error.txt;
+			  --grid conus \
+			  --acquired 1982-01-01/2017-12-31 >> $cx_$cy-success.txt 2>> $cx_$cy-error.txt;
     	echo "{cx:$cx, cy:$cy}";
     done
 	
