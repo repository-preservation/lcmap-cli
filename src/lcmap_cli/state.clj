@@ -19,12 +19,6 @@
 (def stderr-writer (binding [*out* *err*] (async/thread (while (true? @run-threads?) (-> (async/<!! stderr) stringify-keys json/encode println)))))
 
 (defn shutdown
-  ([]
-   (do
-    (swap! run-threads? (fn [_] false))
-    (async/close! stdout)
-    (async/close! stderr)
-    (async/close! detect-tile-in)
-    (async/close! detect-tile-out)
-    :finalized))
-  ([_] (shutdown)))
+  []
+  (swap! run-threads? (fn [_] false)))
+   

@@ -54,7 +54,7 @@
                  :args (->options [:help :grid :source])}
    :detect-chip {:func #'lcmap-cli.changedetection/chip
                  :args (->options [:help :grid :cx :cy :acquired])}
-   :detect-tile {:func #'lcmap-cli.changedetection/tile
+   :detect      {:func #'lcmap-cli.changedetection/tile
                  :args (->options [:help :grid :tile :acquired])}
    :train       {:func nil
                  :args (->options [:help :grid :tile])}
@@ -131,7 +131,7 @@
 (defn -main [& args]
   (let [{:keys [action options exit-message ok?]} (validate-args args)]
     
-    ;;(add-shutdown-hook)
+    (add-shutdown-hook)
 
     (if exit-message
       (exit (if ok? 0 1) exit-message)
