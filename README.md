@@ -23,30 +23,28 @@ Command line interface for the LCMAP system
 | lcmap available-products     |                                |                      | list of available products      |
 | lcmap products               | --grid --tile --product --date |                      | create map product              |
 
-
 ### Parameters
 
-Not all commands accept all parameters.  Use lcmap <command> <subcommand> -h for usage
+Not all commands accept all parameters.  Use lcmap <command> -h for usage
 
-| Parameter   | Description                                  |
-| ----------- | -------------------------------------------- |
-|  --grid     | grid identifier (conus, alaska, hawaii)      |
-|  --tile     | tile identifier (001001, 012019, ...)        |
-|  --dataset  | dataset identifier (ard, aux, ccdc)          |
-|  --x        | horizontal projection coordinate             |
-|  --y        | vertical projection coordinate               |
-|  --cx       | chip x coordinate                            |
-|  --cy       | chip y coordinate                            |
-|  --source   | source layer filename (layer1.tiff, no path) |
-|  --start    | start date (YYYY/MM/DD)                      |
-|  --end      | end date (YYYY/MM/DD)                        |
+| Parameter   | Description                                       |
+| ----------- | ------------------------------------------------- |
+|  --grid     | grid identifier (conus, alaska, hawaii)           |
+|  --tile     | tile identifier (001001, 012019, ...)             |
+|  --dataset  | dataset identifier (ard, aux, ccdc)               |
+|  --x        | horizontal projection coordinate                  |
+|  --y        | vertical projection coordinate                    |
+|  --cx       | chip x coordinate                                 |
+|  --cy       | chip y coordinate                                 |
+|  --source   | source layer filename (layer1.tiff, no path)      |
+|  --acquired | iso8601 date range string (YYYY-MM-DD/YYYY-MM-DD) |
 |  --product  | name of the product to create                |
 |  --date     | date for which product values are calculated |
-|  --verbose  | display additional information               |
-| -h --help   | display help                                 |
+|  --verbose  | display additional information                    |
+| -h --help   | display help                                      |
 
 
-## Example Change Detection Workflow
+## Examples
 
 ```bash
 
@@ -54,7 +52,7 @@ Not all commands accept all parameters.  Use lcmap <command> <subcommand> -h for
     # Successful chips go to standard out
     # Errors go to standard error
 	
-    $ lcmap detect-tile --grid CONUS --tile 025007 >> 025007-success.txt 2>> 025007-error.txt
+    $ lcmap detect --grid conus --tile 025007 --acquired 1982-01-01/2017-12-31 >> 025007-success.txt 2>> 025007-error.txt
 	
     # Fill in any chips that experienced errors without re-running the whole tile
 	
@@ -65,8 +63,22 @@ Not all commands accept all parameters.  Use lcmap <command> <subcommand> -h for
     # Iterate and run individual chips
     for index in $(seq 0 $((${#xs[@]} - 1)));
     do
-        cx=${xs[$index]}
-        cy=${xy[$index]}
-        lcmap detect-chip --grid CONUS --cx $cx --cy $cy >> $cx_$cy-success.txt 2>> $cx_$cy-error.txt;
-    done	
+        cx=${xs[$index]};
+        cy=${xy[$index]};
+	lcmap detect-chip --cx $cx \
+	                  --cy $cy \
+			  --grid conus \
+			  --acquired 1982-01-01/2017-12-31 >> $cx_$cy-success.txt 2>> $cx_$cy-error.txt;
+    	echo "{cx:$cx, cy:$cy}";
+    done
+	
+	
+	# Running a single chip.
+	# Result evaluation/filling in errors & timeouts only...
+	# ... starting up the JVM with Clojure is slow & inefficient
+	# Use lcmap detect for tile sized runs.
+    
+	$ lcmap detect-chip --cx 1484415 --cy 2414805 --grid conus --acquired 1982-01-01/2017-12-31;
+	{"acquired":"1982-01-01/2017-12-31","cx":1484415,"cy":2414805}
+	
 ```
