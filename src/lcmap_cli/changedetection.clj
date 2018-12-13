@@ -28,15 +28,6 @@
               result (handler (assoc input :response (f/detect input)))]
           (async/>!! out-chan result))))))
 
-(defn start-aggregator
-  [in-chan]
-  (async/thread
-    (while (true? @state/run-threads?)
-      (let [result (async/<!! in-chan)]
-        (if (:error result)
-          (async/>!! state/stderr result)
-          (async/>!! state/stdout (or result "no response")))))))
-
 (defn tile
   [{g :grid t :tile a :acquired :as all}]
   (let [xys        (f/chips (assoc all :dataset "ard"))
@@ -44,16 +35,21 @@
         in-chan    state/detect-tile-in
         out-chan   state/detect-tile-out
         consumers  (start-consumers chunk-size in-chan out-chan)
-        aggregator (start-aggregator out-chan)
-        sleep-for  5000]
-             
-    (doseq [xy xys]
-      (Thread/sleep sleep-for)
-      (async/>!! in-chan {:cx (:cx xy)
-                          :cy (:cy xy)
-                          :acquired a
-                          :grid g})))
+        sleep-for  1000]
+    
+    (async/go (doseq [xy xys]
+                (Thread/sleep sleep-for)
+                (async/>! in-chan {:cx (:cx xy)
+                                   :cy (:cy xy)
+                                   :acquired a
+                                   :grid g})))
+    (dotimes [i (count xys)]
+      (let [result (async/<!! out-chan)]
+        (if (:error result)
+          (async/>!! state/stderr result)
+          (async/>!! state/stdout (or result "no response"))))))
   all)
+      
   
 (defn chip
   [{g :grid cx :cx cy :cy acquired :acquired :as all}]
