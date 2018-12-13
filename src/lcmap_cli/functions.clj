@@ -10,6 +10,19 @@
 
 (matrix/set-current-implementation :vectorz)
 
+(defn ->json
+  [msg]
+  (json/encode (stringify-keys msg)))
+
+(defn stdout
+  [msg]
+  (println msg))
+
+(defn stderr
+  [msg]
+  (binding [*out* *err*]
+    (println msg)))
+
 (defn ->trim
   [v]
   (if (string? v)

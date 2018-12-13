@@ -46,8 +46,8 @@
     (dotimes [i (count xys)]
       (let [result (async/<!! out-chan)]
         (if (:error result)
-          (async/>!! state/stderr result)
-          (async/>!! state/stdout (or result "no response"))))))
+          (f/stderr (f/->json result))
+          (f/stdout (f/->json (or result "no response")))))))
   all)
       
   
