@@ -20,8 +20,8 @@ Command line interface for the LCMAP system
 | lcmap train                  | --grid --tile                  |                      | train a model for a tile        |
 | lcmap predict-tile           | --grid --tile                  |                      | predict a tile                  |
 | lcmap predict-chip           | --grid --cx --cy               |                      | predict a chip                  |
-| lcmap available-products     |                                |                      | list of available products      |
-| lcmap products               | --grid --tile --product --date |                      | create map product              |
+| lcmap available-products     | --grid                         |                      | list of available products      |
+| lcmap product                | --grid --tile --product --date | --dest               | create map product              |
 
 ### Parameters
 
@@ -38,8 +38,9 @@ Not all commands accept all parameters.  Use lcmap <command> -h for usage
 |  --cy       | chip y coordinate                                 |
 |  --source   | source layer filename (layer1.tiff, no path)      |
 |  --acquired | iso8601 date range string (YYYY-MM-DD/YYYY-MM-DD) |
-|  --product  | name of the product to create                |
-|  --date     | date for which product values are calculated |
+|  --product  | name of the product to create                     |
+|  --date     | date for which product values are calculated      |
+|  --dest     | location of output                                |
 |  --verbose  | display additional information                    |
 | -h --help   | display help                                      |
 

@@ -11,7 +11,9 @@
                  [org.clojure/clojure "1.9.0"]
                  [org.clojure/core.async "0.4.490"]
                  [org.clojure/data.json "0.2.6"]
-                 [org.clojure/tools.cli "0.4.1"]]
+                 [org.clojure/tools.cli "0.4.1"]
+                 [org.gdal/gdal         "2.2.0"]
+                 [mount                 "0.1.12"]]
   :main ^:skip-aot lcmap-cli.core
   :target-path "target/%s"
   :repl-options {:init-ns user}

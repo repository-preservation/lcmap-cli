@@ -6,6 +6,7 @@
             [lcmap-cli.functions :as f]
             [lcmap-cli.changedetection]
             [lcmap-cli.state :as state]
+            [lcmap-cli.products :as products]
             [lcmap.commons.numbers :refer [numberize]])
   (:gen-class :main true))
 
@@ -21,6 +22,8 @@
            :cy       [nil  "--cy CY" "chip y coordinate" :parse-fn numberize :missing "--cy is required"]
            :tile     [nil  "--tile TILE" "tile id" :missing "--tile is required"]
            :source   [nil  "--source" :missing "--source is required"]
+           :product  [nil  "--product" :missing "--product is required"]
+           :date     [nil  "--date" :missing "--date is required"]
            :acquired [nil  "--acquired ACQUIRED" "iso8601 date range" :missing "--acquired is required"]}]
     (vals (select-keys o keys))))
 
@@ -54,7 +57,14 @@
    :predict     {:func nil
                  :args (->options [:help :grid :tile])}
    :rasters     {:func nil
-                 :args (->options [:help])}})
+                 :args (->options [:help])}
+   :available-products {:func #'lcmap-cli.products/available
+                        :args (->options [:help :grid])}
+   :product     {:func #'lcmap-cli.products/product
+                 :args (->options [:help :grid :tile :product :date])}
+
+
+})
 
  (defn usage [action options-summary]
   (->> ["lcmap command line interface"
