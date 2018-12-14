@@ -1,60 +1,15 @@
-(ns lcmap-cli.config)
+(ns lcmap-cli.config
+  (:require [clojure.edn  :as edn]
+            [environ.core :as environ]))
 
 (defn read-cfg
   "Read config file from ~/.usgs/lcmap-cli.edn"
   []
-  nil)
+  (let [cfg (or (:lcmap-cli-edn environ/env) "resources/lcmap-cli.edn")]
+    (edn/read-string (slurp cfg))))
 
 (def http-options
-  {:timeout 2400000})
+  (:http-options (read-cfg)))
   
 (def grids
-  {:conus {:ard "http://lcmap-test.cr.usgs.gov/ard_cu_c01_v01"
-           :aux "http://lcmap-test.cr.usgs.gov/aux_cu_c01_v01"
-           :ccdc "http://lcmap-test.cr.usgs.gov/ard_cu_c01_v01_aux_cu_v01_ccdc_1_0"
-           :grid "/grid"
-           :snap "/grid/snap"
-           :near "/grid/near"
-           :inventory "/inventory"
-           :sources "/sources"
-           :tile "/tile"
-           :chip "/chip"
-           :pixel "/pixel"
-           :segment "/segment"
-           :annual-prediction "/annual_prediction"
-           :available-products "/available_products"
-           :product "/product"
-           :segment-instance-count 25
-           }
-   :alaska {:ard "http://host:port/ard_ak_c01_v01"
-            :aux "http://host:port/aux_ak_v01"
-            :ccdc "http://host:port/ard_ak_c01_v01_aux_ak_v01_ccdc_1_0"
-            :grid "/grid"
-            :snap "/grid/snap"
-            :near "/grid/near"
-            :inventory "/inventory"
-            :sources "/sources"
-            :tile "/tile"
-            :chip "/chip"
-            :pixel "/pixel"
-            :segment "/segment"
-            :annual-prediction "/annual_prediction"
-            :available-products "/available_products"
-            :product "/product"
-            :segment-instance-count 1}
-   :hawaii {:ard "http://host:port/ard_hi_c01_v01"
-            :aux "http://host:port/aux_hi_v01"
-            :ccdc "http://host:port/ard_hi_c01_v01_aux_hi_v01_ccdc_1_0"
-            :grid "/grid"
-            :snap "/grid/snap"
-            :near "/grid/near"
-            :inventory "/inventory"
-            :sources "/sources"
-            :tile "/tile"
-            :chip "/chip"
-            :pixel "/pixel"
-            :segment "/segment"
-            :annual-prediction "/annual_prediction"
-            :available-products "/available_products"
-            :product "/product"
-            :segment-instance-count 1}})
+  (:grids (read-cfg)))
