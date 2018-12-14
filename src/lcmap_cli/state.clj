@@ -6,10 +6,6 @@
 
 (def run-threads? (atom true))
 
-(def detect-tile-in (async/chan))
-
-(def detect-tile-out (async/chan))
-
 (defn shutdown
   []
   (swap! run-threads? (fn [_] false)))
