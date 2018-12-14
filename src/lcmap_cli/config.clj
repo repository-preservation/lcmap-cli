@@ -23,6 +23,7 @@
            :segment "/segment"
            :annual-prediction "/annual_prediction"
            :segment-instance-count 25
+           :segment-sleep-for 1000
            }
    :alaska {:ard "http://host:port/ard_ak_c01_v01"
             :aux "http://host:port/aux_ak_v01"
@@ -37,7 +38,8 @@
             :pixel "/pixel"
             :segment "/segment"
             :annual-prediction "/annual_prediction"
-            :segment-instance-count 1}
+            :segment-instance-count 1
+            :segment-sleep-for 1000}
    :hawaii {:ard "http://host:port/ard_hi_c01_v01"
             :aux "http://host:port/aux_hi_v01"
             :ccdc "http://host:port/ard_hi_c01_v01_aux_hi_v01_ccdc_1_0"
@@ -51,4 +53,5 @@
             :pixel "/pixel"
             :segment "/segment"
             :annual-prediction "/annual_prediction"
-            :segment-instance-count 1}})
+            :segment-instance-count 1
+            :segment-sleep-for 1000}})

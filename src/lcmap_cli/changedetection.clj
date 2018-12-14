@@ -35,7 +35,7 @@
         in-chan    state/detect-tile-in
         out-chan   state/detect-tile-out
         consumers  (start-consumers chunk-size in-chan out-chan)
-        sleep-for  1000]
+        sleep-for  (get-in cfg/grids [(keyword g) :segment-sleep-for])]
     
     (async/go (doseq [xy xys]
                 (Thread/sleep sleep-for)
