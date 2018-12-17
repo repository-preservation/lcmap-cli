@@ -2,10 +2,11 @@
 Command line interface for the LCMAP system
 
 ## Get the Code
-Released code is available on the master branch.  Release versions are tagged.
+Released code is available on the master branch.  
+
+[Release versions are tagged. ](https://github.com/USGS-EROS/lcmap-cli/tags)
 
 ```bash
-
     $ git clone https://github.com/usgs-eros/lcmap-cli
     $ git checkout tags/<tag_name>
 ```
