@@ -3,11 +3,15 @@ Command line interface for the LCMAP system
 
 ## Get the Code
 Released code is available on the master branch.  Release versions are tagged.
+```bash
 
-git clone https://github.com/usgs-eros/lcmap-cli
+    $ git clone https://github.com/usgs-eros/lcmap-cli
+```
 
 ## Building
-lein bin
+```bash
+    $ lein bin
+```
 
 ## Commands
 
