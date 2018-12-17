@@ -1,9 +1,21 @@
 (ns lcmap-cli.config)
 
-(defn read-cfg
-  "Read config file from ~/.usgs/lcmap-cli.edn"
-  []
-  nil)
+
+;;  (:require[clojure.edn :require [read]]
+;;           [clojure.io :as io)
+;;  (:import java.io.PushbackReader)))
+
+;;(defn load-edn
+;;  "Load edn from an io/reader source (filename or io/resource)."
+;;  [source]
+;;  (try
+;;    (with-open [r (io/reader source)]
+;;      (edn/read (java.io.PushbackReader. r)))
+
+;;    (catch java.io.IOException e
+;;      (printf "Couldn't open '%s': %s\n" source (.getMessage e)))
+;;    (catch RuntimeException e
+;;      (printf "Error parsing edn file '%s': %s\n" source (.getMessage e)))))
 
 (def http-options
   {:timeout 2400000})
@@ -23,8 +35,7 @@
            :segment "/segment"
            :annual-prediction "/annual_prediction"
            :segment-instance-count 25
-           :segment-sleep-for 1000
-           }
+           :segment-sleep-for 1000}
    :alaska {:ard "http://host:port/ard_ak_c01_v01"
             :aux "http://host:port/aux_ak_v01"
             :ccdc "http://host:port/ard_ak_c01_v01_aux_ak_v01_ccdc_1_0"
