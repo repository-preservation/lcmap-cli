@@ -16,14 +16,12 @@
     (catch RuntimeException e
       (printf "Error parsing edn file '%s': %s\n" source (.getMessage e))))) 
 
-(defn grids
-  []
+(def grids
   (if-let [c (load-edn edn-file)]
     (:grids c)
     nil))
 
-(defn http-options
-  []
+(def http-options
   (if-let [c (load-edn edn-file)]
     (:http c)))
 
