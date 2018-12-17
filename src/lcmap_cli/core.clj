@@ -125,7 +125,7 @@
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (try
-        (f/stdout ((function action) options))
+        (-> ((function action) options) f/->json  f/stdout)
         (catch Exception e
           (binding [*out* *err*]
           (f/stderr (.toString e))))))))
