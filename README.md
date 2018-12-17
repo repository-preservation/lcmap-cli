@@ -1,6 +1,14 @@
 # lcmap-cli
 Command line interface for the LCMAP system
 
+## Get the Code
+Released code is available on the master branch.  Release versions are tagged.
+
+git clone https://github.com/usgs-eros/lcmap-cli
+
+## Building
+lein bin
+
 ## Commands
 
 | Command                      | Required Parameters                | Description                     |
@@ -78,5 +86,35 @@ Not all commands accept all parameters.  Use lcmap <command> -h for usage
     
 	$ lcmap detect-chip --cx 1484415 --cy 2414805 --grid conus --acquired 1982-01-01/2017-12-31;
 	{"acquired":"1982-01-01/2017-12-31","cx":1484415,"cy":2414805}
+	
+	# Schedule change detection in bulk.
+	
+	#!/usr/bin/env bash
+
+    time lcmap detect --grid conus \
+	                  --tile 028006 \
+					  --acquired 1982-01-01/2017-12-31 \
+					  >> ~/devops/028006-success.txt 2>> ~/devops/028006-error.txt;
+					  
+    time lcmap detect --grid conus \
+	                  --tile 028008 \
+					  --acquired 1982-01-01/2017-12-31 \
+					  >> ~/devops/028008-success.txt 2>> ~/devops/028008-error.txt;
+					  
+    time lcmap detect --grid conus \
+	                  --tile 029006 \
+					  --acquired 1982-01-01/2017-12-31 \
+					  >> ~/devops/029006-success.txt 2>> ~/devops/029006-error.txt;
+					  
+    time lcmap detect --grid conus \
+	                  --tile 029007 \
+					  --acquired 1982-01-01/2017-12-31 \
+					  >> ~/devops/029007-success.txt 2>> ~/devops/029007-error.txt;
+					  
+    time lcmap detect --grid conus \
+	                  --tile 029008 \
+					  --acquired 1982-01-01/2017-12-31 \
+					  >> ~/devops/029008-success.txt 2>> ~/devops/029008-error.txt;
+
 	
 ```
