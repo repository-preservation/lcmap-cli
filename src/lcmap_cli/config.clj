@@ -13,3 +13,11 @@
   
 (def grids
   (:grids (read-cfg)))
+
+(defn segment-instance-count
+  [grid]
+  (:segment-instance-count ((keyword grid) grids)))
+
+(defn product-doy
+  [grid]
+  (:product-doy ((keyword grid) grids)))

@@ -1,7 +1,7 @@
 {:grids
-  {:conus {:ard "http://lcmap-test.cr.usgs.gov/ard_cu_c01_v01"
-           :aux "http://lcmap-test.cr.usgs.gov/aux_cu_c01_v01"
-           :ccdc "http://lcmap-test.cr.usgs.gov/ard_cu_c01_v01_aux_cu_v01_ccdc_1_0"
+  {:conus {:ard "http://localardhost:5656"
+           :aux "http://localauxhost:5656"
+           :ccdc "http://localccdchost:5656"
            :grid "/grid"
            :snap "/grid/snap"
            :near "/grid/near"
@@ -14,7 +14,8 @@
            :annual-prediction "/annual_prediction"
            :available-products "/available_products"
            :products "/products"
-           :segment-instance-count 25}
+           :segment-instance-count 25
+           :product-doy "07-01"}
    :alaska {:ard "http://host:port/ard_ak_c01_v01"
             :aux "http://host:port/aux_ak_v01"
             :ccdc "http://host:port/ard_ak_c01_v01_aux_ak_v01_ccdc_1_0"
@@ -30,7 +31,8 @@
             :annual-prediction "/annual_prediction"
             :available-products "/available_products"
             :products "/products"
-            :segment-instance-count 1}
+            :segment-instance-count 1
+            :product-doy "07-01"}
    :hawaii {:ard "http://host:port/ard_hi_c01_v01"
             :aux "http://host:port/aux_hi_v01"
             :ccdc "http://host:port/ard_hi_c01_v01_aux_hi_v01_ccdc_1_0"
@@ -46,6 +48,7 @@
             :annual-prediction "/annual_prediction"
             :available-products "/available_products"
             :products "/products"
-            :segment-instance-count 1}}
+            :segment-instance-count 1
+            :product-doy "07-01"}}
  :http-options {:timeout 2400000}
 }

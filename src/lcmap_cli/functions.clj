@@ -1,12 +1,15 @@
 (ns lcmap-cli.functions
   (:require [cheshire.core :as json]
             [clojure.core.matrix :as matrix]
+            [clojure.core.async :as async]
             [clojure.spec.alpha :as s]
             [clojure.string :as string]
             [clojure.walk :refer [stringify-keys keywordize-keys]]
             [lcmap-cli.config :as cfg]
             [lcmap-cli.http :as http]
-            [lcmap.commons.numbers :refer [numberize]]))
+            [lcmap.commons.numbers :refer [numberize]]
+            [lcmap-cli.state :as state])
+  (:gen-class))
 
 (matrix/set-current-implementation :vectorz)
 
@@ -151,3 +154,21 @@
                :segment
                {:body (json/encode {:cx cx :cy cy :acquired acquired})
                 :headers {"Content-Type" "application/json"}}))
+
+(defn start-consumers
+  [number in-chan out-chan response-handler operator]
+  (dotimes [_ number]
+    (async/thread
+      (while (true? @state/run-threads?)
+        (let [input  (async/<!! in-chan)
+              result (response-handler (assoc input :response (operator input)))]
+          (async/>!! out-chan result))))))
+
+(defn start-aggregator
+  [out-chan]
+  (async/thread
+    (while (true? @state/run-threads?)
+      (let [result (async/<!! out-chan)]
+        (if (:error result)
+          (async/>!! state/stderr result)
+          (async/>!! state/stdout (or result "no response")))))))

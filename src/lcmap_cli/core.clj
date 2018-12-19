@@ -12,19 +12,20 @@
 
 (defn options
   [keys]
-  (let [o {:help     ["-h" "--help"]
-           :verbose  [nil  "--verbose"]
-           :grid     [nil  "--grid GRID" "grid id" :missing "--grid is required"]
-           :dataset  [nil  "--dataset DATASET" "dataset id" :missing "--dataset is required"]
-           :x        [nil  "--x X" "projection x coordinate"  :parse-fn numberize :missing "--x is required"]
-           :y        [nil  "--y Y" "projection y coordinate" :parse-fn numberize :missing "--y is required"]
-           :cx       [nil  "--cx CX" "chip x coordinate" :parse-fn numberize :missing "--cx is required"]
-           :cy       [nil  "--cy CY" "chip y coordinate" :parse-fn numberize :missing "--cy is required"]
-           :tile     [nil  "--tile TILE" "tile id" :missing "--tile is required"]
-           :source   [nil  "--source" :missing "--source is required"]
-           :product  [nil  "--product" :missing "--product is required"]
-           :date     [nil  "--date" :missing "--date is required"]
-           :acquired [nil  "--acquired ACQUIRED" "iso8601 date range" :missing "--acquired is required"]}]
+  (let [o {:help        ["-h" "--help"]
+           :verbose     [nil  "--verbose"]
+           :grid        [nil  "--grid GRID" "grid id" :missing "--grid is required"]
+           :dataset     [nil  "--dataset DATASET" "dataset id" :missing "--dataset is required"]
+           :x           [nil  "--x X" "projection x coordinate"  :parse-fn numberize :missing "--x is required"]
+           :y           [nil  "--y Y" "projection y coordinate" :parse-fn numberize :missing "--y is required"]
+           :cx          [nil  "--cx CX" "chip x coordinate" :parse-fn numberize :missing "--cx is required"]
+           :cy          [nil  "--cy CY" "chip y coordinate" :parse-fn numberize :missing "--cy is required"]
+           :tile        [nil  "--tile TILE" "tile id" :missing "--tile is required"]
+           :source      [nil  "--source" :missing "--source is required"]
+           :products    [nil  "--products" :missing "--products are required"]
+           :years       [nil  "--years" :missing "--years are required"]
+           :destination [nil "--destination" :missing "--destination is required"]
+           :acquired    [nil  "--acquired ACQUIRED" "iso8601 date range" :missing "--acquired is required"]}]
     (vals (select-keys o keys))))
 
 (defn ->options
@@ -56,14 +57,10 @@
                  :args (->options [:help :grid :tile])}
    :predict     {:func nil
                  :args (->options [:help :grid :tile])}
-   :rasters     {:func nil
-                 :args (->options [:help])}
    :available-products {:func #'lcmap-cli.products/available
                         :args (->options [:help :grid])}
-   :product     {:func #'lcmap-cli.products/product
-                 :args (->options [:help :grid :tile :product :date])}
-
-
+   :products    {:func #'lcmap-cli.products/tile
+                 :args (->options [:help :grid :tile :product :years :destination])}
 })
 
  (defn usage [action options-summary]

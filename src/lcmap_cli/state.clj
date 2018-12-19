@@ -10,9 +10,9 @@
 
 (def stderr (async/chan))
 
-(def detect-tile-in (async/chan))
+(def tile-in (async/chan))
 
-(def detect-tile-out (async/chan))
+(def tile-out (async/chan))
 
 (def stdout-writer (async/thread (while (true? @run-threads?) (-> (async/<!! stdout) stringify-keys json/encode println))))
 

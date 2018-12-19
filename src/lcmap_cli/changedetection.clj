@@ -19,32 +19,14 @@
           
           :else {:cx cx :cy cy :acquired acquired :error r})))
 
-(defn start-consumers
-  [number in-chan out-chan]
-  (dotimes [_ number]
-    (async/thread
-      (while (true? @state/run-threads?)
-        (let [input  (async/<!! in-chan)
-              result (handler (assoc input :response (f/detect input)))]
-          (async/>!! out-chan result))))))
-
-(defn start-aggregator
-  [in-chan]
-  (async/thread
-    (while (true? @state/run-threads?)
-      (let [result (async/<!! in-chan)]
-        (if (:error result)
-          (async/>!! state/stderr result)
-          (async/>!! state/stdout (or result "no response")))))))
-
 (defn tile
   [{g :grid t :tile a :acquired :as all}]
   (let [xys        (f/chips (assoc all :dataset "ard"))
         chunk-size (get-in cfg/grids [(keyword g) :segment-instance-count])
-        in-chan    state/detect-tile-in
-        out-chan   state/detect-tile-out
-        consumers  (start-consumers chunk-size in-chan out-chan)
-        aggregator (start-aggregator out-chan)
+        in-chan    state/tile-in
+        out-chan   state/tile-out
+        consumers  (f/start-consumers chunk-size in-chan out-chan handler f/detect)
+        aggregator (f/start-aggregator out-chan)
         sleep-for  5000]
              
     (doseq [xy xys]
