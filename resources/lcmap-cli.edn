@@ -1,7 +1,7 @@
 {:grids
-  {:conus {:ard "http://localardhost:5656"
+  {:conus {:ard "http://localhost:5656"
            :aux "http://localauxhost:5656"
-           :ccdc "http://localccdchost:5656"
+           :ccdc "http://localhost:9876"
            :grid "/grid"
            :snap "/grid/snap"
            :near "/grid/near"
@@ -13,8 +13,8 @@
            :segment "/segment"
            :annual-prediction "/annual_prediction"
            :available-products "/available_products"
-           :products "/products"
-           :segment-instance-count 25
+           :products "/product-test"
+           :segment-instance-count 5
            :product-doy "07-01"}
    :alaska {:ard "http://host:port/ard_ak_c01_v01"
             :aux "http://host:port/aux_ak_v01"

@@ -22,7 +22,7 @@
            :cy          [nil  "--cy CY" "chip y coordinate" :parse-fn numberize :missing "--cy is required"]
            :tile        [nil  "--tile TILE" "tile id" :missing "--tile is required"]
            :source      [nil  "--source" :missing "--source is required"]
-           :products    [nil  "--products" :missing "--products are required"]
+           :product     [nil  "--product" :missing "--product is required"]
            :years       [nil  "--years" :missing "--years are required"]
            :destination [nil "--destination" :missing "--destination is required"]
            :acquired    [nil  "--acquired ACQUIRED" "iso8601 date range" :missing "--acquired is required"]}]

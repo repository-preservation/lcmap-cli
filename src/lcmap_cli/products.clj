@@ -46,14 +46,15 @@
         in-chan    state/tile-in
         out-chan   state/tile-out
         chip_xys   (chips (assoc all :dataset "ard"))
-        {tilex :x tiley :y} (tile-to-xy all)
+        {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
         date-coll  (date-range all)
-        sleep-for  5000]
+        ;sleep-for  5000
+        ]
 
     (f/start-consumers chunk-size in-chan out-chan response-handler product-request)
     (f/start-aggregator out-chan)
     (doseq [date date-coll]
-      (Thread/sleep sleep-for)
+      ;(Thread/sleep sleep-for)
       (async/>!! in-chan (assoc all :tilex tilex
                                     :tiley tiley
                                     :chips chip_xys
