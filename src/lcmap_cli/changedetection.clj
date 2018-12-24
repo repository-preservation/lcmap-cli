@@ -26,16 +26,21 @@
         in-chan    state/tile-in
         out-chan   state/tile-out
         consumers  (f/start-consumers chunk-size in-chan out-chan handler f/detect)
-        aggregator (f/start-aggregator out-chan)
-        sleep-for  5000]
-             
-    (doseq [xy xys]
-      (Thread/sleep sleep-for)
-      (async/>!! in-chan {:cx (:cx xy)
-                          :cy (:cy xy)
-                          :acquired a
-                          :grid g})))
+        sleep-for  (get-in cfg/grids [(keyword g) :segment-sleep-for])]
+    
+    (async/go (doseq [xy xys]
+                (Thread/sleep sleep-for)
+                (async/>! in-chan {:cx (:cx xy)
+                                   :cy (:cy xy)
+                                   :acquired a
+                                   :grid g})))
+    (dotimes [i (count xys)]
+      (let [result (async/<!! out-chan)]
+        (if (:error result)
+          (f/stderr (f/->json result))
+          (f/stdout (f/->json (or result "no response")))))))
   all)
+      
   
 (defn chip
   [{g :grid cx :cx cy :cy acquired :acquired :as all}]

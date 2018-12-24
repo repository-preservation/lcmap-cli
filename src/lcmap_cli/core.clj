@@ -132,7 +132,7 @@
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (try
-        (-> ((function action) options) stringify-keys json/encode println)
+        (-> ((function action) options) f/->json  f/stdout)
         (catch Exception e
           (binding [*out* *err*]
-          (-> (.toString e) stringify-keys json/encode println)))))))
+          (f/stderr (.toString e))))))))

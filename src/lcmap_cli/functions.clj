@@ -8,10 +8,22 @@
             [lcmap-cli.config :as cfg]
             [lcmap-cli.http :as http]
             [lcmap.commons.numbers :refer [numberize]]
-            [lcmap-cli.state :as state])
-  (:gen-class))
+            [lcmap-cli.state :as state]))
 
 (matrix/set-current-implementation :vectorz)
+
+(defn ->json
+  [msg]
+  (json/encode (stringify-keys msg)))
+
+(defn stdout
+  [msg]
+  (println msg))
+
+(defn stderr
+  [msg]
+  (binding [*out* *err*]
+    (println msg)))
 
 (defn ->trim
   [v]
