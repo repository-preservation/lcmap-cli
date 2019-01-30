@@ -21,10 +21,10 @@
            :cx          [nil  "--cx CX" "chip x coordinate" :parse-fn numberize :missing "--cx is required"]
            :cy          [nil  "--cy CY" "chip y coordinate" :parse-fn numberize :missing "--cy is required"]
            :tile        [nil  "--tile TILE" "tile id" :missing "--tile is required"]
-           :source      [nil  "--source" :missing "--source is required"]
-           :product     [nil  "--product" :missing "--product is required"]
-           :years       [nil  "--years" :missing "--years are required"]
-           :destination [nil "--destination" :missing "--destination is required"]
+           :source      [nil  "--source SOURCE" :missing "--source is required"]
+           :product     [nil  "--product PRODUCT" "product name" :missing "--product is required"]
+           :years       [nil  "--years YEARS" "years to produce" :missing "--years are required"]
+           :destination [nil  "--destination DESTINATION" "where to store" :missing "--destination is required"]
            :acquired    [nil  "--acquired ACQUIRED" "iso8601 date range" :missing "--acquired is required"]}]
     (vals (select-keys o keys))))
 
@@ -59,8 +59,8 @@
                  :args (->options [:help :grid :tile])}
    :available-products {:func #'lcmap-cli.products/available
                         :args (->options [:help :grid])}
-   :products    {:func #'lcmap-cli.products/tile
-                 :args (->options [:help :grid :tile :product :years :destination])}
+   :products    {:func #'lcmap-cli.products/tile 
+                 :args (->options [:help :grid :tile :product :years])}
 })
 
  (defn usage [action options-summary]

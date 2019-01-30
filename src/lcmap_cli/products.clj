@@ -41,24 +41,24 @@
     (map (fn [i] (str i "-" doy)) year_range)))
 
 (defn tile
-  [{grid :grid tile :tile product :product years :years destination :destination :as all}]
+  [{grid :grid tile :tile product :product years :years :as all}]
   (let [chunk-size (cfg/segment-instance-count grid)
         in-chan    state/tile-in
         out-chan   state/tile-out
         chip_xys   (chips (assoc all :dataset "ard"))
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
-        date-coll  (date-range all)
-        ;sleep-for  5000
-        ]
+        date-coll  (date-range all)]
 
     (f/start-consumers chunk-size in-chan out-chan response-handler product-request)
     (f/start-aggregator out-chan)
-    (doseq [date date-coll]
+    (doseq [cxcy chip_xys]
       ;(Thread/sleep sleep-for)
       (async/>!! in-chan (assoc all :tilex tilex
                                     :tiley tiley
-                                    :chips chip_xys
-                                    :date date)))))
+                                    :chipx (:cx cxcy)
+                                    :chipy (:cy cxcy)
+                                    :product product
+                                    :dates date-coll)))))
 
 (defn available
   [& args]

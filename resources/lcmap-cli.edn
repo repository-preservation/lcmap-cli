@@ -13,7 +13,7 @@
            :segment "/segment"
            :annual-prediction "/annual_prediction"
            :available-products "/available_products"
-           :products "/product-test"
+           :products "/products"
            :segment-instance-count 5
            :product-doy "07-01"}
    :alaska {:ard "http://host:port/ard_ak_c01_v01"
