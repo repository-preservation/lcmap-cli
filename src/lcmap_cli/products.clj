@@ -31,6 +31,14 @@
                {:body (json/encode all)
                 :headers {"Content-Type" "application/json"}}))
 
+(defn map-request
+  [{grid :grid :as all}]
+  (println "map-request args: " all)
+  (http/client :post 
+               (keyword grid) :ccdc :maps
+               {:body (json/encode all)
+                :headers {"Content-Type" "application/json"}}))
+
 (defn date-range
   [{grid :grid years :years :as all}]
   (let [year_coll (string/split years #"-")
@@ -59,6 +67,30 @@
                                     :chipy (:cy cxcy)
                                     :product product
                                     :dates date-coll)))))
+
+;[date tile tilex tiley chips product]
+(defn maps
+  [{grid :grid tile :tile product :product years :years :as all}]
+  (let [chunk-size (cfg/segment-instance-count grid)
+        in-chan    state/tile-in
+        out-chan   state/tile-out
+        chip_xys (chips (assoc all :dataset "ard"))
+        {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
+        date-coll  (date-range all)]
+
+    (println "chip count: " (count chip_xys))
+    (doseq [date date-coll
+            :let [body (json/encode (assoc all :date date :tilex tilex :tiley tiley :chips chip_xys))
+                  resp (http/client :post (keyword grid) :ccdc :maps
+                                    {:body body :headers {"Content-Type" "application/json"}})]]
+      (print "response: " @resp)
+
+
+      
+
+
+)))
+
 
 (defn available
   [& args]
