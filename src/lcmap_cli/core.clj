@@ -125,7 +125,9 @@
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (try
-        (-> ((function action) options) f/->json  f/stdout)
+        (let [result ((function action) options)]
+          (if (:error result)
+            (f/stderr (f/->json result))
+            (f/stdout (f/->json (or result "no response")))))
         (catch Exception e
-          (binding [*out* *err*]
-          (f/stderr (.toString e))))))))
+          (f/stderr (.toString e)))))))
