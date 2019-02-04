@@ -33,7 +33,6 @@
 
 (defn map-request
   [{grid :grid :as all}]
-  (println "map-request args: " all)
   (http/client :post 
                (keyword grid) :ccdc :maps
                {:body (json/encode all)
@@ -41,7 +40,7 @@
 
 (defn date-range
   [{grid :grid years :years :as all}]
-  (let [year_coll (string/split years #"-")
+  (let [year_coll (string/split years #"/")
         start (-> year_coll first read-string)
         stop  (-> year_coll last read-string inc)
         year_range (range start stop)
@@ -60,7 +59,6 @@
     (f/start-consumers chunk-size in-chan out-chan response-handler product-request)
     (f/start-aggregator out-chan)
     (doseq [cxcy chip_xys]
-      ;(Thread/sleep sleep-for)
       (async/>!! in-chan (assoc all :tilex tilex
                                     :tiley tiley
                                     :chipx (:cx cxcy)
@@ -68,28 +66,42 @@
                                     :product product
                                     :dates date-coll)))))
 
-;[date tile tilex tiley chips product]
+(defn tile2
+  [{grid :grid tile :tile product :product years :years :as all}]
+  (let [chunk-size (cfg/segment-instance-count grid)
+        chip-chunk-size (cfg/chip-partition-count grid)
+        in-chan    state/tile-in
+        out-chan   state/tile-out
+        chip_xys   (chips (assoc all :dataset "ard"))
+        chip_groups (partition chip-chunk-size chip-chunk-size "" chip_xys)
+        {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
+        date-coll  (date-range all)]
+    (f/start-consumers chunk-size in-chan out-chan response-handler product-request)
+    (f/start-aggregator out-chan)
+    (doseq [cps chip_parts]
+      (println "in doseq")
+      (async/>!! in-chan (assoc all :tilex tilex
+                                    :tiley tiley
+                                    :chips cps
+                                    :product product
+                                    :dates date-coll)))))
+
 (defn maps
   [{grid :grid tile :tile product :product years :years :as all}]
   (let [chunk-size (cfg/segment-instance-count grid)
-        in-chan    state/tile-in
-        out-chan   state/tile-out
-        chip_xys (chips (assoc all :dataset "ard"))
+        chip_xys   (doall (chips (assoc all :dataset "ard"))) 
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
-        date-coll  (date-range all)]
+        date-coll  (date-range all)
+        req_fn #(map-request )
+        responses (map req_fn date-coll)]
 
-    (println "chip count: " (count chip_xys))
     (doseq [date date-coll
-            :let [body (json/encode (assoc all :date date :tilex tilex :tiley tiley :chips chip_xys))
-                  resp (http/client :post (keyword grid) :ccdc :maps
-                                    {:body body :headers {"Content-Type" "application/json"}})]]
-      (print "response: " @resp)
+            :let [req-args (assoc all :tilex tilex :tiley tiley :chips chip_xys :product product :date date)
+                  resp (map-request req-args)]]
+      (if (= 200 (:status @resp))
+        (println "success for date: " date)
+        (println "failure for date: " date)))))
 
-
-      
-
-
-)))
 
 
 (defn available

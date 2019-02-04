@@ -32,3 +32,7 @@
 (defn product-doy
   [grid]
   (:product-doy ((keyword grid) grids)))
+
+(defn chip-partition-count
+  [grid]
+  (:chip-partition-count ((keyword grid) grids)))

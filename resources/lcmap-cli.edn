@@ -1,7 +1,7 @@
 {:grids
-  {:conus {:ard "http://localhost:5656"
-           :aux "http://localauxhost:5656"
-           :ccdc "http://localhost:9876"
+  {:conus {:ard "http://127.0.0.1:5656"
+           :aux "http://lcmap-test.cr.usgs.gov/aux_cu_v01"
+           :ccdc "http://127.0.0.1:9876"
            :grid "/grid"
            :snap "/grid/snap"
            :near "/grid/near"
@@ -14,7 +14,9 @@
            :annual-prediction "/annual_prediction"
            :available-products "/available_products"
            :products "/products"
-           :segment-instance-count 5
+           :maps "/maps"
+           :segment-instance-count 1 
+           :chip-partition-count 10
            :product-doy "07-01"}
    :alaska {:ard "http://host:port/ard_ak_c01_v01"
             :aux "http://host:port/aux_ak_v01"
@@ -32,6 +34,7 @@
             :available-products "/available_products"
             :products "/products"
             :segment-instance-count 1
+            :chip-partition-count 10
             :product-doy "07-01"}
    :hawaii {:ard "http://host:port/ard_hi_c01_v01"
             :aux "http://host:port/aux_hi_v01"
@@ -49,6 +52,7 @@
             :available-products "/available_products"
             :products "/products"
             :segment-instance-count 1
+            :chip-partition-count 10
             :product-doy "07-01"}}
  :http-options {:timeout 2400000}
 }

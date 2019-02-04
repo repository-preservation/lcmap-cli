@@ -59,7 +59,7 @@
                  :args (->options [:help :grid :tile])}
    :available-products {:func #'lcmap-cli.products/available
                         :args (->options [:help :grid])}
-   :products    {:func #'lcmap-cli.products/tile 
+   :products    {:func #'lcmap-cli.products/tile2 
                  :args (->options [:help :grid :tile :product :years])}
    :maps        {:func #'lcmap-cli.products/maps 
                  :args (->options [:help :grid :tile :product :years])}
