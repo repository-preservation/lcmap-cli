@@ -78,9 +78,10 @@
         date-coll  (date-range all)]
     (f/start-consumers chunk-size in-chan out-chan response-handler product-request)
     (f/start-aggregator out-chan)
-    (doseq [cps chip_parts]
+    (doseq [cps chip_groups]
       (println "in doseq")
-      (async/>!! in-chan (assoc all :tilex tilex
+      (async/>!! in-chan (assoc all :tile tile
+                                    :tilex tilex
                                     :tiley tiley
                                     :chips cps
                                     :product product
