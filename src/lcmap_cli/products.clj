@@ -73,12 +73,10 @@
   (let [chunk-size (cfg/segment-instance-count grid)
         chip_xys   (doall (chips (assoc all :dataset "ard"))) 
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
-        date-coll  (date-range all)
-        req_fn #(map-request )
-        responses (map req_fn date-coll)]
+        date-coll  (date-range all)]
 
     (doseq [date date-coll
-            :let [req-args (assoc all :tilex tilex :tiley tiley :chips chip_xys :product product :date date)
+            :let [req-args (assoc all :tilex tilex :tiley tiley :chips chip_xys :date date)
                   resp (map-request req-args)]]
       (if (= 200 (:status @resp))
         (println "success for date: " date)
