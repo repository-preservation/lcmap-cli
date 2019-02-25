@@ -10,9 +10,15 @@
 
 (matrix/set-current-implementation :vectorz)
 
-(defn ->json
+(defn to-json
   [msg]
   (json/encode (stringify-keys msg)))
+
+(defn to-json-or-str
+  [msg]
+  (try (to-json msg)
+       (catch Exception e
+         (str msg))))
 
 (defn stdout
   [msg]
