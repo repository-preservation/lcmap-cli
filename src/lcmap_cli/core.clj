@@ -127,7 +127,7 @@
       (try
         (let [result ((function action) options)]
           (if (:error result)
-            (f/stderr (f/->json result))
-            (f/stdout (f/->json (or result "no response")))))
+            (f/stderr (f/to-json-or-str result))
+            (f/stdout (f/to-json-or-str (or result "no response")))))
         (catch Exception e
           (f/stderr (.toString e)))))))
