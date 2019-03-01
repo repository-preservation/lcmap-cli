@@ -81,7 +81,8 @@
 
   (testing "(trim java.lang.String)"
     (is (= "asdf" (trim "asdf     ")))
-    (is (= "as   df" (trim "as   df"))))
+    (is (= "as   df" (trim "as   df")))
+    (is (= "asdf" (trim "  asdf"))))
 
   (testing "(trim Integer)"
     (is (= 1 (trim 1)))))
