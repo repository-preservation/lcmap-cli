@@ -36,7 +36,8 @@
     (is (= "0.3333333333333333" (to-json (/ 1 3)))))
   
   (testing "(to-json Exception)"
-    (is (thrown? Exception (to-json (new java.lang.Object)))))
+    (is (thrown? com.fasterxml.jackson.core.JsonGenerationException
+                 (to-json (new java.lang.Object)))))
 
 
 (deftest to-json-or-str-test
