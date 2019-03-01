@@ -29,7 +29,7 @@
   (binding [*out* *err*]
     (println msg)))
 
-(defn ->trim
+(defn trim
   [v]
   (if (string? v)
     (string/trim v)

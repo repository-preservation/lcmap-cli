@@ -81,7 +81,7 @@
 (defn parameters
   [args]
   (let [p (parse-opts args (-> args first keyword registry :args))]
-        (assoc p :options (reduce-kv (fn [m k v] (assoc m k (f/->trim v)))
+        (assoc p :options (reduce-kv (fn [m k v] (assoc m k (f/trim v)))
                                      {}
                                      (:options p)))))
 

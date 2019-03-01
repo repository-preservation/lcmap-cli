@@ -74,13 +74,14 @@
   
   (testing "(to-json-or-str Exception)"
     (is (not (nil? (to-json-or-str (new java.lang.Object)))))
-    (is (= java.lang.String (type (to-json-or-str (new java.lang.Object))))))
-        
-  (testing "to-json-or-str-test-passes"
-    (= 1 0))
+    (is (= java.lang.String (type (to-json-or-str (new java.lang.Object)))))))
 
-  (testing "to-json-or-str-test-"
-    (= 1 0)))
+  
+(deftest trim-test
 
+  (testing "(trim java.lang.String)"
+    (is (= "asdf" (trim "asdf     ")))
+    (is (= "as   df" (trim "as   df"))))
 
-
+  (testing "(trim Integer)"
+    (is (= 1 (trim 1)))))
