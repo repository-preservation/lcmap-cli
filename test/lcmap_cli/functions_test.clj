@@ -73,7 +73,8 @@
     (is (= "0.3333333333333333" (to-json-or-str (/ 1 3)))))
   
   (testing "(to-json-or-str Exception)"
-    (is (not (nil? (to-json-or-str (new java.lang.Object))))))
+    (is (not (nil? (to-json-or-str (new java.lang.Object)))))
+    (is (= java.lang.String (type (to-json-or-str (new java.lang.Object))))))
         
   (testing "to-json-or-str-test-passes"
     (= 1 0))
