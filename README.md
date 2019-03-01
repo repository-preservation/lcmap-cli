@@ -1,4 +1,6 @@
 # lcmap-cli
+[![Build Status](https://travis-ci.org/USGS-EROS/lcmap-cli.svg?branch=develop)](https://travis-ci.org/USGS-EROS/lcmap-cli)
+
 Command line interface for the LCMAP system
 
 ## Get the Code
