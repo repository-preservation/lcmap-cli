@@ -1,6 +1,8 @@
 (ns lcmap-cli.functions-test
   (:require [clojure.test :refer :all]
-            [lcmap-cli.functions :refer :all]))
+            [lcmap-cli.functions :refer :all]
+            [org.httpkit.client :as http-kit]
+            [org.httpkit.fake :refer [with-fake-http]]))
 
 
 (deftest to-json-test
@@ -75,7 +77,7 @@
   (testing "(to-json-or-str Exception)"
     (is (not (nil? (to-json-or-str (new java.lang.Object)))))
     (is (= java.lang.String (type (to-json-or-str (new java.lang.Object)))))))
-  
+
 
 (deftest trim-test
 
@@ -107,3 +109,13 @@
 
   (testing "(tile->projection Hashmap)"
     (is (= 1 0))))
+
+
+;; dummy, remove and replace with tests for grid, snap, etc.
+(deftest fake-http
+  (testing "fake http"
+
+    (with-fake-http ["http://google.com/" "faked"
+                     "http://flickr.com/" 500]
+      (is (= (:body @(http-kit/get "http://google.com/")) "faked"))
+      (is (= (:status @(http-kit/get "http://flickr.com/")) 500)))))
