@@ -1,5 +1,6 @@
 (ns lcmap-cli.functions-test
   (:require [clojure.test :refer :all]
+            [environ.core :refer [env]]
             [lcmap-cli.functions :refer :all]
             [org.httpkit.client :as http-kit]
             [org.httpkit.fake :refer [with-fake-http]]))
@@ -112,6 +113,7 @@
 
 
 ;; dummy, remove and replace with tests for grid, snap, etc.
+
 (deftest fake-http
   (testing "fake http"
 
@@ -119,3 +121,10 @@
                      "http://flickr.com/" 500]
       (is (= (:body @(http-kit/get "http://google.com/")) "faked"))
       (is (= (:status @(http-kit/get "http://flickr.com/")) 500)))))
+
+
+(deftest fake-config-test
+  (testing "fake config"
+    (print (:edn-file env))
+    (is (= 1 0))))
+    

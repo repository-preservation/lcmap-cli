@@ -15,12 +15,13 @@
   :main ^:skip-aot lcmap-cli.core
   :target-path "target/%s"
   :repl-options {:init-ns user}
+  :plugins [[lein-environ "1.1.0"]]
   :profiles {:uberjar {:aot :all}
              :dev {:resource-paths ["dev"]
                    :plugins [[lein-binplus "0.6.4"]]}
              :test {:resource-paths ["test" "test/resources"]
                     :dependencies [[http-kit.fake "0.2.1"]]
-                    :env {:edn-file "test/resources/lcmap-cli-test.edn"}}}
+                    :env {:edn-file "lcmap-cli-test.edn"}}}
   
   :bin {:name "lcmap"
         :bin-path "~/bin"
