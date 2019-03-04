@@ -91,7 +91,8 @@
 (deftest transform-matrix-test
 
   (testing "(transform-matrix Hashmap)"
-    (is (= 1 0))))
+    (let [gs {:rx 3 :ry 3 :sx 1 :sy 1 :tx 2 :ty 2}]
+      (is (= [[3 0 2][0 3 2][0 0 1.0]] (transform-matrix gs))))))
 
 
 (deftest point-matrix-test
