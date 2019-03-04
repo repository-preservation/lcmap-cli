@@ -21,7 +21,7 @@
                    :plugins [[lein-binplus "0.6.4"]]}
              :test {:resource-paths ["test" "test/resources"]
                     :dependencies [[http-kit.fake "0.2.1"]]
-                    :env {:edn-file "lcmap-cli-test.edn"}}}
+                    :env {:edn-file "test/resources/lcmap-cli-test.edn"}}}
   
   :bin {:name "lcmap"
         :bin-path "~/bin"
