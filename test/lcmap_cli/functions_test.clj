@@ -75,8 +75,8 @@
   (testing "(to-json-or-str Exception)"
     (is (not (nil? (to-json-or-str (new java.lang.Object)))))
     (is (= java.lang.String (type (to-json-or-str (new java.lang.Object)))))))
-
   
+
 (deftest trim-test
 
   (testing "(trim java.lang.String)"
@@ -84,5 +84,23 @@
     (is (= "as   df" (trim "as   df")))
     (is (= "asdf" (trim "  asdf"))))
 
-  (testing "(trim Integer)"
+  (testing "(trim not-a-string)"
     (is (= 1 (trim 1)))))
+
+
+(deftest transform-matrix-test
+
+  (testing "(transform-matrix Hashmap)"
+    (is (= 1 0))))
+
+
+(deftest point-matrix-test
+
+  (testing "(point-matrix Hashmap)"
+    (is (= 1 0))))
+
+
+(deftest tile->projection-test
+
+  (testing "(tile->projection Hashmap)"
+    (is (= 1 0))))
