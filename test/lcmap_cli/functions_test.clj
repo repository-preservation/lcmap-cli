@@ -160,12 +160,12 @@
 (deftest chip-grid-test
 
   (testing "(chip-grid Hashmap)"
-    (with-fake-http ["http://fake/grid" "[{\"name\": \"chip\",
+    (with-fake-http ["http://fake/grid" "[{\"name\": \"tile\",
                                            \"proj\": \"\",
                                            \"rx\": 1.0,
                                            \"ry\": -1.0,
-                                           \"sx\": 3000.0,
-                                           \"sy\": 3000.0,
+                                           \"sx\": 150000.0,
+                                           \"sy\": 150000.0,
                                            \"tx\": 2565585.0,
                                            \"ty\": 3314805.0},
                                           {\"name\": \"chip\",
