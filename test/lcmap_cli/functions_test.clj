@@ -205,10 +205,13 @@
     (is (= {:h 12 :v 7} (string-to-tile "012007")))))
 
 
-(deftest tile->string-test
+(deftest tile-to-string-test
 
-  (testing "(tile->string Integer Integer)"
-    (is (= 1 0))))
+  (testing "(tile-to-string Integer Integer)"
+    (is (= "000000" (tile-to-string 0 0)))
+    (is (= "005007" (tile-to-string 5 7)))
+    (is (= "111222" (tile-to-string 111 222)))))
+
 
 
 (deftest xy-to-tile-test
