@@ -13,6 +13,13 @@
   (testing "(http-options)"
     (is (= (http-options {:keepalive 30000})
            {:keepalive 30000 :timeout 2400000}))))
+
+(deftest decode-test
+  (testing "(decode)"
+    (is (= (decode {:headers {:content-type "application/json;what/ever"}
+                    :body "[{\"a-key\": 45}]"})
+           {:headers {:content-type "application/json;what/ever"}
+            :body [{:a-key 45}]}))))
       
   (comment (testing "(url)"
        (with-fake-http ["http://fake/grid" "[{\"name\": \"tile\",
