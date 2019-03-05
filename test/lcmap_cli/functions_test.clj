@@ -191,7 +191,10 @@
 (deftest lstrip0-test
 
   (testing "(lstrip0 java.lang.String)"
-    (is (= 1 0))))
+    (is (= (lstrip0 "00007") "7"))
+    (is (= (lstrip0 "70000") "70000"))
+    (is (= (lstrip0 "00 007") " 007"))
+    (is (= (lstrip0 "7") "7"))))
 
 
 (deftest string->tile-test
@@ -226,16 +229,5 @@
 (deftest detect-test
   (testing "(detect Hashmap)"
     (is (= 1 0))))
-
-
-(deftest fake-http
-  (testing "fake http"
-
-    (with-fake-http ["http://google.com/" "faked"
-                     "http://flickr.com/" 500]
-      (is (= (:body @(http-kit/get "http://google.com/")) "faked"))
-      (is (= (:status @(http-kit/get "http://flickr.com/")) 500)))))
-
-
 
     

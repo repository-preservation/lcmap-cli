@@ -18,6 +18,8 @@
   :plugins [[lein-environ "1.1.0"]]
   :profiles {:uberjar {:aot :all}
              :dev {:resource-paths ["dev"]
+                   :dependencies [[org.clojure/tools.namespace "0.2.11"]
+                                  [http-kit.fake "0.2.1"]]
                    :plugins [[lein-binplus "0.6.4"]]}
              :test {:resource-paths ["test" "test/resources"]
                     :dependencies [[http-kit.fake "0.2.1"]]

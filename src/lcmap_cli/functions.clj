@@ -109,9 +109,9 @@
 
 (defn lstrip0
   "Remove leading zeros from a string."
-  [t]
-  (loop [t t]
-    (if (and (= "0" (str (first t))) (> 1 (count t)))
+  [s]
+  (loop [t s]
+    (if (and (= "0" (str (first t))) (< 1 (count t)))
       (recur (rest t))
       (string/join t))))
 
