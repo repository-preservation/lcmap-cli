@@ -24,17 +24,18 @@
 
 
 (deftest function-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+  (testing "(function)"
+    (is (= clojure.lang.Var
+           (type (function :grids))))))
+
+;;
+;; (deftest parameters-test
+;;  (testing "FIXME, I fail."
+;;    (is (= 0 1))))
 
 
-(deftest parameters-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
-
-
-(deftest validate-args-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+;; (deftest validate-args-test
+;;  (testing "FIXME, I fail."
+;;    (is (= 0 1))))
 
 
