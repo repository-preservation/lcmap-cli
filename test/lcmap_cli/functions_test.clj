@@ -197,10 +197,12 @@
     (is (= (lstrip0 "7") "7"))))
 
 
-(deftest string->tile-test
+(deftest string-to-tile-test
 
-  (testing "(string->tile java.lang.String)"
-    (is (= 1 0))))
+  (testing "(string-to-tile java.lang.String)"
+    (is (= {:h 0 :v 0} (string-to-tile "000000")))
+    (is (= {:h 4 :v 5} (string-to-tile "004005")))
+    (is (= {:h 12 :v 7} (string-to-tile "012007")))))
 
 
 (deftest tile->string-test
