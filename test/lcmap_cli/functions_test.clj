@@ -105,40 +105,56 @@
       (is (= [[1] [3] [1]] (point-matrix p))))))
 
 
-(deftest tile->projection-test
+(deftest tile-to-projection-test
 
-  (testing "(tile->projection Hashmap)"
-    (is (= 1 0))))
+  (testing "(tile-to-projection Hashmap)"
 
+    (let [g      {:rx 1.0 :ry -1.0 :sx 150000.0
+                  :sy 150000.0 :tx 2565585.0 :ty 3314805.0}
+          h24v07 (tile-to-projection {:h 24 :v 7 :grid g})
+          h00v00 (tile-to-projection {:h 0  :v 0 :grid g})]
 
-(deftest grids-test
+      (is (= (:x h24v07) 1034415.0))
+      (is (= (:y h24v07) 2264805.0))
+      (is (= (:x h00v00) -2565585.0))
+      (is (= (:y h00v00) 3314805.0)))))
 
-  (testing "(grids)"
-    (is (= 1 0))))
-
-
-(deftest grid-test
-
-  (testing "(grid Hashmap)"
-    (is (= 1 0))))
-
-
-(deftest snap-test
-
-  (testing "(snap Hashmap)"
-    (is (= 1 0))))
-
-
-(deftest near-test
-
-  (testing "(near Hashmap)"
-    (is (= 1 0))))
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Tests for grids, grid, snap & near are handled
+;; by testing the http client.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (deftest tile-grid-test
 
   (testing "(tile-grid Hashmap)"
-    (is (= 1 0))))
+    (with-fake-http ["http://fake/grid" "[{\"name\": \"tile\",
+                                           \"proj\": \"\",
+                                           \"rx\": 1.0,
+                                           \"ry\": -1.0,
+                                           \"sx\": 150000.0,
+                                           \"sy\": 150000.0,
+                                           \"tx\": 2565585.0,
+                                           \"ty\": 3314805.0},
+                                          {\"name\": \"chip\",
+                                           \"proj\": \"\",
+                                           \"rx\": 1.0,
+                                           \"ry\": -1.0,
+                                           \"sx\": 3000.0,
+                                           \"sy\": 3000.0,
+                                           \"tx\": 2565585.0,
+                                           \"ty\": 3314805.0}]]"]
+
+      (is (= (tile-grid {:grid "fake-http" :dataset "ard"})
+             {:name "tile"
+              :proj ""
+              :rx 1.0
+              :ry -1.0
+              :sx 150000.0
+              :sy 150000.0
+              :tx 2565585.0
+              :ty 3314805.0})))))
 
 
 (deftest chip-grid-test

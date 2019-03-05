@@ -57,7 +57,7 @@
      [y]
      [1]]))
 
-(defn tile->projection
+(defn tile-to-projection
   [{:keys [:h :v :grid]}]
   (let [pm (point-matrix {:x h :y v})
         tm (transform-matrix grid)
@@ -115,12 +115,12 @@
       (recur (rest t))
       (string/join t))))
 
-(defn string->tile
+(defn string-to-tile
   [tile-id]
   {:h (numberize (lstrip0 (subs tile-id 0 3)))
    :v (numberize (lstrip0 (subs tile-id 3)))})
 
-(defn tile->string
+(defn tile-to-string
   [h v]
   (format "%03d%03d" h v))
 
@@ -137,14 +137,14 @@
   (let [{:keys [:grid-pt]} (:tile (-> all snap json/decode keywordize-keys))
         h (int (first grid-pt))
         v (int (second grid-pt))]
-    (tile->string h v)))
+    (tile-to-string h v)))
 
 (defn tile-to-xy
   [{g :grid d :dataset t :tile :as all}]
   (let [tg (tile-grid all)
         {:keys [:rx :ry :tx :ty :sx :sy]} tg
-        {:keys [:h :v]} (string->tile t)]
-    (tile->projection {:h h :v v :grid tg})))
+        {:keys [:h :v]} (string-to-tile t)]
+    (tile-to-projection {:h h :v v :grid tg})))
     
 (defn chips
   [{g :grid d :dataset t :tile :as all}]
