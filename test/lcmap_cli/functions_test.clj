@@ -213,11 +213,12 @@
     (is (= "111222" (tile-to-string 111 222)))))
 
 
-
 (deftest xy-to-tile-test
 
   (testing "(xy-to-tile Hashmap)"
-    (is (= 1 0))))
+    (with-fake-http ["http://fake/grid/snap" "{\"tile\": {\"grid-pt\": [1,2]}}"]
+      (is (= (xy-to-tile {:grid "fake-http" :dataset "ard" :x 123 :y 456})
+             "001002")))))
 
 
 (deftest tile-to-xy-test
