@@ -160,7 +160,32 @@
 (deftest chip-grid-test
 
   (testing "(chip-grid Hashmap)"
-    (is (= 1 0))))
+    (with-fake-http ["http://fake/grid" "[{\"name\": \"chip\",
+                                           \"proj\": \"\",
+                                           \"rx\": 1.0,
+                                           \"ry\": -1.0,
+                                           \"sx\": 3000.0,
+                                           \"sy\": 3000.0,
+                                           \"tx\": 2565585.0,
+                                           \"ty\": 3314805.0},
+                                          {\"name\": \"chip\",
+                                           \"proj\": \"\",
+                                           \"rx\": 1.0,
+                                           \"ry\": -1.0,
+                                           \"sx\": 3000.0,
+                                           \"sy\": 3000.0,
+                                           \"tx\": 2565585.0,
+                                           \"ty\": 3314805.0}]]"]
+
+      (is (= (chip-grid {:grid "fake-http" :dataset "ard"})
+             {:name "chip"
+              :proj ""
+              :rx 1.0
+              :ry -1.0
+              :sx 3000.0
+              :sy 3000.0
+              :tx 2565585.0
+              :ty 3314805.0})))))
 
 
 (deftest lstrip0-test
