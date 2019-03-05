@@ -121,8 +121,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Tests for grids, grid, snap & near are handled
+;; grids, grid, snap & near testing is covered
 ;; by testing the http client.
+;;
+;; (deftest detect-grids
+;;  (testing "(detect Hashmap)"
+;;    (is (= 1 0))))
+;;
+;; (deftest detect-grid
+;;  (testing "(detect Hashmap)"
+;;    (is (= 1 0))))
+;;
+;; (deftest detect-snap
+;;  (testing "(detect Hashmap)"
+;;    (is (= 1 0))))
+;;
+;; (deftest detect-near
+;;  (testing "(detect Hashmap)"
+;;    (is (= 1 0))))
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -246,11 +262,40 @@
 
 (deftest chips-test
   (testing "(chips Hashmap)"
-    (is (= 1 0))))
+    (with-fake-http ["http://fake/grid" "[{\"name\": \"tile\",
+                                           \"proj\": \"\",
+                                           \"rx\": 1.0,
+                                           \"ry\": -1.0,
+                                           \"sx\": 10.0,
+                                           \"sy\": 10.0,
+                                           \"tx\": 0.0,
+                                           \"ty\": 0.0},
+                                          {\"name\": \"chip\",
+                                           \"proj\": \"\",
+                                           \"rx\": 1.0,
+                                           \"ry\": -1.0,
+                                           \"sx\": 5.0,
+                                           \"sy\": 5.0,
+                                           \"tx\": 0.0,
+                                           \"ty\": 0.0}]]"]
+      (is (= (into #{} (chips {:grid "fake-http" :dataset "ard" :tile "001001"}))
+             (into #{} [{:cx 10.0 :cy -10.0}
+                        {:cx 15.0 :cy -10.0}
+                        {:cx 10.0 :cy -15.0}
+                        {:cx 15.0 :cy -15.0}]))))))
 
 
-(deftest detect-test
-  (testing "(detect Hashmap)"
-    (is (= 1 0))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; detect is tested as a result of testing
+;; the http client
+;;
+;; (deftest detect-test
+;;  (testing "(detect Hashmap)"
+;;    (is (= 1 0))))
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 
     
