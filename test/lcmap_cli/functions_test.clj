@@ -1,6 +1,5 @@
 (ns lcmap-cli.functions-test
   (:require [clojure.test :refer :all]
-            [environ.core :refer [env]]
             [lcmap-cli.functions :refer :all]
             [org.httpkit.client :as http-kit]
             [org.httpkit.fake :refer [with-fake-http]]))
@@ -112,7 +111,81 @@
     (is (= 1 0))))
 
 
-;; dummy, remove and replace with tests for grid, snap, etc.
+(deftest grids-test
+
+  (testing "(grids)"
+    (is (= 1 0))))
+
+
+(deftest grid-test
+
+  (testing "(grid Hashmap)"
+    (is (= 1 0))))
+
+
+(deftest snap-test
+
+  (testing "(snap Hashmap)"
+    (is (= 1 0))))
+
+
+(deftest near-test
+
+  (testing "(near Hashmap)"
+    (is (= 1 0))))
+
+
+(deftest tile-grid-test
+
+  (testing "(tile-grid Hashmap)"
+    (is (= 1 0))))
+
+
+(deftest chip-grid-test
+
+  (testing "(chip-grid Hashmap)"
+    (is (= 1 0))))
+
+
+(deftest lstrip0-test
+
+  (testing "(lstrip0 java.lang.String)"
+    (is (= 1 0))))
+
+
+(deftest string->tile-test
+
+  (testing "(string->tile java.lang.String)"
+    (is (= 1 0))))
+
+
+(deftest tile->string-test
+
+  (testing "(tile->string Integer Integer)"
+    (is (= 1 0))))
+
+
+(deftest xy-to-tile-test
+
+  (testing "(xy-to-tile Hashmap)"
+    (is (= 1 0))))
+
+
+(deftest tile-to-xy-test
+
+  (testing "(tile-to-xy Hashmap)"
+    (is (= 1 0))))
+
+
+(deftest chips-test
+  (testing "(chips Hashmap)"
+    (is (= 1 0))))
+
+
+(deftest detect-test
+  (testing "(detect Hashmap)"
+    (is (= 1 0))))
+
 
 (deftest fake-http
   (testing "fake http"
@@ -123,8 +196,5 @@
       (is (= (:status @(http-kit/get "http://flickr.com/")) 500)))))
 
 
-(deftest fake-config-test
-  (testing "fake config"
-    (print (:edn-file env))
-    (is (= 1 0))))
+
     
