@@ -8,20 +8,14 @@
     (is (= '(["-h" "--help"]) (options [:help])))))
 
 
-(deftest registry-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
-
-
 (deftest usage-test
   (testing "(usage)"
     (= java.lang.String
        (type (usage "some-action" "some-options")))))
 
 (deftest actions-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
-
+  (testing "actions"
+    (= java.lang.String (type actions))))
 
 (deftest error-msg-test
   (testing "(error-msg)"
