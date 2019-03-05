@@ -224,7 +224,24 @@
 (deftest tile-to-xy-test
 
   (testing "(tile-to-xy Hashmap)"
-    (is (= 1 0))))
+    (with-fake-http ["http://fake/grid" "[{\"name\": \"tile\",
+                                           \"proj\": \"\",
+                                           \"rx\": 1.0,
+                                           \"ry\": -1.0,
+                                           \"sx\": 150000.0,
+                                           \"sy\": 150000.0,
+                                           \"tx\": 2565585.0,
+                                           \"ty\": 3314805.0},
+                                          {\"name\": \"chip\",
+                                           \"proj\": \"\",
+                                           \"rx\": 1.0,
+                                           \"ry\": -1.0,
+                                           \"sx\": 3000.0,
+                                           \"sy\": 3000.0,
+                                           \"tx\": 2565585.0,
+                                           \"ty\": 3314805.0}]]"]
+      (is (= (tile-to-xy {:grid "fake-http" :dataset "ard" :tile "001001"})
+             {:x -2415585.0 :y 3164805.0})))))
 
 
 (deftest chips-test
