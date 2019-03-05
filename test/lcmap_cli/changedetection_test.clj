@@ -1,6 +1,9 @@
 (ns lcmap-cli.changedetection-test
-  (:require [clojure.test :refer :all]
-            [lcmap-cli.changedetection :refer :all]))
+  (:require [clojure.core.async :as async]
+            [clojure.test :refer :all]
+            [org.httpkit.fake :refer [with-fake-http]]
+            [lcmap-cli.changedetection :refer :all]
+            [lcmap-cli.state :refer [shutdown]]))
 
 (deftest handler-test
   (testing "(handler) with HTTP 200"
@@ -33,8 +36,27 @@
                             :response {:status 200
                                        :headers {:content-type "application/json"}
                                        :body "some-value\"]"}})))))
-       
-
-    
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; with-fake-http is not working across threads
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;;(deftest consumers-test
+;;  (testing "(start-consumers)"
+;;    (with-fake-http ["http://fake/segment" "{\"cx\": 0, \"cy\": 0}"]
+;;      (let [in  (async/chan)
+;;            out (async/chan)]
+;;
+;;        (start-consumers 1 in out)
+;;
+;;        (async/>!! in {:cx 0 :cy 0 :acquired "1980/2019"})
+;;        
+;;        (is (= "{\"cx\": 0, \"cy\": 0}" (async/<!! out)))
+;;
+;;        (shutdown)))))
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+            
