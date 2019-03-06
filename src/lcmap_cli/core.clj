@@ -118,14 +118,6 @@
   (.addShutdownHook (java.lang.Runtime/getRuntime)
                     (Thread. #(state/shutdown) "shutdown-handler")))
 
-(defn invoke
-  [func opts]
-  (try
-    (func opts)
-    (catch Exception e
-      (-> e st/print-stack-trace with-out-str))))
-
-
 (defn -main [& args]
   (let [{:keys [action options exit-message ok?]} (validate-args args)]
     
