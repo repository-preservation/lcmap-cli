@@ -1,6 +1,5 @@
 (ns lcmap-cli.core
   (:require [cheshire.core :as json]
-            [clojure.stacktrace :as st]
             [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]]
             [clojure.walk :refer [stringify-keys keywordize-keys]]
