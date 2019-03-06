@@ -1,0 +1,14 @@
+language: clojure
+
+jdk:
+- openjdk8
+
+services:
+  - docker
+
+sudo: required
+  
+notifications:
+  slack:
+    rooms:
+      - lcmap:UTqlh9PfPVomfpli10WKyZoh#cicd

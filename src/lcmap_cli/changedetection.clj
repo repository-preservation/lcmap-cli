@@ -1,5 +1,6 @@
 (ns lcmap-cli.changedetection
   (:require [clojure.core.async :as async]
+            [clojure.stacktrace :as st]
             [lcmap-cli.config :as cfg]
             [lcmap-cli.functions :as f]
             [lcmap-cli.http :as http]
@@ -9,7 +10,7 @@
   [{:keys [:response :cx :cy :grid :acquired]}]
 
   (let [r (try {:response @response}
-               (catch Exception e {:error e}))]
+               (catch Exception e {:error (str e)}))]
     
     (cond (:error r)
           {:cx cx :cy cy :acquired acquired :error (:error r)}
@@ -17,7 +18,7 @@
           (contains? (set (range 200 300))(get-in r [:response :status]))
           (-> (:response r) http/decode :body)
           
-          :else {:cx cx :cy cy :acquired acquired :error r})))
+          :else {:cx cx :cy cy :acquired acquired :error (str r)})))
 
 (defn start-consumers
   [number in-chan out-chan]
@@ -44,11 +45,9 @@
                                    :acquired a
                                    :grid g})))
     (dotimes [i (count xys)]
-      (let [result (async/<!! out-chan)]
-        (if (:error result)
-          (f/stderr (f/to-json-or-str result))
-          (f/stdout (f/to-json-or-str (or result "no response")))))))
-  all)
+      (f/output (async/<!! out-chan))))
+  
+    all)
       
   
 (defn chip

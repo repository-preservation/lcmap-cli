@@ -1,0 +1,18 @@
+{:http  {:timeout 2400000}
+ :grids {:fake-http {:ard "http://fake"
+                     :aux "http://fake"
+                     :ccdc "http://fake"
+                     :grid "/grid"
+                     :snap "/grid/snap"
+                     :near "/grid/near"
+                     :inventory "/inventory"
+                     :sources "/sources"
+                     :tile "/tile"
+                     :chip "/chip"
+                     :pixel "/pixel"
+                     :segment "/segment"
+                     :annual-prediction "/annual_prediction"
+                     :segment-instance-count 1
+                     :segment-sleep-for 1000}}}
+
+ 

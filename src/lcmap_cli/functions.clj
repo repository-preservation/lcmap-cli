@@ -14,22 +14,25 @@
   [msg]
   (json/encode (stringify-keys msg)))
 
-(defn to-json-or-str
-  [msg]
-  (try (to-json msg)
-       (catch Exception e
-         (str msg))))
-
 (defn stdout
   [msg]
-  (println msg))
+  (println msg)
+  msg)
 
 (defn stderr
   [msg]
   (binding [*out* *err*]
-    (println msg)))
+    (println msg))
+  msg)
 
-(defn ->trim
+(defn output
+  [result]
+  (if (:error result)
+    (-> result to-json stderr)
+    (-> result to-json stdout))
+  result)
+
+(defn trim
   [v]
   (if (string? v)
     (string/trim v)
@@ -57,7 +60,7 @@
      [y]
      [1]]))
 
-(defn tile->projection
+(defn tile-to-projection
   [{:keys [:h :v :grid]}]
   (let [pm (point-matrix {:x h :y v})
         tm (transform-matrix grid)
@@ -109,18 +112,18 @@
 
 (defn lstrip0
   "Remove leading zeros from a string."
-  [t]
-  (loop [t t]
-    (if (and (= "0" (str (first t))) (> 1 (count t)))
+  [s]
+  (loop [t s]
+    (if (and (= "0" (str (first t))) (< 1 (count t)))
       (recur (rest t))
       (string/join t))))
 
-(defn string->tile
+(defn string-to-tile
   [tile-id]
   {:h (numberize (lstrip0 (subs tile-id 0 3)))
    :v (numberize (lstrip0 (subs tile-id 3)))})
 
-(defn tile->string
+(defn tile-to-string
   [h v]
   (format "%03d%03d" h v))
 
@@ -137,14 +140,14 @@
   (let [{:keys [:grid-pt]} (:tile (-> all snap json/decode keywordize-keys))
         h (int (first grid-pt))
         v (int (second grid-pt))]
-    (tile->string h v)))
+    (tile-to-string h v)))
 
 (defn tile-to-xy
   [{g :grid d :dataset t :tile :as all}]
   (let [tg (tile-grid all)
         {:keys [:rx :ry :tx :ty :sx :sy]} tg
-        {:keys [:h :v]} (string->tile t)]
-    (tile->projection {:h h :v v :grid tg})))
+        {:keys [:h :v]} (string-to-tile t)]
+    (tile-to-projection {:h h :v v :grid tg})))
     
 (defn chips
   [{g :grid d :dataset t :tile :as all}]
