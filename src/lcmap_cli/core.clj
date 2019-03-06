@@ -24,7 +24,6 @@
            :source      [nil  "--source SOURCE" :missing "--source is required"]
            :product     [nil  "--product PRODUCT" "product name" :missing "--product is required"]
            :years       [nil  "--years YEARS" "years to produce" :missing "--years are required"]
-           :destination [nil  "--destination DESTINATION" "where to store" :missing "--destination is required"]
            :acquired    [nil  "--acquired ACQUIRED" "iso8601 date range" :missing "--acquired is required"]}]
     (vals (select-keys o keys))))
 
@@ -57,13 +56,10 @@
                  :args (->options [:help :grid :tile])}
    :predict     {:func nil
                  :args (->options [:help :grid :tile])}
-   :available-products {:func #'lcmap-cli.products/available
-                        :args (->options [:help :grid])}
    :products    {:func #'lcmap-cli.products/tile 
                  :args (->options [:help :grid :tile :product :years])}
    :maps        {:func #'lcmap-cli.products/maps 
                  :args (->options [:help :grid :tile :product :years])}
-
 })
 
  (defn usage [action options-summary]
@@ -91,7 +87,7 @@
 (defn parameters
   [args]
   (let [p (parse-opts args (-> args first keyword registry :args))]
-        (assoc p :options (reduce-kv (fn [m k v] (assoc m k (f/->trim v)))
+        (assoc p :options (reduce-kv (fn [m k v] (assoc m k (f/trim v)))
                                      {}
                                      (:options p)))))
 
@@ -135,7 +131,9 @@
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (try
-        (-> ((function action) options) f/->json  f/stdout)
+        (let [result ((function action) options)]
+          (if (:error result)
+            (f/stderr (f/to-json-or-str result))
+            (f/stdout (f/to-json-or-str (or result "no response")))))
         (catch Exception e
-          (binding [*out* *err*]
-          (f/stderr (.toString e))))))))
+          (f/stderr (.toString e)))))))

@@ -11,9 +11,3 @@
   [i]
   i)
 
-(deftest start-consumers-test
-  (let [inchan (async/chan)
-        outchan (async/chan)]
-    (f/start-consumers 1 inchan outchan dumb_handler dumb_operator)
-    (async/>!! inchan {:x "4" :foo "bar"})
-    (is (= 5 (:response (async/<!! outchan))))))

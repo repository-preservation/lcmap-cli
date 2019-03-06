@@ -19,24 +19,27 @@
         (assoc _resp :error (:error r))
 
       (contains? (set (range 200 300)) (:status r))
-        (http/decode r)
+        (:body r)
       
       :else
       (assoc _resp :error r))))
 
-(defn product-request
-  [{grid :grid :as all}]
-  (http/client :post 
-               (keyword grid) :ccdc :products
-               {:body (json/encode all)
-                :headers {"Content-Type" "application/json"}}))
+(defn post-request
+  [{grid :grid resource :resource :as all}]
+  (let [json_body (json/encode all)]
+    (http/client :post 
+                 (keyword grid) :ccdc (keyword resource)
+                 {:body json_body
+                  :headers {"Content-Type" "application/json"}})))
 
-(defn map-request
-  [{grid :grid :as all}]
-  (http/client :post 
-               (keyword grid) :ccdc :maps
-               {:body (json/encode all)
-                :headers {"Content-Type" "application/json"}}))
+(defn start-consumers
+  [number in-chan out-chan]
+  (dotimes [_ number]
+    (async/thread
+      (while (true? @state/run-threads?)
+        (let [input  (async/<!! in-chan)
+              result (response-handler (hash-map :response (post-request input)))]
+          (async/>!! out-chan result))))))
 
 (defn date-range
   [{grid :grid years :years :as all}]
@@ -50,42 +53,56 @@
 (defn tile
   [{grid :grid tile :tile product :product years :years :as all}]
   (let [chunk-size (cfg/segment-instance-count grid)
-        chip-chunk-size (cfg/chip-partition-count grid)
         in-chan    state/tile-in
         out-chan   state/tile-out
         chip_xys   (chips (assoc all :dataset "ard"))
-        chip_groups (partition chip-chunk-size chip-chunk-size "" chip_xys)
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
-        date-coll  (date-range all)]
-    (f/start-consumers chunk-size in-chan out-chan response-handler product-request)
-    (f/start-aggregator out-chan)
-    (doseq [cps chip_groups]
-      (println "in doseq")
-      (async/>!! in-chan (assoc all :tile tile
-                                    :tilex tilex
-                                    :tiley tiley
-                                    :chips cps
+        date-coll  (date-range all)
+        consumers  (start-consumers chunk-size in-chan out-chan)
+        sleep-for  (get-in cfg/grids [(keyword grid) :segment-sleep-for])        ]
+
+    (async/go
+      (doseq [cxcy chip_xys]
+        (async/>! in-chan (hash-map :grid grid
+                                    :tile tile
+                                    :cx (:cx cxcy)
+                                    :cy (:cy cxcy)
+                                    :dates date-coll
                                     :product product
-                                    :dates date-coll)))))
+                                    :resource "products"))))
+
+    (dotimes [i (count chip_xys)]
+      (let [result (async/<!! out-chan)]
+        (if (:error result)
+          (f/stderr result)
+          (f/stdout result))))))
 
 (defn maps
   [{grid :grid tile :tile product :product years :years :as all}]
   (let [chunk-size (cfg/segment-instance-count grid)
-        chip_xys   (doall (chips (assoc all :dataset "ard"))) 
+        in-chan    state/tile-in
+        out-chan   state/tile-out
+        chip_xys   (chips (assoc all :dataset "ard"))
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
-        date-coll  (date-range all)]
+        date-coll  (date-range all)
+        consumers  (start-consumers chunk-size in-chan out-chan)
+        sleep-for  (get-in cfg/grids [(keyword grid) :segment-sleep-for])]
 
-    (doseq [date date-coll
-            :let [req-args (assoc all :tilex tilex :tiley tiley :chips chip_xys :date date)
-                  resp (map-request req-args)]]
-      (if (= 200 (:status @resp))
-        (println "success for date: " date)
-        (println "failure for date: " date)))))
+    (async/go 
+      (doseq [date date-coll]
+        (async/>! in-chan (hash-map :grid grid
+                                     :tile tile
+                                     :tilex tilex
+                                     :tiley tiley
+                                     :chips chip_xys
+                                     :date date
+                                     :product product
+                                     :resource "maps"))))
 
-
-
-(defn available
-  [& args]
-  true)
+    (dotimes [i (count date-coll)]
+      (let [result (async/<!! out-chan)]
+        (if (:error result)
+          (f/stderr result)
+          (f/stdout result))))))
 
 

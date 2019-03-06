@@ -19,13 +19,22 @@
           
           :else {:cx cx :cy cy :acquired acquired :error r})))
 
+(defn start-consumers
+  [number in-chan out-chan]
+  (dotimes [_ number]
+    (async/thread
+      (while (true? @state/run-threads?)
+        (let [input  (async/<!! in-chan)
+              result (handler (hash-map :response (f/detect input)))]
+          (async/>!! out-chan result))))))
+
 (defn tile
   [{g :grid t :tile a :acquired :as all}]
   (let [xys        (f/chips (assoc all :dataset "ard"))
         chunk-size (get-in cfg/grids [(keyword g) :segment-instance-count])
         in-chan    state/tile-in
         out-chan   state/tile-out
-        consumers  (f/start-consumers chunk-size in-chan out-chan handler f/detect)
+        consumers  (start-consumers chunk-size in-chan out-chan)
         sleep-for  (get-in cfg/grids [(keyword g) :segment-sleep-for])]
     
     (async/go (doseq [xy xys]
@@ -37,8 +46,8 @@
     (dotimes [i (count xys)]
       (let [result (async/<!! out-chan)]
         (if (:error result)
-          (f/stderr (f/->json result))
-          (f/stdout (f/->json (or result "no response")))))))
+          (f/stderr (f/to-json-or-str result))
+          (f/stdout (f/to-json-or-str (or result "no response")))))))
   all)
       
   
