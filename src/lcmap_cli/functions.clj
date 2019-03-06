@@ -14,20 +14,23 @@
   [msg]
   (json/encode (stringify-keys msg)))
 
-(defn to-json-or-str
-  [msg]
-  (try (to-json msg)
-       (catch Exception e
-         (str msg))))
-
 (defn stdout
   [msg]
-  (println msg))
+  (println msg)
+  msg)
 
 (defn stderr
   [msg]
   (binding [*out* *err*]
-    (println msg)))
+    (println msg))
+  msg)
+
+(defn output
+  [result]
+  (if (:error result)
+    (-> result to-json stderr)
+    (-> result to-json stdout))
+  result)
 
 (defn trim
   [v]
