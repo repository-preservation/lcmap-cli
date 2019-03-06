@@ -1,10 +1,14 @@
 (ns lcmap-cli.config
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [clojure.string :as string])
+            [clojure.string :as string]
+            [environ.core :refer [env]])
+  
   (:import java.io.PushbackReader))
 
-(def edn-file (str (System/getProperty "user.home") "/.usgs/lcmap-cli.edn"))
+(def default-edn-file (str (System/getProperty "user.home") "/.usgs/lcmap-cli.edn"))
+
+(def edn-file (or (-> env :edn-file) default-edn-file))
 
 (defn load-edn
   [source]

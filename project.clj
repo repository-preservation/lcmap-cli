@@ -1,9 +1,10 @@
-(defproject lcmap-cli "0.1.1-SNAPSHOT"
+(defproject lcmap-cli "0.1.3"
   :description "LCMAP Devops Interface"
   :url "https://github.com/usgs-eros/lcmap-cli"
   :license {:name "Unlicense"
             :url "http://unlicense.org/"}
   :dependencies [[cheshire "5.8.1"]
+                 [environ "1.1.0"]
                  [http-kit "2.2.0"]
                  [http-kit.fake "0.2.1"]
                  [gov.usgs.eros/lcmap-commons "1.0.2-SNAPSHOT"]
@@ -20,10 +21,15 @@
   :main ^:skip-aot lcmap-cli.core
   :target-path "target/%s"
   :repl-options {:init-ns user}
+  :plugins [[lein-environ "1.1.0"]]
   :profiles {:uberjar {:aot :all}
              :dev {:resource-paths ["dev"]
+                   :dependencies [[org.clojure/tools.namespace "0.2.11"]
+                                  [http-kit.fake "0.2.1"]]
                    :plugins [[lein-binplus "0.6.4"]]}
-             :test {:resource-paths ["test"]}}
+             :test {:resource-paths ["test" "test/resources"]
+                    :dependencies [[http-kit.fake "0.2.1"]]
+                    :env {:edn-file "test/resources/lcmap-cli-test.edn"}}}
   
   :bin {:name "lcmap"
         :bin-path "~/bin"
