@@ -41,43 +41,31 @@
     (is (thrown? com.fasterxml.jackson.core.JsonGenerationException
                  (to-json (new java.lang.Object))))))
 
+(deftest stdout-test
+  (testing "testing stdout"
+    (is (= 1 (stdout 1)))
+    (is (= "test" (stdout "test")))
+    (is (true? (stdout true)))
+    (is (false? (stdout false)))
+    (is (= {:a 1} (stdout {:a 1})))))
 
-(deftest to-json-or-str-test
+(deftest stderr-test
+  (testing "testing stderr"
+    (is (= 1 (stderr 1)))
+    (is (= "test" (stderr "test")))
+    (is (true? (stderr true)))
+    (is (false? (stderr false)))
+    (is (= {:a 1} (stderr {:a 1})))))
 
-  (testing "(to-json-or-str Hashmap)"
-    (is (= "{\"key\":\"value\"}" (to-json-or-str {:key "value"}))))
-
-  (testing "(to-json-or-str Integer)"
-    (is (= "1" (to-json-or-str 1))))
-
-  (testing "(to-json-or-str Float)"
-    (is (= "1.0" (to-json-or-str 1.0))))
-
-  (testing "(to-json-or-str Boolean)"
-    (is (= "true" (to-json-or-str true))))
-
-  (testing "(to-json-or-str Vector)"
-    (is (= "[1,2,3]" (to-json-or-str [1 2 3]))))
-
-  (testing "(to-json-or-str List)"
-    (is (= "[1,2,3]" (to-json-or-str '(1 2 3)))))
-
-  (testing "(to-json-or-str Set)"
-    (is (= "[1,3,2]" (to-json-or-str #{1 2 3}))))
-  
-  (testing "(to-json-or-str String)"
-    (is (= "\"a-value\"" (to-json-or-str "a-value"))))
-
-  (testing "(to-json-or-str Keyword)"
-    (is (= "\"a-keyword\"" (to-json-or-str :a-keyword))))
-
-  (testing "(to-json-or-str Rational)"
-    (is (= "0.3333333333333333" (to-json-or-str (/ 1 3)))))
-  
-  (testing "(to-json-or-str Exception)"
-    (is (not (nil? (to-json-or-str (new java.lang.Object)))))
-    (is (= java.lang.String (type (to-json-or-str (new java.lang.Object)))))))
-
+(deftest output-test
+  (testing "testing output"
+    (is (= 1 (output 1)))
+    (is (= "test" (output "test")))
+    (is (true? (output true)))
+    (is (false? (output false)))
+    (is (= {:a 1} (output {:a 1})))
+    (is (thrown? com.fasterxml.jackson.core.JsonGenerationException
+                 (output (Exception. "exceptions aren't json encodable"))))))
 
 (deftest trim-test
 
@@ -89,7 +77,6 @@
   (testing "(trim not-a-string)"
     (is (= 1 (trim 1)))))
 
-
 (deftest transform-matrix-test
 
   (testing "(transform-matrix Hashmap)"
@@ -97,13 +84,11 @@
       (is (= [[3 0 2][0 3 2][0 0 1.0]]
              (transform-matrix gs))))))
 
-
 (deftest point-matrix-test
 
   (testing "(point-matrix Hashmap)"
     (let [p {:x "1" :y "3"}]
       (is (= [[1] [3] [1]] (point-matrix p))))))
-
 
 (deftest tile-to-projection-test
 
@@ -172,7 +157,6 @@
               :tx 2565585.0
               :ty 3314805.0})))))
 
-
 (deftest chip-grid-test
 
   (testing "(chip-grid Hashmap)"
@@ -203,7 +187,6 @@
               :tx 2565585.0
               :ty 3314805.0})))))
 
-
 (deftest lstrip0-test
 
   (testing "(lstrip0 java.lang.String)"
@@ -212,14 +195,12 @@
     (is (= (lstrip0 "00 007") " 007"))
     (is (= (lstrip0 "7") "7"))))
 
-
 (deftest string-to-tile-test
 
   (testing "(string-to-tile java.lang.String)"
     (is (= {:h 0 :v 0} (string-to-tile "000000")))
     (is (= {:h 4 :v 5} (string-to-tile "004005")))
     (is (= {:h 12 :v 7} (string-to-tile "012007")))))
-
 
 (deftest tile-to-string-test
 
@@ -228,14 +209,12 @@
     (is (= "005007" (tile-to-string 5 7)))
     (is (= "111222" (tile-to-string 111 222)))))
 
-
 (deftest xy-to-tile-test
 
   (testing "(xy-to-tile Hashmap)"
     (with-fake-http ["http://fake/grid/snap" "{\"tile\": {\"grid-pt\": [1,2]}}"]
       (is (= (xy-to-tile {:grid "fake-http" :dataset "ard" :x 123 :y 456})
              "001002")))))
-
 
 (deftest tile-to-xy-test
 
@@ -258,7 +237,6 @@
                                            \"ty\": 3314805.0}]]"]
       (is (= (tile-to-xy {:grid "fake-http" :dataset "ard" :tile "001001"})
              {:x -2415585.0 :y 3164805.0})))))
-
 
 (deftest chips-test
   (testing "(chips Hashmap)"
@@ -283,7 +261,6 @@
                         {:cx 15.0 :cy -10.0}
                         {:cx 10.0 :cy -15.0}
                         {:cx 15.0 :cy -15.0}]))))))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
