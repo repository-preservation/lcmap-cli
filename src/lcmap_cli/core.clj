@@ -110,10 +110,7 @@
       {:exit-message (usage (-> args first) summary)})))
 
 (defn exit [status msg]
-  (if (not (= 0 status))
-    (f/output {:error (try (-> msg st/print-stack-trace with-out-str)
-                           (catch Exception e e))})
-    (f/output msg))
+  (f/stdout msg)
   (System/exit status))
 
 (defn add-shutdown-hook
