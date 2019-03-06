@@ -10,7 +10,7 @@
   [{:keys [:response :cx :cy :grid :acquired]}]
 
   (let [r (try {:response @response}
-               (catch Exception e {:error (-> e st/print-stack-trace with-out-str)}))]
+               (catch Exception e {:error (str e)}))]
     
     (cond (:error r)
           {:cx cx :cy cy :acquired acquired :error (:error r)}
@@ -18,7 +18,7 @@
           (contains? (set (range 200 300))(get-in r [:response :status]))
           (-> (:response r) http/decode :body)
           
-          :else {:cx cx :cy cy :acquired acquired :error r})))
+          :else {:cx cx :cy cy :acquired acquired :error (str r)})))
 
 (defn start-consumers
   [number in-chan out-chan]

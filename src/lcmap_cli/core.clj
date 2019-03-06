@@ -118,6 +118,14 @@
   (.addShutdownHook (java.lang.Runtime/getRuntime)
                     (Thread. #(state/shutdown) "shutdown-handler")))
 
+(defn invoke
+  [func opts]
+  (try
+    (func opts)
+    (catch Exception e
+      (-> e st/print-stack-trace with-out-str))))
+
+
 (defn -main [& args]
   (let [{:keys [action options exit-message ok?]} (validate-args args)]
     
@@ -132,6 +140,7 @@
     ;; string where it occurred.
     ;;
     ;; Simple way to do this is with clojure.stacktrace/print-stack-trace and with-out-str.
+    ;; Alternatively, just make sure you do this: (str (Exception. "an exception"))
     ;;
     ;; Example:  (-> (Exception. "an exception") stacktrace/print-stack-trace with-out-str)
     ;;
@@ -150,7 +159,12 @@
     ;;                          :cy 456
     ;;                          :error (-> e print-stack-trace with-out-str)}))
     ;;
+    ;; (try (something-throws-an-exception)
+    ;;      (catch Exception e {:cx 123
+    ;;                          :cy 456
+    ;;                          :error (str e)}))
+    ;;
     
     (if exit-message
       (exit (if ok? 0 1) exit-message)
-      (f/output ((function action) options)))))      
+      (f/output ((function action) options)))))
