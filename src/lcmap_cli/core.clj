@@ -56,13 +56,13 @@
                  :args (->options [:help :grid :tile])}
    :predict     {:func nil
                  :args (->options [:help :grid :tile])}
-   :products    {:func #'lcmap-cli.products/tile 
+   :products    {:func #'lcmap-cli.products/products 
                  :args (->options [:help :grid :tile :product :years])}
    :maps        {:func #'lcmap-cli.products/maps 
                  :args (->options [:help :grid :tile :product :years])}
 })
 
- (defn usage [action options-summary]
+(defn usage [action options-summary]
   (->> ["lcmap command line interface"
         ""
         (str "Usage: lcmap " action " [options]" )
@@ -131,9 +131,6 @@
     (if exit-message
       (exit (if ok? 0 1) exit-message)
       (try
-        (let [result ((function action) options)]
-          (if (:error result)
-            (f/stderr (f/to-json-or-str result))
-            (f/stdout (f/to-json-or-str (or result "no response")))))
+        ((function action) options)
         (catch Exception e
           (f/stderr (.toString e)))))))

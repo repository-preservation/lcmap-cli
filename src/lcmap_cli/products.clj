@@ -50,7 +50,7 @@
         doy (cfg/product-doy grid)]
     (map (fn [i] (str i "-" doy)) year_range)))
 
-(defn tile
+(defn products
   [{grid :grid tile :tile product :product years :years :as all}]
   (let [chunk-size (cfg/segment-instance-count grid)
         in-chan    state/tile-in
@@ -71,11 +71,10 @@
                                     :product product
                                     :resource "products"))))
 
-    (dotimes [i (count chip_xys)]
-      (let [result (async/<!! out-chan)]
-        (if (:error result)
-          (f/stderr result)
-          (f/stdout result))))))
+    (let [results (map (fn [i] (async/<!! out-chan)) chip_xys)
+          successes_errors (split-with (fn [i] (nil? (:error i))) results)]
+      (hash-map :success (first successes_errors)
+                :error (last successes_errors)))))
 
 (defn maps
   [{grid :grid tile :tile product :product years :years :as all}]
@@ -99,10 +98,9 @@
                                      :product product
                                      :resource "maps"))))
 
-    (dotimes [i (count date-coll)]
-      (let [result (async/<!! out-chan)]
-        (if (:error result)
-          (f/stderr result)
-          (f/stdout result))))))
+    (let [results (map (fn [i] (async/<!! out-chan) ) date-coll)
+          successes_errors (split-with (fn [i] (nil? (:error i))) results)]
+      (hash-map :success (first successes_errors)
+                :error (last successes_errors)))))
 
 
