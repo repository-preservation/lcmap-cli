@@ -115,7 +115,7 @@
       {:exit-message (usage (-> args first) summary)})))
 
 (defn exit [status msg]
-  (println msg)
+  (f/stdout msg)
   (System/exit status))
 
 (defn add-shutdown-hook
@@ -128,9 +128,40 @@
     
     (add-shutdown-hook)
 
+    ;;
+    ;; Functions must not raise Exceptions
+    ;; Function results must be JSON encodable
+    ;;
+    ;; If an Exception is returned from a function it will halt the CLI/JVM.
+    ;; Do not patch this at the -main level.  Catch & convert the stacktrace to a
+    ;; string where it occurred.
+    ;;
+    ;; Simple way to do this is with clojure.stacktrace/print-stack-trace and with-out-str.
+    ;; Alternatively, just make sure you do this: (str (Exception. "an exception"))
+    ;;
+    ;; Example:  (-> (Exception. "an exception") stacktrace/print-stack-trace with-out-str)
+    ;;
+    ;; Good example non-error response from function is:
+    ;; {:cx 123 :cy 456 :acquired "1980/2019"}
+    ;;
+    ;; Or:
+    ;; {:cx 123 :cy 456 :acquired "1980/2019" :other "information" :more "data" :what "ever you need to include in the output"}
+    ;;
+    ;; Good example error response from function is:
+    ;; {:cx 123 :cy 456 :acquired "1980/2019" :error "a-string-and-not-a-stacktrace-object"}
+    ;;
+    ;;
+    ;; (try (something-throws-an-exception)
+    ;;      (catch Exception e {:cx 123
+    ;;                          :cy 456
+    ;;                          :error (-> e print-stack-trace with-out-str)}))
+    ;;
+    ;; (try (something-throws-an-exception)
+    ;;      (catch Exception e {:cx 123
+    ;;                          :cy 456
+    ;;                          :error (str e)}))
+    ;;
+    
     (if exit-message
       (exit (if ok? 0 1) exit-message)
-      (try
-        ((function action) options)
-        (catch Exception e
-          (f/stderr (.toString e)))))))
+      (f/output ((function action) options)))))
