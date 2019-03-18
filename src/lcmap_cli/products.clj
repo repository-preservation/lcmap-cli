@@ -9,20 +9,19 @@
             [lcmap-cli.functions :as f]
             [lcmap-cli.functions :refer [chips tile-to-xy]]))
 
-(defn response-handler
-  [{:keys [:response :grid :date :product :tilex :tiley :tile]}]
-  (let [r (try @response
-               (catch Exception e {:error e}))
-        _resp {:tilex tilex :tiley tiley :tile tile :date date :product product}]
-   (cond 
-      (:error r)
-        (assoc _resp :error (:error r))
+(defn handler
+  [http_response]
+  (let [r (try @http_response
+               (catch Exception e {:error (str e)}))]
+    
+    (cond (:error r)
+          {:error (:error r)}
 
-      (contains? (set (range 200 300)) (:status r))
-        (:body r)
-      
-      :else
-      (assoc _resp :error r))))
+          (contains? (set (range 200 300)) (:status r))
+          (-> r http/decode :body)
+          
+          :else 
+          {:error (assoc (-> r http/decode :body) :status (:status r))})))
 
 (defn post-request
   [{grid :grid resource :resource :as all}]
@@ -38,7 +37,7 @@
     (async/thread
       (while (true? @state/run-threads?)
         (let [input  (async/<!! in-chan)
-              result (response-handler (hash-map :response (post-request input)))]
+              result (handler (post-request input))]
           (async/>!! out-chan result))))))
 
 (defn date-range
@@ -71,10 +70,9 @@
                                     :product product
                                     :resource "products"))))
 
-    (let [results (map (fn [i] (async/<!! out-chan)) chip_xys)
-          successes_errors (split-with (fn [i] (nil? (:error i))) results)]
-      (hash-map :success (first successes_errors)
-                :error (last successes_errors)))))
+    (dotimes [i (count chip_xys)]
+      (f/output (async/<!! out-chan)))
+    all))
 
 (defn maps
   [{grid :grid tile :tile product :product years :years :as all}]
@@ -90,17 +88,15 @@
     (async/go 
       (doseq [date date-coll]
         (async/>! in-chan (hash-map :grid grid
-                                     :tile tile
-                                     :tilex tilex
-                                     :tiley tiley
-                                     :chips chip_xys
-                                     :date date
-                                     :product product
-                                     :resource "maps"))))
+                                    :tile tile
+                                    :tilex tilex
+                                    :tiley tiley
+                                    :chips chip_xys
+                                    :date date
+                                    :product product
+                                    :resource "maps"))))
 
-    (let [results (map (fn [i] (async/<!! out-chan) ) date-coll)
-          successes_errors (split-with (fn [i] (nil? (:error i))) results)]
-      (hash-map :success (first successes_errors)
-                :error (last successes_errors)))))
-
+    (dotimes [i (count date-coll)]
+      (f/output (async/<!! out-chan)))
+    all))
 
