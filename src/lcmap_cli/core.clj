@@ -7,7 +7,7 @@
             [lcmap-cli.changedetection]
             [lcmap-cli.state :as state]
             [lcmap-cli.products :as products]
-            [lcmap.commons.numbers :refer [numberize]])
+            [lcmap-cli.numbers :refer [numberize]])
   (:gen-class :main true))
 
 (defn options

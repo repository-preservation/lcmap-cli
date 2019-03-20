@@ -6,7 +6,7 @@
             [clojure.walk :refer [stringify-keys keywordize-keys]]
             [lcmap-cli.config :as cfg]
             [lcmap-cli.http :as http]
-            [lcmap.commons.numbers :refer [numberize]]))
+            [lcmap-cli.numbers :refer [numberize]]))
 
 (matrix/set-current-implementation :vectorz)
 

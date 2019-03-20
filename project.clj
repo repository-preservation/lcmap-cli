@@ -7,7 +7,6 @@
                  [environ "1.1.0"]
                  [http-kit "2.2.0"]
                  [http-kit.fake "0.2.1"]
-                 [gov.usgs.eros/lcmap-commons "1.0.2-SNAPSHOT"]
                  [net.mikera/core.matrix "0.62.0"]
                  [net.mikera/vectorz-clj "0.48.0"]
                  [org.clojure/clojure "1.9.0"]
