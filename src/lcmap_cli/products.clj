@@ -21,7 +21,7 @@
           (-> r http/decode :body)
           
           :else 
-          {:error (assoc (-> r http/decode :body) :status (:status r))})))
+          {:error (-> r http/decode :body) :status (:status r)})))
 
 (defn post-request
   [{grid :grid resource :resource :as all}]
@@ -51,14 +51,13 @@
 
 (defn products
   [{grid :grid tile :tile product :product years :years :as all}]
-  (let [chunk-size (cfg/segment-instance-count grid)
+  (let [chunk-size (cfg/request-instance-count grid)
         in-chan    state/tile-in
         out-chan   state/tile-out
         chip_xys   (chips (assoc all :dataset "ard"))
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
         date-coll  (date-range all)
-        consumers  (start-consumers chunk-size in-chan out-chan)
-        sleep-for  (get-in cfg/grids [(keyword grid) :segment-sleep-for])        ]
+        consumers  (start-consumers chunk-size in-chan out-chan)]
 
     (async/go
       (doseq [cxcy chip_xys]
@@ -70,20 +69,23 @@
                                     :product product
                                     :resource "products"))))
 
-    (dotimes [i (count chip_xys)]
-      (f/output (async/<!! out-chan)))
-    all))
+    ;; (dotimes [i (count chip_xys)]
+    ;;   (f/output (async/<!! out-chan)))
+    (map 
+     (fn [i] (let [result (async/<!! out-chan)] (f/output result) result)) 
+     chip_xys)
+   ; all
+))
 
 (defn maps
   [{grid :grid tile :tile product :product years :years :as all}]
-  (let [chunk-size (cfg/segment-instance-count grid)
+  (let [chunk-size (cfg/request-instance-count grid)
         in-chan    state/tile-in
         out-chan   state/tile-out
         chip_xys   (chips (assoc all :dataset "ard"))
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
         date-coll  (date-range all)
-        consumers  (start-consumers chunk-size in-chan out-chan)
-        sleep-for  (get-in cfg/grids [(keyword grid) :segment-sleep-for])]
+        consumers  (start-consumers chunk-size in-chan out-chan)]
 
     (async/go 
       (doseq [date date-coll]
