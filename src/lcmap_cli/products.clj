@@ -24,21 +24,23 @@
           {:error (-> r http/decode :body) :status (:status r)})))
 
 (defn post-request
-  [{grid :grid resource :resource :as all}]
-  (let [json_body (json/encode all)]
+  [{grid :grid resource :resource :as all} http-options]
+  (let [json_body (json/encode all)
+        headers {"Content-Type" "application/json"}]
     (http/client :post 
                  (keyword grid) :ccdc (keyword resource)
-                 {:body json_body
-                  :headers {"Content-Type" "application/json"}})))
+                 (merge {:body json_body :headers headers} http-options))))
 
 (defn start-consumers
-  [number in-chan out-chan]
-  (dotimes [_ number]
-    (async/thread
-      (while (true? @state/run-threads?)
-        (let [input  (async/<!! in-chan)
-              result (handler (post-request input))]
-          (async/>!! out-chan result))))))
+  ([number in-chan out-chan http-options]
+   (dotimes [_ number]
+     (async/thread
+       (while (true? @state/run-threads?)
+         (let [input  (async/<!! in-chan)
+               result (handler (post-request input http-options))]
+           (async/>!! out-chan result))))))
+  ([number in-chan out-chan]
+   (start-consumers number in-chan out-chan cfg/http-options)))
 
 (defn date-range
   [{grid :grid years :years :as all}]
@@ -80,7 +82,7 @@
         chip_xys   (chips (assoc all :dataset "ard"))
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
         date-coll  (date-range all)
-        consumers  (start-consumers chunk-size in-chan out-chan)
+        consumers  (start-consumers chunk-size in-chan out-chan {:timeout 7200000})
         output_fn  (fn [i] (let [result (async/<!! out-chan)] (f/output result) result))]
 
     (async/go 
