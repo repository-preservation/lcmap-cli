@@ -62,14 +62,15 @@
         consumers  (start-consumers chunk-size in-chan out-chan)
         output_fn  (fn [i] (let [result (async/<!! out-chan)] (f/output result) result))]
 
+    (async/go
       (doseq [cxcy chip_xys]
-        (async/>!! in-chan (hash-map :grid grid
+        (async/>! in-chan (hash-map :grid grid
                                     :tile tile
                                     :cx (:cx cxcy)
                                     :cy (:cy cxcy)
                                     :dates date-coll
                                     :product product
-                                    :resource "products")))
+                                    :resource "products"))))
 
     (map output_fn chip_xys)))
 
@@ -84,15 +85,16 @@
         consumers  (start-consumers chunk-size in-chan out-chan {:timeout 7200000})
         output_fn  (fn [i] (let [result (async/<!! out-chan)] (f/output result) result))]
 
+    (async/go
      (doseq [date date-coll]
-       (async/>!! in-chan (hash-map :grid grid
+       (async/>! in-chan (hash-map :grid grid
                                     :tile tile
                                     :tilex tilex
                                     :tiley tiley
                                     :chips chip_xys
                                     :date date
                                     :product product
-                                    :resource "maps")))
+                                    :resource "maps"))))
 
     (map output_fn date-coll)))
 
