@@ -12,11 +12,11 @@
            :pixel "/pixel"
            :segment "/segment"
            :annual-prediction "/annual_prediction"
-           :available-products "/available_products"
            :products "/products"
            :maps "/maps"
            :segment-instance-count 2 
            :request-instance-count 2
+           :segment-sleep-for 1000
            :product-doy "07-01"}
    :alaska {:ard "http://host:port/ard_ak_c01_v01"
             :aux "http://host:port/aux_ak_v01"
@@ -31,10 +31,10 @@
             :pixel "/pixel"
             :segment "/segment"
             :annual-prediction "/annual_prediction"
-            :available-products "/available_products"
             :products "/products"
             :segment-instance-count 1
             :request-instance-count 1
+            :segment-sleep-for 1000
             :product-doy "07-01"}
    :hawaii {:ard "http://host:port/ard_hi_c01_v01"
             :aux "http://host:port/aux_hi_v01"
@@ -49,10 +49,10 @@
             :pixel "/pixel"
             :segment "/segment"
             :annual-prediction "/annual_prediction"
-            :available-products "/available_products"
             :products "/products"
             :segment-instance-count 1
             :request-instance-count 1
+            :segment-sleep-for 1000 
             :product-doy "07-01"}}
  :http-options {:timeout 2400000}
 }

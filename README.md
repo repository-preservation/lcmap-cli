@@ -36,7 +36,8 @@ Command line interface for the LCMAP system
 | lcmap predict-tile           | --grid --tile                    |                      | predict a tile                  |
 | lcmap predict-chip           | --grid --cx --cy                 |                      | predict a chip                  |
 | lcmap available-products     | --grid                           |                      | list of available products      |
-| lcmap products               | --grid --tile --products --dates | --dest               | create map products             |
+| lcmap products               | --grid --tile --product --years  |                      | generate chip size json products|
+| lcmap maps                   | --grid --tile --product --years  |                      | generate tile size map tiff     |
 
 ### Parameters
 
@@ -53,9 +54,8 @@ Not all commands accept all parameters.  Use lcmap <command> -h for usage
 |  --cy       | chip y coordinate                                 |
 |  --source   | source layer filename (layer1.tiff, no path)      |
 |  --acquired | iso8601 date range string (YYYY-MM-DD/YYYY-MM-DD) |
-|  --products | names of products to create                       |
-|  --dates    | dates for which product values are calculated     |
-|  --dest     | location of output                                |
+|  --product  | names of product to create                        |
+|  --years    | years for which product values are calculated     |
 |  --verbose  | display additional information                    |
 | -h --help   | display help                                      |
 
@@ -64,7 +64,7 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
 
 ```edn
 
-{:http  {:timeout 2400000}
+{:http-options  {:timeout 2400000}
  :grids {:conus  {:ard "http://host:port/ard_cu_c01_v01"
                   :aux "http://host:port/aux_cu_c01_v01"
                   :ccdc "http://host:port/ard_cu_c01_v01_aux_cu_v01_ccdc_1_0"
@@ -78,8 +78,12 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :pixel "/pixel"
                   :segment "/segment"
                   :annual-prediction "/annual_prediction"
+                  :products "/products"
+                  :maps "/maps"
                   :segment-instance-count 25
-                  :segment-sleep-for 1000}
+                  :request-instance-count 1
+                  :segment-sleep-for 1000
+                  :product-doy "07-01"}
          :alaska {:ard "http://host:port/ard_ak_c01_v01"
                   :aux "http://host:port/aux_ak_v01"
                   :ccdc "http://host:port/ard_ak_c01_v01_aux_ak_v01_ccdc_1_0"
@@ -93,8 +97,12 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :pixel "/pixel"
                   :segment "/segment"
                   :annual-prediction "/annual_prediction"
+                  :products "/products"
+                  :maps "/maps"
                   :segment-instance-count 1
-                  :segment-sleep-for 1000}
+                  :request-instance-count 1
+                  :segment-sleep-for 1000
+                  :product-doy "07-01"}
          :hawaii {:ard "http://host:port/ard_hi_c01_v01"
                   :aux "http://host:port/aux_hi_v01"
                   :ccdc "http://host:port/ard_hi_c01_v01_aux_hi_v01_ccdc_1_0"
@@ -108,8 +116,12 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :pixel "/pixel"
                   :segment "/segment"
                   :annual-prediction "/annual_prediction"
+                  :products "/products"
+                  :maps "/maps"
                   :segment-instance-count 1
-                  :segment-sleep-for 1000}}}
+                  :request-instance-count 1
+                  :segment-sleep-for 1000                   
+                  :product-doy "07-01"}}}
 ```
 
 ## Examples
@@ -175,4 +187,40 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                      --tile 029008 \
 	             --acquired 1982-01-01/2017-12-31 \
 	             >> ~/devops/029008-success.txt 2>> ~/devops/029008-error.txt;
+
+
+   # Creating Products
+   # Before we can produce a map, we need to have the product values calculated for 
+   # every chip in the requested tile.
+   $ lcmap products --grid conus \
+                    --tile 027008 \
+                    --product length-of-segment \
+                    --years 2002/2006 \
+                    >> 2002_2006_product_success.txt 2>> 2002_2006_product_errors.txt;
+
+   # example stdout output:
+   # {"product":"length-of-segment","cx":1484415.0,"cy":2111805.0,"dates":["2002-07-01"]}
+   # {"product":"length-of-segment","cx":1484415.0,"cy":2114805.0,"dates":["2002-07-01"]}
+   # ...
+
+   # example stderr output if there was a problem calculating product values for a chip
+   # {"failed_dates":[{"2002-07-01": "validation error"}],"product":"length-of-segment","cx":1484415.0,"cy":2114805.0,"dates":["2002-07-01"]}
+   # example stderr output if there was a problem parsing the maps request
+   # {"error":"problem processing /products request: 'helpful_error_message'", "dates":"2002/2006", "product":"length-of-segment", "tile":"027008", "grid":"conus"}
+
+   
+   # Creating Maps
+   # Producing tile sized product maps
+   $ lcmap maps --grid conus \
+                --tile 027008 \
+                --product length-of-segment \
+                --years 2002/2006 \
+                >> 2002_2006_maps_success.txt 2>> 2002_2006_maps_errors.txt;
+
+   # example stdout output:
+   # {"tile":"027008","date":"2002-07-01","grid":"conus","tiley":2114805.0,"tilex":1484415.0,"product":"length-of-segment","resource":"maps","map_name":"LCMAP-CU-027008-2002-20190320-V01-SCSTAB.tif"}
+
+   # example stderr output:
+   # {"error":"problem processing /maps request: 'helpful_error_message'", "date":"2002-07-01", "tile":"027008", "tilex":"111111", "tiley":"222222", "product":"length-of-segment"}
+
 ```
