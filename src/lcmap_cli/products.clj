@@ -57,7 +57,8 @@
         chip_xys   (chips (assoc all :dataset "ard"))
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
         date-coll  (date-range all)
-        consumers  (start-consumers chunk-size in-chan out-chan)]
+        consumers  (start-consumers chunk-size in-chan out-chan)
+        output_fn  (fn [i] (let [result (async/<!! out-chan)] (f/output result) result))]
 
     (async/go
       (doseq [cxcy chip_xys]
@@ -69,13 +70,7 @@
                                     :product product
                                     :resource "products"))))
 
-    ;; (dotimes [i (count chip_xys)]
-    ;;   (f/output (async/<!! out-chan)))
-    (map 
-     (fn [i] (let [result (async/<!! out-chan)] (f/output result) result)) 
-     chip_xys)
-   ; all
-))
+    (map output_fn chip_xys)))
 
 (defn maps
   [{grid :grid tile :tile product :product years :years :as all}]
@@ -85,7 +80,8 @@
         chip_xys   (chips (assoc all :dataset "ard"))
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
         date-coll  (date-range all)
-        consumers  (start-consumers chunk-size in-chan out-chan)]
+        consumers  (start-consumers chunk-size in-chan out-chan)
+        output_fn  (fn [i] (let [result (async/<!! out-chan)] (f/output result) result))]
 
     (async/go 
       (doseq [date date-coll]
@@ -98,7 +94,5 @@
                                     :product product
                                     :resource "maps"))))
 
-    (dotimes [i (count date-coll)]
-      (f/output (async/<!! out-chan)))
-    all))
+    (map output_fn date-coll)))
 
