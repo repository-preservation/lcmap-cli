@@ -1,14 +1,12 @@
 (ns lcmap-cli.functions
   (:require [cheshire.core :as json]
             [clojure.core.matrix :as matrix]
-            [clojure.core.async :as async]
             [clojure.spec.alpha :as s]
             [clojure.string :as string]
             [clojure.walk :refer [stringify-keys keywordize-keys]]
             [lcmap-cli.config :as cfg]
             [lcmap-cli.http :as http]
-            [lcmap.commons.numbers :refer [numberize]]
-            [lcmap-cli.state :as state]))
+            [lcmap.commons.numbers :refer [numberize]]))
 
 (matrix/set-current-implementation :vectorz)
 
