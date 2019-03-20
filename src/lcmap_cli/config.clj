@@ -29,14 +29,10 @@
   (if-let [c (load-edn edn-file)]
     (:http c)))
 
-(defn segment-instance-count
+(defn request-instance-count
   [grid]
-  (:segment-instance-count ((keyword grid) grids)))
+  (:request-instance-count ((keyword grid) grids)))
 
 (defn product-doy
   [grid]
   (:product-doy ((keyword grid) grids)))
-
-(defn chip-partition-count
-  [grid]
-  (:chip-partition-count ((keyword grid) grids)))
