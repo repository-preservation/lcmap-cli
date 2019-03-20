@@ -24,8 +24,8 @@
           {:error (-> r http/decode :body) :status (:status r)})))
 
 (defn post-request
-  [{grid :grid resource :resource :as all} http-options]
-  (let [json_body (json/encode all)
+  [{grid :grid resource :resource http-options :http-options :as all}]
+  (let [json_body (json/encode (dissoc all :http-options))
         headers {"Content-Type" "application/json"}]
     (http/client :post 
                  (keyword grid) :ccdc (keyword resource)
@@ -37,7 +37,7 @@
      (async/thread
        (while (true? @state/run-threads?)
          (let [input  (async/<!! in-chan)
-               result (handler (post-request input http-options))]
+               result (handler (post-request (assoc input :http-options http-options)))]
            (async/>!! out-chan result))))))
   ([number in-chan out-chan]
    (start-consumers number in-chan out-chan cfg/http-options)))
@@ -62,15 +62,14 @@
         consumers  (start-consumers chunk-size in-chan out-chan)
         output_fn  (fn [i] (let [result (async/<!! out-chan)] (f/output result) result))]
 
-    (async/go
       (doseq [cxcy chip_xys]
-        (async/>! in-chan (hash-map :grid grid
+        (async/>!! in-chan (hash-map :grid grid
                                     :tile tile
                                     :cx (:cx cxcy)
                                     :cy (:cy cxcy)
                                     :dates date-coll
                                     :product product
-                                    :resource "products"))))
+                                    :resource "products")))
 
     (map output_fn chip_xys)))
 
