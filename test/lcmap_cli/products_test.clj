@@ -67,3 +67,16 @@
     (is (= '("(:tile :dates :grid :product :cx :resource :cy :http-options)")
        (products/products {:grid "conus" :tile "027008" :product "tsc" :years "2006"})))))
 
+(deftest maps-test
+  (with-redefs [cfg/request-instance-count (fn [i] 1)
+                functions/chips       (fn [i] [{:cx 1 :cy 2}])
+                functions/tile-to-xy  (fn [i] {:x 3 :y 4})
+                cfg/product-doy       (fn [i] "07-01")
+                products/handler      str
+                products/post-request keys
+                cfg/http-options      {:timeout 9}]
+
+    (is (= '("(:tile :date :chips :grid :tiley :tilex :product :resource :http-options)")
+       (products/maps {:grid "conus" :tile "027008" :product "tsc" :years "2006"})))))
+
+
