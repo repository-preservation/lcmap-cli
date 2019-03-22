@@ -33,8 +33,8 @@
   [{g :grid t :tile a :acquired :as all}]
   (let [xys        (f/chips (assoc all :dataset "ard"))
         chunk-size (get-in cfg/grids [(keyword g) :segment-instance-count])
-        in-chan    state/tile-in
-        out-chan   state/tile-out
+        in-chan    (async/chan)
+        out-chan   (async/chan)
         consumers  (start-consumers chunk-size in-chan out-chan)
         sleep-for  (get-in cfg/grids [(keyword g) :segment-sleep-for])]
     

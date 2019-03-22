@@ -10,10 +10,6 @@
 
 (def stderr (async/chan))
 
-(def tile-in (async/chan))
-
-(def tile-out (async/chan))
-
 (def stdout-writer (async/thread (while (true? @run-threads?) (-> (async/<!! stdout) stringify-keys json/encode println))))
 
 (def stderr-writer (binding [*out* *err*] (async/thread (while (true? @run-threads?) (-> (async/<!! stderr) stringify-keys json/encode println)))))

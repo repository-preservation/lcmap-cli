@@ -53,8 +53,8 @@
 (defn products
   [{grid :grid tile :tile product :product years :years :as all}]
   (let [chunk-size (cfg/request-instance-count grid)
-        in-chan    state/tile-in
-        out-chan   state/tile-out
+        in-chan    (async/chan)
+        out-chan   (async/chan)
         chip_xys   (chips (assoc all :dataset "ard"))
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
         date-coll  (date-range all)
@@ -76,8 +76,8 @@
 (defn maps
   [{grid :grid tile :tile product :product years :years :as all}]
   (let [chunk-size (cfg/request-instance-count grid)
-        in-chan    state/tile-in
-        out-chan   state/tile-out
+        in-chan    (async/chan)
+        out-chan   (async/chan)
         chip_xys   (chips (assoc all :dataset "ard"))
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
         date-coll  (date-range all)
