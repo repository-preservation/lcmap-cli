@@ -30,12 +30,10 @@ Command line interface for the LCMAP system
 | lcmap ingest                 | --grid --dataset --source        |                      | ingest a layer                  |
 | lcmap ingest-list-available  | --grid --dataset --tile          | --start --end        | list ingestable layers          |
 | lcmap ingest-list-completed  | --grid --dataset --tile          | --start --end        | list ingested layers            |
-| lcmap detect-tile            | --grid --tile                    |                      | detect changes for a tile       |
-| lcmap detect-chip            | --grid --cx --cy                 |                      | detect changes for a chip       |
+| lcmap detect                 | --grid --tile --acquired         |                      | detect changes for a tile       |
+| lcmap detect-chip            | --grid --cx --cy --acquired      |                      | detect changes for a chip       |
 | lcmap train                  | --grid --tile                    |                      | train a model for a tile        |
-| lcmap predict-tile           | --grid --tile                    |                      | predict a tile                  |
-| lcmap predict-chip           | --grid --cx --cy                 |                      | predict a chip                  |
-| lcmap available-products     | --grid                           |                      | list of available products      |
+| lcmap predict                | --grid --tile                    |                      | predict a tile                  |
 | lcmap products               | --grid --tile --product --years  |                      | generate chip size json products|
 | lcmap maps                   | --grid --tile --product --years  |                      | generate tile size map tiff     |
 
