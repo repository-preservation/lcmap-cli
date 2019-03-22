@@ -13,8 +13,6 @@
                  [org.clojure/core.async "0.4.490"]
                  [org.clojure/data.json "0.2.6"]
                  [org.clojure/tools.cli "0.4.1"]
-                 [org.clojure/math.combinatorics "0.1.4"]
-                 [org.gdal/gdal         "2.2.0"]
                  [mount                 "0.1.12"]
                  [environ               "1.1.0"]]
   :main ^:skip-aot lcmap-cli.core

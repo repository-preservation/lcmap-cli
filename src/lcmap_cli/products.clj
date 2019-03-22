@@ -1,6 +1,5 @@
 (ns lcmap-cli.products
-  (:require [clojure.math.combinatorics :refer [cartesian-product]] ; to support multiple products + dates
-            [clojure.core.async :as async]
+  (:require [clojure.core.async :as async]
             [clojure.string :as string]
             [cheshire.core :as json]
             [lcmap-cli.state :as state]
