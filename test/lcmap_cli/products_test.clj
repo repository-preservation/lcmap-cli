@@ -39,8 +39,8 @@
                 products/post-request (fn [i] (+ (:val i) (get-in i [:http-options :timeout])))
                 cfg/http-options      {:timeout 9}]
 
-    (let [in-chan state/tile-in
-          out-chan state/tile-out
+    (let [in-chan (async/chan)
+          out-chan (async/chan)
           chunk-size 2
           consumers (products/start-consumers chunk-size in-chan out-chan)
           vals [{:val 4}]]
