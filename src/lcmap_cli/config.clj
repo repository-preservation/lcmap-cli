@@ -27,7 +27,7 @@
 
 (def http-options
   (if-let [c (load-edn edn-file)]
-    (:http-options c)))
+    (:http c)))
 
 (defn request-instance-count
   [grid]
