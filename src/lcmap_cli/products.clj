@@ -52,7 +52,7 @@
 
 (defn products
   [{grid :grid tile :tile product :product years :years :as all}]
-  (let [chunk-size (cfg/request-instance-count grid)
+  (let [chunk-size (cfg/products-instance-count grid)
         in-chan    (async/chan)
         out-chan   (async/chan)
         chip_xys   (chips (assoc all :dataset "ard"))
@@ -75,7 +75,7 @@
 
 (defn maps
   [{grid :grid tile :tile product :product years :years :as all}]
-  (let [chunk-size (cfg/request-instance-count grid)
+  (let [chunk-size (cfg/maps-instance-count grid)
         in-chan    (async/chan)
         out-chan   (async/chan)
         chip_xys   (chips (assoc all :dataset "ard"))

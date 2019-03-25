@@ -13,6 +13,8 @@
                      :segment "/segment"
                      :annual-prediction "/annual_prediction"
                      :segment-instance-count 1
+                     :products-instance-count 1
+                     :maps-instance-count 1
                      :segment-sleep-for 1000}}}
 
  
