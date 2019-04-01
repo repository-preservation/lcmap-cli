@@ -26,7 +26,7 @@
     (async/thread
       (while (true? @state/run-threads?)
         (let [input  (async/<!! in-chan)
-              result (handler (assoc :response (f/detect input)))]
+              result (handler (assoc input :response (f/detect input)))]
           (async/>!! out-chan result))))))
 
 (defn tile
