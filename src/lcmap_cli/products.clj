@@ -50,7 +50,7 @@
         mmdd (cfg/product-mmdd grid)]
     (map (fn [i] (str i "-" mmdd)) year_range)))
 
-(defn products
+(defn product
   [{grid :grid tile :tile product :product years :years :as all}]
   (let [chunk-size (cfg/products-instance-count grid)
         in-chan    (async/chan)
@@ -69,11 +69,11 @@
                                     :cy (:cy cxcy)
                                     :dates date-coll
                                     :product product
-                                    :resource "products"))))
+                                    :resource "product"))))
 
     (map output_fn chip_xys)))
 
-(defn maps
+(defn raster
   [{grid :grid tile :tile product :product years :years :as all}]
   (let [chunk-size (cfg/maps-instance-count grid)
         in-chan    (async/chan)
@@ -93,7 +93,7 @@
                                     :chips chip_xys
                                     :date date
                                     :product product
-                                    :resource "maps"))))
+                                    :resource "raster"))))
 
     (map output_fn date-coll)))
 

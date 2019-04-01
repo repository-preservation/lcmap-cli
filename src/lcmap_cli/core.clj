@@ -56,9 +56,9 @@
                  :args (->options [:help :grid :tile])}
    :predict     {:func nil
                  :args (->options [:help :grid :tile])}
-   :products    {:func #'lcmap-cli.products/products 
+   :product     {:func #'lcmap-cli.products/product 
                  :args (->options [:help :grid :tile :product :years])}
-   :maps        {:func #'lcmap-cli.products/maps 
+   :raster      {:func #'lcmap-cli.products/raster 
                  :args (->options [:help :grid :tile :product :years])}
 })
 

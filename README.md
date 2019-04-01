@@ -34,8 +34,8 @@ Command line interface for the LCMAP system
 | lcmap detect-chip            | --grid --cx --cy --acquired      |                      | detect changes for a chip       |
 | lcmap train                  | --grid --tile                    |                      | train a model for a tile        |
 | lcmap predict                | --grid --tile                    |                      | predict a tile                  |
-| lcmap products               | --grid --tile --product --years  |                      | generate chip size json products|
-| lcmap maps                   | --grid --tile --product --years  |                      | generate tile size map tiff     |
+| lcmap product                | --grid --tile --product --years  |                      | generate chip size json products|
+| lcmap raster                 | --grid --tile --product --years  |                      | generate tile size map tiff     |
 
 ### Parameters
 
@@ -76,8 +76,8 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :pixel "/pixel"
                   :segment "/segment"
                   :annual-prediction "/annual_prediction"
-                  :products "/products"
-                  :maps "/maps"
+                  :product "/product"
+                  :raster "/map"
                   :segment-instance-count 25
                   :products-instance-count 1
                   :maps-instance-count 1
@@ -97,8 +97,8 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :pixel "/pixel"
                   :segment "/segment"
                   :annual-prediction "/annual_prediction"
-                  :products "/products"
-                  :maps "/maps"
+                  :product "/product"
+                  :raster "/raster"
                   :segment-instance-count 1
                   :products-instance-count 1
                   :maps-instance-count 1
@@ -118,8 +118,8 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :pixel "/pixel"
                   :segment "/segment"
                   :annual-prediction "/annual_prediction"
-                  :products "/products"
-                  :maps "/maps"
+                  :product "/product"
+                  :raster "/raster"
                   :segment-instance-count 1
                   :products-instance-count 1
                   :maps-instance-count 1

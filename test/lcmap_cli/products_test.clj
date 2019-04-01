@@ -63,7 +63,7 @@
                 cfg/http-options      {:timeout 9}]
 
     (is (= '("(:tile :dates :grid :product :cx :resource :cy :http-options)")
-       (products/products {:grid "conus" :tile "027008" :product "tsc" :years "2006"})))))
+       (products/product {:grid "conus" :tile "027008" :product "tsc" :years "2006"})))))
 
 (deftest maps-test
   (with-redefs [cfg/maps-instance-count (fn [i] 1)
@@ -74,6 +74,6 @@
                 cfg/http-options      {:timeout 9}]
 
     (is (= '("(:tile :date :chips :grid :tiley :tilex :product :resource :http-options)")
-       (products/maps {:grid "conus" :tile "027008" :product "tsc" :years "2006"})))))
+       (products/raster {:grid "conus" :tile "027008" :product "tsc" :years "2006"})))))
 
 

@@ -12,6 +12,8 @@
                      :pixel "/pixel"
                      :segment "/segment"
                      :annual-prediction "/annual_prediction"
+                     :product "/product"
+                     :raster "/raster"
                      :segment-instance-count 1
                      :products-instance-count 1
                      :maps-instance-count 1
