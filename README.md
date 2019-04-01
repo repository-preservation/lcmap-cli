@@ -77,7 +77,7 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :segment "/segment"
                   :annual-prediction "/annual_prediction"
                   :product "/product"
-                  :raster "/map"
+                  :raster "/raster"
                   :segment-instance-count 25
                   :products-instance-count 1
                   :maps-instance-count 1
