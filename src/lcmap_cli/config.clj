@@ -37,6 +37,8 @@
   [grid]
   (:maps-instance-count ((keyword grid) grids)))
 
-(defn product-doy
+(defn product-mmdd
   [grid]
-  (:product-doy ((keyword grid) grids)))
+  (let [mm (:product-month ((keyword grid) grids))
+        dd (:product-day   ((keyword grid) grids))]
+    (str mm "-" dd)))

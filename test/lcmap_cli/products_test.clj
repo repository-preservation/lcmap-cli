@@ -51,15 +51,13 @@
       (is (= "13" (async/<!! out-chan))))))
 
 (deftest date-range-test
-  (with-redefs [cfg/product-doy (fn [i] "07-01")]
-    (is (= ["2006-07-01" "2007-07-01"] (products/date-range {:grid "conus" :years "2006/2007"})))))
+    (is (= ["2006-07-01" "2007-07-01"] (products/date-range {:grid "fake-http" :years "2006/2007"}))))
 
 
 (deftest products-test
   (with-redefs [cfg/products-instance-count (fn [i] 1)
                 functions/chips       (fn [i] [{:cx 1 :cy 2}])
                 functions/tile-to-xy  (fn [i] {:x 3 :y 4})
-                cfg/product-doy       (fn [i] "07-01")
                 products/handler      str
                 products/post-request keys
                 cfg/http-options      {:timeout 9}]
@@ -71,7 +69,6 @@
   (with-redefs [cfg/maps-instance-count (fn [i] 1)
                 functions/chips       (fn [i] [{:cx 1 :cy 2}])
                 functions/tile-to-xy  (fn [i] {:x 3 :y 4})
-                cfg/product-doy       (fn [i] "07-01")
                 products/handler      str
                 products/post-request keys
                 cfg/http-options      {:timeout 9}]

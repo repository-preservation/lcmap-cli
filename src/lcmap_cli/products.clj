@@ -47,8 +47,8 @@
         start (-> year_coll first read-string)
         stop  (-> year_coll last read-string inc)
         year_range (range start stop)
-        doy (cfg/product-doy grid)]
-    (map (fn [i] (str i "-" doy)) year_range)))
+        mmdd (cfg/product-mmdd grid)]
+    (map (fn [i] (str i "-" mmdd)) year_range)))
 
 (defn products
   [{grid :grid tile :tile product :product years :years :as all}]

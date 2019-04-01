@@ -82,7 +82,8 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :products-instance-count 1
                   :maps-instance-count 1
                   :segment-sleep-for 1000
-                  :product-doy "07-01"}
+                  :product-month "07"
+                  :product-day "01"}
          :alaska {:ard "http://host:port/ard_ak_c01_v01"
                   :aux "http://host:port/aux_ak_v01"
                   :ccdc "http://host:port/ard_ak_c01_v01_aux_ak_v01_ccdc_1_0"
@@ -102,7 +103,8 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :products-instance-count 1
                   :maps-instance-count 1
                   :segment-sleep-for 1000
-                  :product-doy "07-01"}
+                  :product-month "07"
+                  :product-day "01"}
          :hawaii {:ard "http://host:port/ard_hi_c01_v01"
                   :aux "http://host:port/aux_hi_v01"
                   :ccdc "http://host:port/ard_hi_c01_v01_aux_hi_v01_ccdc_1_0"
@@ -122,7 +124,8 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :products-instance-count 1
                   :maps-instance-count 1
                   :segment-sleep-for 1000                   
-                  :product-doy "07-01"}}}
+                  :product-month "07"
+                  :product-day "01"}}}
 ```
 
 ## Examples
