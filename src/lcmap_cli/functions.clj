@@ -177,7 +177,7 @@
 (defn train
   [{:keys [:grid :tx :ty :acquired :date :chips]}]
   (http/client :post
-               (keyword g)
+               (keyword grid)
                :ccdc
                :tile
                {:body (json/encode {:tx ty :ty ty :acquired acquired :date date :chips chips})
