@@ -61,4 +61,23 @@
 
 (deftest chips-test
   (testing "(chips)"
-    (is (= 0 1))))
+    (with-fake-http ["http://fake/grid"
+                     {:status 200
+                      :body "[{\"name\": \"tile\", \"proj\": \"\",\"rx\": 1.0, \"ry\": -1.0, \"sx\": 2, \"sy\": 2, \"tx\": 0, \"ty\": 0}, {\"name\": \"chip\",\"proj\": \"\",\"rx\": 1.0, \"ry\": -1.0, \"sx\": 1, \"sy\": 1, \"tx\": 0, \"ty\": 0}]"}]
+       
+       (def result (chips {:grid "fake-http"
+                           :dataset "ard"
+                           :tiles [{:grid-pt [0 0] :proj-pt [0.0 0.0]}
+                                   {:grid-pt [5 5] :proj-pt [5.0 5.0]}]}))
+
+
+      (def expected (into #{} '({:cx 0.0, :cy 0.0}
+                                {:cx 0.0, :cy -1.0}
+                                {:cx 1.0, :cy 0.0}
+                                {:cx 1.0, :cy -1.0}
+                                {:cx 10.0, :cy -10.0}
+                                {:cx 10.0, :cy -11.0}
+                                {:cx 11.0, :cy -10.0}
+                                {:cx 11.0, :cy -11.0})))
+      
+    (is (= expected (into #{} (:chips result)))))))

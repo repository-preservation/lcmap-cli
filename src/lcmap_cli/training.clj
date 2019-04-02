@@ -38,13 +38,14 @@
                                 keywordize-keys))))
 
 (defn chips
-  [{g :grid d :dataset t :tiles :as all}]
+  [{:keys [:grid :dataset :tiles] :as all}]
 
-  (let [tids (map (fn [t] {:grid g
-                           :dataset d
-                           :tile (f/tile-to-string (first (get :grid-pt t))
-                                                   (second (get :grid-pt t)))}) (:tiles all))]
-    (assoc all :chips (map f/chips tids))))
+  (let [tids (map (fn [t] {:grid grid
+                           :dataset dataset
+                           :tile (f/tile-to-string (first  (:grid-pt t))
+                                                   (second (:grid-pt t)))}) tiles)]
+    
+    (assoc all :chips (flatten (map f/chips tids)))))
                             
 (defn train
   [{g :grid tx :tx ty :ty acquired :acquired date :date :as all}]
