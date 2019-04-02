@@ -46,10 +46,16 @@
                                                    (second (:grid-pt t)))}) tiles)]
     
     (assoc all :chips (flatten (map f/chips tids)))))
-                            
+
+
 (defn train
   [{g :grid tx :tx ty :ty acquired :acquired date :date :as all}]
 
+  ;; this pipeline may need to have each function partialed into an exception handler to prevent
+  ;; exceptions from being raised to core.clj.
+  ;; 
+  ;; single top level (try (except)) may also work.
+  ;;
   (-> (assoc all :dataset "ard")
       tiles
       chips
