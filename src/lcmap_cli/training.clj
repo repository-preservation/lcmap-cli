@@ -1,5 +1,7 @@
 (ns lcmap-cli.training
-  (:require [clojure.stacktrace :as st]
+  (:require [cheshire.core :as json]
+            [clojure.stacktrace :as st]
+            [clojure.walk :refer [keywordize-keys]]
             [lcmap-cli.config :as cfg]
             [lcmap-cli.functions :as f]
             [lcmap-cli.http :as http]))
@@ -28,8 +30,12 @@
   ;;           {"grid-pt": [854.0, 1104.0], "proj-pt": [-3585.0, 2805.0]},], 
   ;;  "tile": [{"grid-pt": [16.0, 23.0],    "proj-pt": [-165585.0, -135195.0]},
   ;;           {"grid-pt": [16.0, 22.0],    "proj-pt": [-165585.0, 14805.0]},]})
-                      
-  (assoc all :tiles (get :tile (f/near (merge {:x tx :y ty} all)))))
+
+  
+  (assoc all :tiles (:tile (-> (merge {:x tx :y ty} all)
+                                f/near
+                                json/decode
+                                keywordize-keys))))
 
 (defn chips
   [{g :grid d :dataset t :tiles :as all}]
@@ -48,4 +54,4 @@
       chips
       f/train
       (assoc all :response)
-      handler)
+      handler))
