@@ -174,3 +174,12 @@
                {:body (json/encode {:cx cx :cy cy :acquired acquired})
                 :headers {"Content-Type" "application/json"}}))
 
+(defn train
+  [{:keys [:grid :tx :ty :acquired :date :chips]}]
+  (http/client :post
+               (keyword g)
+               :ccdc
+               :tile
+               {:body (json/encode {:tx ty :ty ty :acquired acquired :date date :chips chips})
+                :headers {"Content-Type" "application/json"}}))
+
