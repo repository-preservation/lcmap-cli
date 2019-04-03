@@ -19,7 +19,7 @@
 
 (defn http-options
   [options]
-    (merge options cfg/http-options))
+    (merge cfg/http-options options))
 
 (defmulti decode
   (fn [x]
