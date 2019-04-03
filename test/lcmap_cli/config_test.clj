@@ -17,5 +17,5 @@
 
 
 (deftest http-options-test
-  (testing "http-options from edn"
-    (is (not (nil? (:timeout http-options))))))
+  (testing "http options from edn"   
+    (is (= 2400000 (:timeout http-options)))))

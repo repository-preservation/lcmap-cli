@@ -29,4 +29,16 @@
   (if-let [c (load-edn edn-file)]
     (:http c)))
 
+(defn products-instance-count
+  [grid]
+  (:products-instance-count ((keyword grid) grids)))
 
+(defn maps-instance-count
+  [grid]
+  (:maps-instance-count ((keyword grid) grids)))
+
+(defn product-mmdd
+  [grid]
+  (let [mm (:product-month ((keyword grid) grids))
+        dd (:product-day   ((keyword grid) grids))]
+    (str mm "-" dd)))

@@ -1,6 +1,7 @@
 (ns lcmap-cli.http-test
   (:require [clojure.test :refer :all]
-            [lcmap-cli.http :refer :all]))
+            [lcmap-cli.http :refer :all]
+            [lcmap-cli.config :as config]))
 
 (deftest url-test
   (testing "(url)"
@@ -9,8 +10,8 @@
 
 (deftest http-options-test
   (testing "(http-options)"
-    (is (= (http-options {:keepalive 30000})
-           {:keepalive 30000 :timeout 2400000}))))
+      (is (= (http-options {:keepalive 30000})
+             {:keepalive 30000 :timeout 2400000}))))
 
 (deftest decode-test
   (testing "(decode)"
