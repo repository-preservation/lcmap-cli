@@ -29,13 +29,13 @@
   (if-let [c (load-edn edn-file)]
     (:http c)))
 
-(defn products-instance-count
+(defn product-instance-count
   [grid]
-  (:products-instance-count ((keyword grid) grids)))
+  (:product-instance-count ((keyword grid) grids)))
 
-(defn maps-instance-count
+(defn raster-instance-count
   [grid]
-  (:maps-instance-count ((keyword grid) grids)))
+  (:raster-instance-count ((keyword grid) grids)))
 
 (defn product-mmdd
   [grid]

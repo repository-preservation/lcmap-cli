@@ -55,7 +55,7 @@
 
 
 (deftest products-test
-  (with-redefs [cfg/products-instance-count (fn [i] 1)
+  (with-redefs [cfg/product-instance-count (fn [i] 1)
                 functions/chips       (fn [i] [{:cx 1 :cy 2}])
                 functions/tile-to-xy  (fn [i] {:x 3 :y 4})
                 products/handler      str
@@ -66,7 +66,7 @@
        (products/product {:grid "conus" :tile "027008" :product "tsc" :years "2006"})))))
 
 (deftest maps-test
-  (with-redefs [cfg/maps-instance-count (fn [i] 1)
+  (with-redefs [cfg/raster-instance-count (fn [i] 1)
                 functions/chips       (fn [i] [{:cx 1 :cy 2}])
                 functions/tile-to-xy  (fn [i] {:x 3 :y 4})
                 products/handler      str

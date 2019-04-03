@@ -15,8 +15,8 @@
                      :product "/product"
                      :raster "/raster"
                      :segment-instance-count 1
-                     :products-instance-count 1
-                     :maps-instance-count 1
+                     :product-instance-count 1
+                     :raster-instance-count 1
                      :segment-sleep-for 1000
                      :product-month "07"
                      :product-day "01"}}}

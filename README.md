@@ -79,8 +79,8 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :product "/product"
                   :raster "/raster"
                   :segment-instance-count 25
-                  :products-instance-count 1
-                  :maps-instance-count 1
+                  :product-instance-count 1
+                  :raster-instance-count 1
                   :segment-sleep-for 1000
                   :product-month "07"
                   :product-day "01"}
@@ -100,8 +100,8 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :product "/product"
                   :raster "/raster"
                   :segment-instance-count 1
-                  :products-instance-count 1
-                  :maps-instance-count 1
+                  :product-instance-count 1
+                  :raster-instance-count 1
                   :segment-sleep-for 1000
                   :product-month "07"
                   :product-day "01"}
@@ -121,8 +121,8 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :product "/product"
                   :raster "/raster"
                   :segment-instance-count 1
-                  :products-instance-count 1
-                  :maps-instance-count 1
+                  :product-instance-count 1
+                  :raster-instance-count 1
                   :segment-sleep-for 1000                   
                   :product-month "07"
                   :product-day "01"}}}
@@ -196,11 +196,11 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
    # Creating Products
    # Before we can produce a map, we need to have the product values calculated for 
    # every chip in the requested tile.
-   $ lcmap products --grid conus \
-                    --tile 027008 \
-                    --product length-of-segment \
-                    --years 2002/2006 \
-                    >> 2002_2006_product_success.txt 2>> 2002_2006_product_errors.txt;
+   $ lcmap product --grid conus \
+                   --tile 027008 \
+                   --product length-of-segment \
+                   --years 2002/2006 \
+                   >> 2002_2006_product_success.txt 2>> 2002_2006_product_errors.txt;
 
    # example stdout output:
    # {"product":"length-of-segment","cx":1484415.0,"cy":2111805.0,"dates":["2002-07-01"]}
@@ -215,11 +215,11 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
    
    # Creating Maps
    # Producing tile sized product maps
-   $ lcmap maps --grid conus \
-                --tile 027008 \
-                --product length-of-segment \
-                --years 2002/2006 \
-                >> 2002_2006_maps_success.txt 2>> 2002_2006_maps_errors.txt;
+   $ lcmap raster --grid conus \
+                  --tile 027008 \
+                  --product length-of-segment \
+                  --years 2002/2006 \
+                  >> 2002_2006_maps_success.txt 2>> 2002_2006_raster_errors.txt;
 
    # example stdout output:
    # {"tile":"027008","date":"2002-07-01","grid":"conus","tiley":2114805.0,"tilex":1484415.0,"product":"length-of-segment","resource":"maps","map_name":"LCMAP-CU-027008-2002-20190320-V01-SCSTAB.tif"}
