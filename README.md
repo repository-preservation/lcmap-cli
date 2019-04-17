@@ -18,24 +18,25 @@ Command line interface for the LCMAP system
 
 ## Commands
 
-| Command                      | Required Parameters              | Optional Parameters  | Description                     |
-| ---------------------------- | -------------------------------- |--------------------- | ------------------------------- |
-| lcmap grids                  |                                  |                      | list configured grids           |
-| lcmap grid                   | --grid --dataset                 |                      | show grid configuration         |
-| lcmap snap                   | --grid --dataset --x --y         |                      | snap point to tile/chip         |
-| lcmap near                   | --grid --dataset --x --y         |                      | tile/chip xys near point        |
-| lcmap tile-to-xy             | --grid --dataset --tile          |                      | look up a tile xy from id       |
-| lcmap xy-to-tile             | --grid --dataset --x --y         |                      | look up a tile id from xy       | 
-| lcmap chips                  | --grid --dataset --tile          |                      | list chip xys for tile          |
-| lcmap ingest                 | --grid --dataset --source        |                      | ingest a layer                  |
-| lcmap ingest-list-available  | --grid --dataset --tile          | --start --end        | list ingestable layers          |
-| lcmap ingest-list-completed  | --grid --dataset --tile          | --start --end        | list ingested layers            |
-| lcmap detect                 | --grid --tile --acquired         |                      | detect changes for a tile       |
-| lcmap detect-chip            | --grid --cx --cy --acquired      |                      | detect changes for a chip       |
-| lcmap train                  | --grid --tile                    |                      | train a model for a tile        |
-| lcmap predict                | --grid --tile                    |                      | predict a tile                  |
-| lcmap product                | --grid --tile --product --years  |                      | generate chip size json products|
-| lcmap raster                 | --grid --tile --product --years  |                      | generate tile size map tiff     |
+| Command                      | Required Parameters                | Optional Parameters  | Description                     |
+| ---------------------------- | ---------------------------------- |--------------------- | ------------------------------- |
+| lcmap grids                  |                                    |                      | list configured grids           |
+| lcmap grid                   | --grid --dataset                   |                      | show grid configuration         |
+| lcmap snap                   | --grid --dataset --x --y           |                      | snap point to tile/chip         |
+| lcmap near                   | --grid --dataset --x --y           |                      | tile/chip xys near point        |
+| lcmap tile-to-xy             | --grid --dataset --tile            |                      | look up a tile xy from id       |
+| lcmap xy-to-tile             | --grid --dataset --x --y           |                      | look up a tile id from xy       | 
+| lcmap chips                  | --grid --dataset --tile            |                      | list chip xys for tile          |
+| lcmap ingest                 | --grid --dataset --source          |                      | ingest a layer                  |
+| lcmap ingest-list-available  | --grid --dataset --tile            | --start --end        | list ingestable layers          |
+| lcmap ingest-list-completed  | --grid --dataset --tile            | --start --end        | list ingested layers            |
+| lcmap detect                 | --grid --tile --acquired           |                      | detect changes for a tile       |
+| lcmap detect-chip            | --grid --cx --cy --acquired        |                      | detect changes for a chip       |
+| lcmap train                  | --grid --tile                      |                      | train a model for a tile        |
+| lcmap predict                | --grid --tile                      |                      | predict a tile                  |
+| lcmap product                | --grid --tile --product --years    |                      | generate json products for tile |
+| lcmap product-chip           | --grid --product --years --cx --cy |                      | generate json product for chip  |
+| lcmap raster                 | --grid --tile --product --years    |                      | generate tile size map tiff     |
 
 ### Parameters
 

@@ -32,34 +32,36 @@
   (into [] (options opts)))
 
 (def registry
-  {:grids       {:func #'lcmap-cli.functions/grids
-                 :args (->options [:help])}                 
-   :grid        {:func #'lcmap-cli.functions/grid
-                 :args (->options [:help :grid :dataset])}
-   :snap        {:func #'lcmap-cli.functions/snap
-                 :args (->options [:help :grid :dataset :x :y])}
-   :near        {:func #'lcmap-cli.functions/near
-                 :args (->options [:help :grid :dataset :x :y])}
-   :xy-to-tile  {:func #'lcmap-cli.functions/xy-to-tile
-                 :args (->options [:help :grid :dataset :x :y])}
-   :tile-to-xy  {:func #'lcmap-cli.functions/tile-to-xy
-                 :args (->options [:help :grid :dataset :tile])}
-   :chips       {:func #'lcmap-cli.functions/chips
-                 :args (->options [:help :grid :dataset :tile])}
-   :ingest      {:func nil
-                 :args (->options [:help :grid :source])}
-   :detect-chip {:func #'lcmap-cli.changedetection/chip
-                 :args (->options [:help :grid :cx :cy :acquired])}
-   :detect      {:func #'lcmap-cli.changedetection/tile
-                 :args (->options [:help :grid :tile :acquired])}
-   :train       {:func nil
-                 :args (->options [:help :grid :tile])}
-   :predict     {:func nil
-                 :args (->options [:help :grid :tile])}
-   :product     {:func #'lcmap-cli.products/product 
-                 :args (->options [:help :grid :tile :product :years])}
-   :raster      {:func #'lcmap-cli.products/raster 
-                 :args (->options [:help :grid :tile :product :years])}
+  {:grids        {:func #'lcmap-cli.functions/grids
+                  :args (->options [:help])}                 
+   :grid         {:func #'lcmap-cli.functions/grid
+                  :args (->options [:help :grid :dataset])}
+   :snap         {:func #'lcmap-cli.functions/snap
+                  :args (->options [:help :grid :dataset :x :y])}
+   :near         {:func #'lcmap-cli.functions/near
+                  :args (->options [:help :grid :dataset :x :y])}
+   :xy-to-tile   {:func #'lcmap-cli.functions/xy-to-tile
+                  :args (->options [:help :grid :dataset :x :y])}
+   :tile-to-xy   {:func #'lcmap-cli.functions/tile-to-xy
+                  :args (->options [:help :grid :dataset :tile])}
+   :chips        {:func #'lcmap-cli.functions/chips
+                  :args (->options [:help :grid :dataset :tile])}
+   :ingest       {:func nil
+                  :args (->options [:help :grid :source])}
+   :detect-chip  {:func #'lcmap-cli.changedetection/chip
+                  :args (->options [:help :grid :cx :cy :acquired])}
+   :detect       {:func #'lcmap-cli.changedetection/tile
+                  :args (->options [:help :grid :tile :acquired])}
+   :train        {:func nil
+                  :args (->options [:help :grid :tile])}
+   :predict      {:func nil
+                  :args (->options [:help :grid :tile])}
+   :product      {:func #'lcmap-cli.products/product 
+                  :args (->options [:help :grid :tile :product :years])}
+   :product-chip {:func #'lcmap-cli.products/chip 
+                  :args (->options [:help :grid :product :tile :cx :cy :years])}
+   :raster       {:func #'lcmap-cli.products/raster 
+                  :args (->options [:help :grid :tile :product :years])}
 })
 
 (defn usage [action options-summary]
