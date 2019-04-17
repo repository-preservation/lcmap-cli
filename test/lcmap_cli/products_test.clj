@@ -56,10 +56,11 @@
 (deftest chip-test
   (with-redefs [products/handler      str
                 products/post-request keys
-                cfg/http-options      {:timeout 9}]
+                cfg/http-options      {:timeout 9}
+                functions/xy-to-tile  (fn [i] "027008")]
 
-    (is (= "(:grid :tile :cx :cy :product :dates :resource :http-options)"
-           (products/chip {:grid "conus" :tile "027008" :cx 111111 :cy 222222 :product "tsc" :years "2006"})))))
+    (is (= "(:grid :cx :cy :product :dates :resource :http-options)"
+           (products/chip {:grid "conus" :cx 111111 :cy 222222 :product "tsc" :years "2006"})))))
 
 (deftest product-test
   (with-redefs [cfg/product-instance-count (fn [i] 1)
