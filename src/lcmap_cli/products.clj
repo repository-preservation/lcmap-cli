@@ -54,7 +54,7 @@
   [{grid :grid product :product years :years cx :cx cy :cy :as all}]
   (let [tile      (f/xy-to-tile {:grid grid :dataset "ard" :x cx :y cy}) 
         date-coll (date-range all)
-        req-args  (-> (dissoc all :years) (assoc :dates date-coll :resource "product" :http-options cfg/http-options)) 
+        req-args  (-> (dissoc all :years) (assoc :tile tile :dates date-coll :resource "product" :http-options cfg/http-options)) 
         response  (post-request req-args)
         output    (handler response)]
     (f/output output)
@@ -81,7 +81,7 @@
                                     :product product
                                     :resource "product"))))
 
-    (map output_fn chip_xys)))
+    (doall (map output_fn chip_xys))))
 
 (defn raster
   [{grid :grid tile :tile product :product years :years :as all}]
@@ -105,5 +105,5 @@
                                     :product product
                                     :resource "raster"))))
 
-    (map output_fn date-coll)))
+    (doall (map output_fn date-coll))))
 
