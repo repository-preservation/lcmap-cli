@@ -59,7 +59,7 @@
    :product      {:func #'lcmap-cli.products/product 
                   :args (->options [:help :grid :tile :product :years])}
    :product-chip {:func #'lcmap-cli.products/chip 
-                  :args (->options [:help :grid :product :tile :cx :cy :years])}
+                  :args (->options [:help :grid :product :cx :cy :years])}
    :raster       {:func #'lcmap-cli.products/raster 
                   :args (->options [:help :grid :tile :product :years])}
 })
