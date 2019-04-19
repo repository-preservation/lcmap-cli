@@ -59,7 +59,7 @@
                 cfg/http-options      {:timeout 9}
                 functions/xy-to-tile  (fn [i] "027008")]
 
-    (is (= "(:grid :cx :cy :product :dates :resource :http-options)"
+    (is (= "(:grid :cx :cy :product :tile :dates :resource :http-options)"
            (products/chip {:grid "conus" :cx 111111 :cy 222222 :product "tsc" :years "2006"})))))
 
 (deftest product-test
