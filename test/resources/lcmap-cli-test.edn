@@ -12,7 +12,13 @@
                      :pixel "/pixel"
                      :segment "/segment"
                      :annual-prediction "/annual_prediction"
+                     :product "/product"
+                     :raster "/raster"
                      :segment-instance-count 1
-                     :segment-sleep-for 1000}}}
+                     :product-instance-count 1
+                     :raster-instance-count 1
+                     :segment-sleep-for 1000
+                     :product-month "07"
+                     :product-day "01"}}}
 
  

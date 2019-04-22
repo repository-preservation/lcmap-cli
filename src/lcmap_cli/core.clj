@@ -6,22 +6,25 @@
             [lcmap-cli.functions :as f]
             [lcmap-cli.changedetection]
             [lcmap-cli.state :as state]
+            [lcmap-cli.products :as products]
             [lcmap-cli.numbers :refer [numberize]])
   (:gen-class :main true))
 
 (defn options
   [keys]
-  (let [o {:help     ["-h" "--help"]
-           :verbose  [nil  "--verbose"]
-           :grid     [nil  "--grid GRID" "grid id" :missing "--grid is required"]
-           :dataset  [nil  "--dataset DATASET" "dataset id" :missing "--dataset is required"]
-           :x        [nil  "--x X" "projection x coordinate"  :parse-fn numberize :missing "--x is required"]
-           :y        [nil  "--y Y" "projection y coordinate" :parse-fn numberize :missing "--y is required"]
-           :cx       [nil  "--cx CX" "chip x coordinate" :parse-fn numberize :missing "--cx is required"]
-           :cy       [nil  "--cy CY" "chip y coordinate" :parse-fn numberize :missing "--cy is required"]
-           :tile     [nil  "--tile TILE" "tile id" :missing "--tile is required"]
-           :source   [nil  "--source" :missing "--source is required"]
-           :acquired [nil  "--acquired ACQUIRED" "iso8601 date range" :missing "--acquired is required"]}]
+  (let [o {:help        ["-h" "--help"]
+           :verbose     [nil  "--verbose"]
+           :grid        [nil  "--grid GRID" "grid id" :missing "--grid is required"]
+           :dataset     [nil  "--dataset DATASET" "dataset id" :missing "--dataset is required"]
+           :x           [nil  "--x X" "projection x coordinate"  :parse-fn numberize :missing "--x is required"]
+           :y           [nil  "--y Y" "projection y coordinate" :parse-fn numberize :missing "--y is required"]
+           :cx          [nil  "--cx CX" "chip x coordinate" :parse-fn numberize :missing "--cx is required"]
+           :cy          [nil  "--cy CY" "chip y coordinate" :parse-fn numberize :missing "--cy is required"]
+           :tile        [nil  "--tile TILE" "tile id" :missing "--tile is required"]
+           :source      [nil  "--source SOURCE" :missing "--source is required"]
+           :product     [nil  "--product PRODUCT" "product name" :missing "--product is required"]
+           :years       [nil  "--years YEARS" "years to produce" :missing "--years are required"]
+           :acquired    [nil  "--acquired ACQUIRED" "iso8601 date range" :missing "--acquired is required"]}]
     (vals (select-keys o keys))))
 
 (defn ->options
@@ -29,34 +32,39 @@
   (into [] (options opts)))
 
 (def registry
-  {:grids       {:func #'lcmap-cli.functions/grids
-                 :args (->options [:help])}                 
-   :grid        {:func #'lcmap-cli.functions/grid
-                 :args (->options [:help :grid :dataset])}
-   :snap        {:func #'lcmap-cli.functions/snap
-                 :args (->options [:help :grid :dataset :x :y])}
-   :near        {:func #'lcmap-cli.functions/near
-                 :args (->options [:help :grid :dataset :x :y])}
-   :xy-to-tile  {:func #'lcmap-cli.functions/xy-to-tile
-                 :args (->options [:help :grid :dataset :x :y])}
-   :tile-to-xy  {:func #'lcmap-cli.functions/tile-to-xy
-                 :args (->options [:help :grid :dataset :tile])}
-   :chips       {:func #'lcmap-cli.functions/chips
-                 :args (->options [:help :grid :dataset :tile])}
-   :ingest      {:func nil
-                 :args (->options [:help :grid :source])}
-   :detect-chip {:func #'lcmap-cli.changedetection/chip
-                 :args (->options [:help :grid :cx :cy :acquired])}
-   :detect      {:func #'lcmap-cli.changedetection/tile
-                 :args (->options [:help :grid :tile :acquired])}
-   :train       {:func nil
-                 :args (->options [:help :grid :tile])}
-   :predict     {:func nil
-                 :args (->options [:help :grid :tile])}
-   :rasters     {:func nil
-                 :args (->options [:help])}})
+  {:grids        {:func #'lcmap-cli.functions/grids
+                  :args (->options [:help])}                 
+   :grid         {:func #'lcmap-cli.functions/grid
+                  :args (->options [:help :grid :dataset])}
+   :snap         {:func #'lcmap-cli.functions/snap
+                  :args (->options [:help :grid :dataset :x :y])}
+   :near         {:func #'lcmap-cli.functions/near
+                  :args (->options [:help :grid :dataset :x :y])}
+   :xy-to-tile   {:func #'lcmap-cli.functions/xy-to-tile
+                  :args (->options [:help :grid :dataset :x :y])}
+   :tile-to-xy   {:func #'lcmap-cli.functions/tile-to-xy
+                  :args (->options [:help :grid :dataset :tile])}
+   :chips        {:func #'lcmap-cli.functions/chips
+                  :args (->options [:help :grid :dataset :tile])}
+   :ingest       {:func nil
+                  :args (->options [:help :grid :source])}
+   :detect-chip  {:func #'lcmap-cli.changedetection/chip
+                  :args (->options [:help :grid :cx :cy :acquired])}
+   :detect       {:func #'lcmap-cli.changedetection/tile
+                  :args (->options [:help :grid :tile :acquired])}
+   :train        {:func nil
+                  :args (->options [:help :grid :tile])}
+   :predict      {:func nil
+                  :args (->options [:help :grid :tile])}
+   :product      {:func #'lcmap-cli.products/product 
+                  :args (->options [:help :grid :tile :product :years])}
+   :product-chip {:func #'lcmap-cli.products/chip 
+                  :args (->options [:help :grid :product :cx :cy :years])}
+   :raster       {:func #'lcmap-cli.products/raster 
+                  :args (->options [:help :grid :tile :product :years])}
+})
 
- (defn usage [action options-summary]
+(defn usage [action options-summary]
   (->> ["lcmap command line interface"
         ""
         (str "Usage: lcmap " action " [options]" )
