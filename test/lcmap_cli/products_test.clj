@@ -15,19 +15,22 @@
     (is (= ["foo"]
            (products/handler (atom {:status 200
                                     :headers {:content-type "application/json"}
-                                    :body "[\"foo\"]"})))))
+                                    :body "[\"foo\"]"})
+                             {:cx 111 :cy 222}))))
 
   (testing "handler with non 200 status"
-    (is (= {:error ["foo error"] :status 400}
+    (is (= {:error ["foo error"], :status 400, :cx 111, :cy 222}
            (products/handler (atom {:status 400
                                     :headers {:content-type "application/json"}
-                                    :body "[\"foo error\"]"})))))
+                                    :body "[\"foo error\"]"})
+                              {:cx 111 :cy 222}))))
 
   (testing "handler with decode failure"
-    (is (= {:error "java.lang.ClassCastException: clojure.lang.PersistentArrayMap cannot be cast to java.util.concurrent.Future"}
+    (is (= {:error "java.lang.ClassCastException: clojure.lang.PersistentArrayMap cannot be cast to java.util.concurrent.Future" :cx 111 :cy 222}
            (products/handler {:status 400
                               :headers {:content-type "application/json"}
-                              :body "[\"foo error\"]"})))))
+                              :body "[\"foo error\"]"}
+                              {:cx 111 :cy 222})))))
 
 (deftest post-request-test
   (with-redefs [http/client (fn [a b c d e] (assoc e a b c d))]
@@ -35,7 +38,7 @@
            {:body "{\"grid\":\"foo\",\"resource\":\"bar\"}", :headers {"Content-Type" "application/json"}, :post :foo, :ccdc :bar}))))
 
 (deftest start-consumers-test
-  (with-redefs [products/handler      str
+  (with-redefs [products/handler      (fn [a b] (str a))
                 products/post-request (fn [i] (+ (:val i) (get-in i [:http-options :timeout])))
                 cfg/http-options      {:timeout 9}]
 
@@ -54,7 +57,7 @@
     (is (= ["2006-07-01" "2007-07-01"] (products/date-range {:grid "fake-http" :years "2006/2007"}))))
 
 (deftest chip-test
-  (with-redefs [products/handler      str
+  (with-redefs [products/handler      (fn [a b] (str a))
                 products/post-request keys
                 cfg/http-options      {:timeout 9}
                 functions/xy-to-tile  (fn [i] "027008")]
@@ -66,7 +69,7 @@
   (with-redefs [cfg/product-instance-count (fn [i] 1)
                 functions/chips       (fn [i] [{:cx 1 :cy 2}])
                 functions/tile-to-xy  (fn [i] {:x 3 :y 4})
-                products/handler      str
+                products/handler      (fn [a b] (str a))
                 products/post-request keys
                 cfg/http-options      {:timeout 9}]
 
@@ -77,7 +80,7 @@
   (with-redefs [cfg/raster-instance-count (fn [i] 1)
                 functions/chips       (fn [i] [{:cx 1 :cy 2}])
                 functions/tile-to-xy  (fn [i] {:x 3 :y 4})
-                products/handler      str
+                products/handler      (fn [a b] (str a))
                 products/post-request keys
                 cfg/http-options      {:timeout 9}]
 
