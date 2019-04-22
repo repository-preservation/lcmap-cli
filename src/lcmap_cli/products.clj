@@ -9,18 +9,18 @@
             [lcmap-cli.functions :refer [chips tile-to-xy]]))
 
 (defn handler
-  [http_response]
+  [http_response params]
   (let [r (try @http_response
                (catch Exception e {:error (str e)}))]
     
     (cond (:error r)
-          {:error (:error r)}
+          (merge {:error (:error r)} params)
 
           (contains? (set (range 200 300)) (:status r))
           (-> r http/decode :body)
           
           :else 
-          {:error (-> r http/decode :body) :status (:status r)})))
+          (merge {:error (-> r http/decode :body) :status (:status r)} params))))
 
 (defn post-request
   [{grid :grid resource :resource http-options :http-options :as all}]
@@ -36,7 +36,8 @@
      (async/thread
        (while (true? @state/run-threads?)
          (let [input  (async/<!! in-chan)
-               result (handler (post-request (assoc input :http-options http-options)))]
+               params (assoc input :http-options http-options)
+               result (handler (post-request params) params)]
            (async/>!! out-chan result))))))
   ([number in-chan out-chan]
    (start-consumers number in-chan out-chan cfg/http-options)))
@@ -56,7 +57,7 @@
         date-coll (date-range all)
         req-args  (-> (dissoc all :years) (assoc :tile tile :dates date-coll :resource "product" :http-options cfg/http-options)) 
         response  (post-request req-args)
-        output    (handler response)]
+        output    (handler response req-args)]
     (f/output output)
     output))
 
