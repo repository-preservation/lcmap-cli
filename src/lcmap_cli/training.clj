@@ -22,7 +22,7 @@
 
 
 (defn tiles
-  [{g :grid d :dataset tx :tx ty :ty :as all}]
+  [{:keys [:grid :dataset :tile] :as all}]
 
   ;; f/near returns this data
   ;;
@@ -31,32 +31,31 @@
   ;;  "tile": [{"grid-pt": [16.0, 23.0],    "proj-pt": [-165585.0, -135195.0]},
   ;;           {"grid-pt": [16.0, 22.0],    "proj-pt": [-165585.0, 14805.0]},]})
 
-  
-  (assoc all :tiles (:tile (-> (merge {:x tx :y ty} all)
-                                f/near
-                                json/decode
-                                keywordize-keys))))
+  (let [xy   (f/tile-to-xy all)
+        data (merge {:tx (:x xy) :ty (:y xy)} (merge xy all))]
+    
+  (assoc data :tiles (:tile (-> data
+                               f/near
+                               json/decode
+                               keywordize-keys)))))
+   
+
 
 (defn chips
   [{:keys [:grid :dataset :tiles] :as all}]
-
+  
   (let [tids (map (fn [t] {:grid grid
                            :dataset dataset
                            :tile (f/tile-to-string (first  (:grid-pt t))
                                                    (second (:grid-pt t)))}) tiles)]
     
-    (assoc all :chips (flatten (map f/chips tids)))))
+    (assoc all :chips (map vals (flatten (map f/chips tids))))))
 
 
 (defn train
-  [{g :grid tx :tx ty :ty acquired :acquired date :date :as all}]
-
-  ;; this pipeline may need to have each function partialed into an exception handler to prevent
-  ;; exceptions from being raised to core.clj.
-  ;; 
-  ;; single top level (try (except)) may also work.
-  ;;
-  (-> (assoc all :dataset "ard")
+  [{:keys [:grid :acquired :date :tile] :as all}]
+    
+  (->>(assoc all :dataset "ard")
       tiles
       chips
       f/train

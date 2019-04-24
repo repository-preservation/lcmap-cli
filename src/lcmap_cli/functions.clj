@@ -38,6 +38,7 @@
     (string/trim v)
     v))
 
+
 (defn transform-matrix
   "Produce transform matrix from given grid-spec."
   [grid-spec]
@@ -125,7 +126,7 @@
 
 (defn tile-to-string
   [h v]
-  (format "%03d%03d" h v))
+  (format "%03d%03d" (int h) (int v)))
 
 (s/def ::x #(numberize %))
 (s/def ::y #(numberize %))
@@ -180,6 +181,6 @@
                (keyword grid)
                :ccdc
                :tile
-               {:body (json/encode {:tx ty :ty ty :acquired acquired :date date :chips chips})
+               {:body (json/encode {:tx tx :ty ty :acquired acquired :date date :chips chips})
                 :headers {"Content-Type" "application/json"}}))
 
