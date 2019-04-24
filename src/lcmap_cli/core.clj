@@ -8,6 +8,7 @@
             [lcmap-cli.products :as products]
             [lcmap-cli.state :as state]
             [lcmap-cli.training]
+            [lcmap-cli.prediction]
             [lcmap-cli.numbers :refer [numberize]])
   (:gen-class :main true))
 
@@ -24,6 +25,7 @@
            :tile     [nil  "--tile TILE" "tile id" :missing "--tile is required"]
            :source   [nil  "--source SOURCE" :missing "--source is required"]
            :date     [nil  "--date" :missing "--date is required"]
+           :dates    [nil  "--dates DATES" :missing "--dates is required"]
            :product  [nil  "--product PRODUCT" "product name" :missing "--product is required"]
            :years    [nil  "--years YEARS" "years to produce" :missing "--years are required"]
            :acquired [nil  "--acquired ACQUIRED" "iso8601 date range" :missing "--acquired is required"]}]
@@ -56,8 +58,8 @@
                  :args (->options [:help :grid :tile :acquired])}
    :train       {:func #'lcmap-cli.training/train
                  :args (->options [:help :grid :tile :acquired :date])}
-   :predict     {:func nil
-                 :args (->options [:help :grid :tile])}
+   :predict     {:func #'lcmap-cli.prediction/predict
+                 :args (->options [:help :grid :tile :dates])}
    :product      {:func #'lcmap-cli.products/product 
                   :args (->options [:help :grid :tile :product :years])}
    :product-chip {:func #'lcmap-cli.products/chip 
