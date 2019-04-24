@@ -11,13 +11,15 @@
                      :chip "/chip"
                      :pixel "/pixel"
                      :segment "/segment"
-                     :annual-prediction "/annual_prediction"
+                     :annual-prediction "/annual-prediction"
                      :product "/product"
                      :raster "/raster"
+                     :annual-prediction-instance-count 1
                      :segment-instance-count 1
                      :product-instance-count 1
                      :raster-instance-count 1
                      :segment-sleep-for 1000
+                     :annual-prediction-timeout 2400000
                      :tile-timeout 2400000
                      :product-month "07"
                      :product-day "01"}}}
