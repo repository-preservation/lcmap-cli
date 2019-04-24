@@ -18,6 +18,7 @@
                      :product-instance-count 1
                      :raster-instance-count 1
                      :segment-sleep-for 1000
+                     :tile-timeout 2400000
                      :product-month "07"
                      :product-day "01"}}}
 
