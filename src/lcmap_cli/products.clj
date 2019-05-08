@@ -52,23 +52,25 @@
     (map (fn [i] (str i "-" mmdd)) year_range)))
 
 (defn chip
-  [{grid :grid product :product years :years cx :cx cy :cy :as all}]
+  [{grid :grid products :products years :years cx :cx cy :cy :as all}]
   (let [tile      (f/xy-to-tile {:grid grid :dataset "ard" :x cx :y cy}) 
         date-coll (date-range all)
-        req-args  (-> (dissoc all :years) (assoc :tile tile :dates date-coll :resource "product" :http-options cfg/http-options)) 
+        product-coll (string/split products #",")
+        req-args  (-> (dissoc all :years :products) (assoc :tile tile :dates date-coll :products product-coll :resource "product" :http-options cfg/http-options)) 
         response  (post-request req-args)
         output    (handler response req-args)]
     (f/output output)
     output))
 
 (defn product
-  [{grid :grid tile :tile product :product years :years :as all}]
+  [{grid :grid tile :tile products :products years :years :as all}]
   (let [chunk-size (cfg/product-instance-count grid)
         in-chan    (async/chan)
         out-chan   (async/chan)
         chip_xys   (chips (assoc all :dataset "ard"))
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
         date-coll  (date-range all)
+        product-coll (string/split products #",")
         consumers  (start-consumers chunk-size in-chan out-chan)
         output_fn  (fn [i] (let [result (async/<!! out-chan)] (f/output result) result))]
 
@@ -79,19 +81,20 @@
                                     :cx (:cx cxcy)
                                     :cy (:cy cxcy)
                                     :dates date-coll
-                                    :product product
+                                    :products product-coll
                                     :resource "product"))))
 
     (doall (map output_fn chip_xys))))
 
 (defn raster
-  [{grid :grid tile :tile product :product years :years :as all}]
+  [{grid :grid tile :tile products :products years :years :as all}]
   (let [chunk-size (cfg/raster-instance-count grid)
         in-chan    (async/chan)
         out-chan   (async/chan)
         chip_xys   (chips (assoc all :dataset "ard"))
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
         date-coll  (date-range all)
+        product-coll (string/split products #",")
         consumers  (start-consumers chunk-size in-chan out-chan {:timeout 7200000})
         output_fn  (fn [i] (let [result (async/<!! out-chan)] (f/output result) result))]
 
@@ -103,7 +106,7 @@
                                     :tiley tiley
                                     :chips chip_xys
                                     :date date
-                                    :product product
+                                    :products product-coll
                                     :resource "raster"))))
 
     (doall (map output_fn date-coll))))
