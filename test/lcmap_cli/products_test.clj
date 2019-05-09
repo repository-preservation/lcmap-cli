@@ -62,8 +62,8 @@
                 cfg/http-options      {:timeout 9}
                 functions/xy-to-tile  (fn [i] "027008")]
 
-    (is (= "(:grid :cx :cy :product :tile :dates :resource :http-options)"
-           (products/chip {:grid "conus" :cx 111111 :cy 222222 :product "tsc" :years "2006"})))))
+    (is (= "(:tile :dates :grid :products :cx :resource :cy :http-options)"
+           (products/chip {:grid "conus" :cx 111111 :cy 222222 :names "tsc" :years "2006"})))))
 
 (deftest product-test
   (with-redefs [cfg/product-instance-count (fn [i] 1)
@@ -73,18 +73,18 @@
                 products/post-request keys
                 cfg/http-options      {:timeout 9}]
 
-    (is (= '("(:tile :dates :grid :product :cx :resource :cy :http-options)")
-       (products/product {:grid "conus" :tile "027008" :product "tsc" :years "2006"})))))
+    (is (= '("(:tile :dates :grid :products :cx :resource :cy :http-options)")
+       (products/product {:grid "conus" :tile "027008" :names "tsc" :years "2006"})))))
 
 (deftest raster-test
   (with-redefs [cfg/raster-instance-count (fn [i] 1)
                 functions/chips       (fn [i] [{:cx 1 :cy 2}])
                 functions/tile-to-xy  (fn [i] {:x 3 :y 4})
-                products/handler      (fn [a b] (str a))
+                products/handler      (fn [a b] b)
                 products/post-request keys
                 cfg/http-options      {:timeout 9}]
 
-    (is (= '("(:tile :date :chips :grid :tiley :tilex :product :resource :http-options)")
-       (products/raster {:grid "conus" :tile "027008" :product "tsc" :years "2006"})))))
+    (is (= '({:tile "027008", :date "2006--", :grid "conus", :tiley 4, :tilex 3, :product "tsc", :resource "raster", :http-options {:timeout 7200000}})
+       (products/raster {:grid "conus" :tile "027008" :names "tsc" :years "2006"})))))
 
 

@@ -1,5 +1,6 @@
 (ns lcmap-cli.products
   (:require [clojure.core.async :as async]
+            [clojure.math.combinatorics :as combo]
             [clojure.string :as string]
             [cheshire.core :as json]
             [lcmap-cli.state :as state]
@@ -52,23 +53,25 @@
     (map (fn [i] (str i "-" mmdd)) year_range)))
 
 (defn chip
-  [{grid :grid product :product years :years cx :cx cy :cy :as all}]
+  [{grid :grid names :names years :years cx :cx cy :cy :as all}]
   (let [tile      (f/xy-to-tile {:grid grid :dataset "ard" :x cx :y cy}) 
         date-coll (date-range all)
-        req-args  (-> (dissoc all :years) (assoc :tile tile :dates date-coll :resource "product" :http-options cfg/http-options)) 
+        product-coll (string/split names #",")
+        req-args  (hash-map :grid grid :tile tile :cx cx :cy cy :dates date-coll :products product-coll :resource "product" :http-options cfg/http-options) 
         response  (post-request req-args)
         output    (handler response req-args)]
     (f/output output)
     output))
 
 (defn product
-  [{grid :grid tile :tile product :product years :years :as all}]
+  [{grid :grid tile :tile names :names years :years :as all}]
   (let [chunk-size (cfg/product-instance-count grid)
         in-chan    (async/chan)
         out-chan   (async/chan)
         chip_xys   (chips (assoc all :dataset "ard"))
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
         date-coll  (date-range all)
+        product-coll (string/split names #",")
         consumers  (start-consumers chunk-size in-chan out-chan)
         output_fn  (fn [i] (let [result (async/<!! out-chan)] (f/output result) result))]
 
@@ -79,32 +82,34 @@
                                     :cx (:cx cxcy)
                                     :cy (:cy cxcy)
                                     :dates date-coll
-                                    :product product
+                                    :products product-coll
                                     :resource "product"))))
 
     (doall (map output_fn chip_xys))))
 
 (defn raster
-  [{grid :grid tile :tile product :product years :years :as all}]
+  [{grid :grid tile :tile names :names years :years :as all}]
   (let [chunk-size (cfg/raster-instance-count grid)
         in-chan    (async/chan)
         out-chan   (async/chan)
         chip_xys   (chips (assoc all :dataset "ard"))
         {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
-        date-coll  (date-range all)
+        dates      (date-range all)
+        products   (string/split names #",")
+        products-dates (combo/cartesian-product products dates)
         consumers  (start-consumers chunk-size in-chan out-chan {:timeout 7200000})
-        output_fn  (fn [i] (let [result (async/<!! out-chan)] (f/output result) result))]
+        output_fn  (fn [i] (let [result (async/<!! out-chan)] (f/output (dissoc result :chips)) (dissoc result :chips)))]
 
     (async/go
-     (doseq [date date-coll]
+     (doseq [pd products-dates]
        (async/>! in-chan (hash-map :grid grid
                                     :tile tile
                                     :tilex tilex
                                     :tiley tiley
                                     :chips chip_xys
-                                    :date date
-                                    :product product
+                                    :date (last pd)
+                                    :product (first pd)
                                     :resource "raster"))))
 
-    (doall (map output_fn date-coll))))
+    (doall (map output_fn products-dates))))
 
