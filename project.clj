@@ -1,4 +1,4 @@
-(defproject lcmap-cli "0.2.5"
+(defproject lcmap-cli "0.3.5"
   :description "LCMAP Devops Interface"
   :url "https://github.com/usgs-eros/lcmap-cli"
   :license {:name "Unlicense"
@@ -11,6 +11,7 @@
                  [org.clojure/clojure "1.9.0"]
                  [org.clojure/core.async "0.4.490"]
                  [org.clojure/data.json "0.2.6"]
+                 [org.clojure/math.combinatorics "0.1.5"]
                  [org.clojure/tools.cli "0.4.1"]
                  [environ               "1.1.0"]]
   :main ^:skip-aot lcmap-cli.core

@@ -18,25 +18,25 @@ Command line interface for the LCMAP system
 
 ## Commands
 
-| Command                      | Required Parameters                | Optional Parameters  | Description                     |
-| ---------------------------- | ---------------------------------- |--------------------- | ------------------------------- |
-| lcmap grids                  |                                    |                      | list configured grids           |
-| lcmap grid                   | --grid --dataset                   |                      | show grid configuration         |
-| lcmap snap                   | --grid --dataset --x --y           |                      | snap point to tile/chip         |
-| lcmap near                   | --grid --dataset --x --y           |                      | tile/chip xys near point        |
-| lcmap tile-to-xy             | --grid --dataset --tile            |                      | look up a tile xy from id       |
-| lcmap xy-to-tile             | --grid --dataset --x --y           |                      | look up a tile id from xy       | 
-| lcmap chips                  | --grid --dataset --tile            |                      | list chip xys for tile          |
-| lcmap ingest                 | --grid --dataset --source          |                      | ingest a layer                  |
-| lcmap ingest-list-available  | --grid --dataset --tile            | --start --end        | list ingestable layers          |
-| lcmap ingest-list-completed  | --grid --dataset --tile            | --start --end        | list ingested layers            |
-| lcmap detect                 | --grid --tile --acquired           |                      | detect changes for a tile       |
-| lcmap detect-chip            | --grid --cx --cy --acquired        |                      | detect changes for a chip       |
-| lcmap train                  | --grid --tile                      |                      | train a model for a tile        |
-| lcmap predict                | --grid --tile                      |                      | predict a tile                  |
-| lcmap product                | --grid --tile --product --years    |                      | generate json products for tile |
-| lcmap product-chip           | --grid --product --years --cx --cy |                      | generate json product for chip  |
-| lcmap raster                 | --grid --tile --product --years    |                      | generate tile size map tiff     |
+| Command                      | Required Parameters                 | Optional Parameters  | Description                     |
+| ---------------------------- | ----------------------------------- |--------------------- | ------------------------------- |
+| lcmap grids                  |                                     |                      | list configured grids           |
+| lcmap grid                   | --grid --dataset                    |                      | show grid configuration         |
+| lcmap snap                   | --grid --dataset --x --y            |                      | snap point to tile/chip         |
+| lcmap near                   | --grid --dataset --x --y            |                      | tile/chip xys near point        |
+| lcmap tile-to-xy             | --grid --dataset --tile             |                      | look up a tile xy from id       |
+| lcmap xy-to-tile             | --grid --dataset --x --y            |                      | look up a tile id from xy       | 
+| lcmap chips                  | --grid --dataset --tile             |                      | list chip xys for tile          |
+| lcmap ingest                 | --grid --dataset --source           |                      | ingest a layer                  |
+| lcmap ingest-list-available  | --grid --dataset --tile             | --start --end        | list ingestable layers          |
+| lcmap ingest-list-completed  | --grid --dataset --tile             | --start --end        | list ingested layers            |
+| lcmap detect                 | --grid --tile --acquired            |                      | detect changes for a tile       |
+| lcmap detect-chip            | --grid --cx --cy --acquired         |                      | detect changes for a chip       |
+| lcmap train                  | --grid --tile                       |                      | train a model for a tile        |
+| lcmap predict                | --grid --tile                       |                      | predict a tile                  |
+| lcmap product                | --grid --tile --names --years       |                      | generate product data for tile  |
+| lcmap product-chip           | --grid --cx --cy --names --years    |                      | generate product data for chip  |
+| lcmap raster                 | --grid --tile --names --years       |                      | generate tile size map tiff     |
 
 ### Parameters
 
@@ -53,7 +53,7 @@ Not all commands accept all parameters.  Use lcmap <command> -h for usage
 |  --cy       | chip y coordinate                                 |
 |  --source   | source layer filename (layer1.tiff, no path)      |
 |  --acquired | iso8601 date range string (YYYY-MM-DD/YYYY-MM-DD) |
-|  --product  | names of product to create                        |
+|  --names    | names of products to create, comma separated      |
 |  --years    | years for which product values are calculated     |
 |  --verbose  | display additional information                    |
 | -h --help   | display help                                      |
@@ -199,13 +199,13 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
    # every chip in the requested tile.
    $ lcmap product --grid conus \
                    --tile 027008 \
-                   --product length-of-segment \
+                   --names length-of-segment,time-since-change \
                    --years 2002/2006 \
                    >> 2002_2006_product_success.txt 2>> 2002_2006_product_errors.txt;
 
    # example stdout output:
-   # {"product":"length-of-segment","cx":1484415.0,"cy":2111805.0,"dates":["2002-07-01"]}
-   # {"product":"length-of-segment","cx":1484415.0,"cy":2114805.0,"dates":["2002-07-01"]}
+   # {"product":["length-of-segment", "time-since-change"],"cx":1484415.0,"cy":2111805.0,"dates":["2002-07-01"]}
+   # {"product":["length-of-segment", "time-since-change"],"cx":1484415.0,"cy":2114805.0,"dates":["2002-07-01"]}
    # ...
 
    # example stderr output if there was a problem calculating product values for a chip
@@ -218,12 +218,12 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
    # Producing tile sized product maps
    $ lcmap raster --grid conus \
                   --tile 027008 \
-                  --product length-of-segment \
+                  --names length-of-segment \
                   --years 2002/2006 \
                   >> 2002_2006_maps_success.txt 2>> 2002_2006_raster_errors.txt;
 
    # example stdout output:
-   # {"tile":"027008","date":"2002-07-01","grid":"conus","tiley":2114805.0,"tilex":1484415.0,"product":"length-of-segment","resource":"maps","map_name":"LCMAP-CU-027008-2002-20190320-V01-SCSTAB.tif"}
+   # {"tile":"027008","date":"2002-07-01","grid":"conus","tiley":2114805.0,"tilex":1484415.0,"product":["length-of-segment"],"resource":"maps","map_name":"LCMAP-CU-027008-2002-20190320-V01-SCSTAB.tif"}
 
    # example stderr output:
    # {"error":"problem processing /maps request: 'helpful_error_message'", "date":"2002-07-01", "tile":"027008", "tilex":"111111", "tiley":"222222", "product":"length-of-segment"}
