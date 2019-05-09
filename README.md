@@ -34,9 +34,9 @@ Command line interface for the LCMAP system
 | lcmap detect-chip            | --grid --cx --cy --acquired         |                      | detect changes for a chip       |
 | lcmap train                  | --grid --tile                       |                      | train a model for a tile        |
 | lcmap predict                | --grid --tile                       |                      | predict a tile                  |
-| lcmap product                | --grid --tile --products --years    |                      | generate json products for tile |
-| lcmap product-chip           | --grid --products --years --cx --cy |                      | generate json product for chip  |
-| lcmap raster                 | --grid --tile --products --years    |                      | generate tile size map tiff     |
+| lcmap product                | --grid --tile --names --years       |                      | generate product data for tile  |
+| lcmap product-chip           | --grid --cx --cy --names --years    |                      | generate product data for chip  |
+| lcmap raster                 | --grid --tile --names --years       |                      | generate tile size map tiff     |
 
 ### Parameters
 
@@ -53,7 +53,7 @@ Not all commands accept all parameters.  Use lcmap <command> -h for usage
 |  --cy       | chip y coordinate                                 |
 |  --source   | source layer filename (layer1.tiff, no path)      |
 |  --acquired | iso8601 date range string (YYYY-MM-DD/YYYY-MM-DD) |
-|  --products | names of products to create, comma separated      |
+|  --names    | names of products to create, comma separated      |
 |  --years    | years for which product values are calculated     |
 |  --verbose  | display additional information                    |
 | -h --help   | display help                                      |
@@ -199,7 +199,7 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
    # every chip in the requested tile.
    $ lcmap product --grid conus \
                    --tile 027008 \
-                   --products length-of-segment,time-since-change \
+                   --names length-of-segment,time-since-change \
                    --years 2002/2006 \
                    >> 2002_2006_product_success.txt 2>> 2002_2006_product_errors.txt;
 
@@ -218,7 +218,7 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
    # Producing tile sized product maps
    $ lcmap raster --grid conus \
                   --tile 027008 \
-                  --products length-of-segment \
+                  --names length-of-segment \
                   --years 2002/2006 \
                   >> 2002_2006_maps_success.txt 2>> 2002_2006_raster_errors.txt;
 

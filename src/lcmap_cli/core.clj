@@ -24,7 +24,7 @@
            :tile     [nil  "--tile TILE" "tile id" :missing "--tile is required"]
            :source   [nil  "--source SOURCE" :missing "--source is required"]
            :date     [nil  "--date" :missing "--date is required"]
-           :products [nil  "--products PRODUCTS" "product names" :missing "--products are required"]
+           :names    [nil  "--names NAMES" "product names" :missing "--names are required"]
            :years    [nil  "--years YEARS" "years to produce" :missing "--years are required"]
            :acquired [nil  "--acquired ACQUIRED" "iso8601 date range" :missing "--acquired is required"]}]
     (vals (select-keys o keys))))
@@ -59,11 +59,11 @@
    :predict     {:func nil
                  :args (->options [:help :grid :tile])}
    :product      {:func #'lcmap-cli.products/product 
-                  :args (->options [:help :grid :tile :products :years])}
+                  :args (->options [:help :grid :tile :names :years])}
    :product-chip {:func #'lcmap-cli.products/chip 
-                  :args (->options [:help :grid :products :cx :cy :years])}
+                  :args (->options [:help :grid :names :cx :cy :years])}
    :raster       {:func #'lcmap-cli.products/raster 
-                  :args (->options [:help :grid :tile :products :years])}
+                  :args (->options [:help :grid :tile :names :years])}
 })
 
 (defn usage [action options-summary]
