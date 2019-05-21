@@ -185,7 +185,7 @@
                 :headers {"Content-Type" "application/json"}}))
 
 (defn predict
-  [{:keys [:grid :tx :ty :month :day :acquired :chips]}]
+  [{:keys [:grid :tx :ty :month :day :acquired :chips] :as all}]
   (http/client :post
                (keyword grid)
                :ccdc
