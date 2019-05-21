@@ -25,7 +25,8 @@
            :tile     [nil  "--tile TILE" "tile id" :missing "--tile is required"]
            :source   [nil  "--source SOURCE" :missing "--source is required"]
            :date     [nil  "--date" :missing "--date is required"]
-           :dates    [nil  "--dates DATES" :missing "--dates is required"]
+           :month    [nil  "--month MONTH" :missing "--month is required"]
+           :day      [nil  "--day DAY" :missing "--day is required"]
            :product  [nil  "--product PRODUCT" "product name" :missing "--product is required"]
            :years    [nil  "--years YEARS" "years to produce" :missing "--years are required"]
            :acquired [nil  "--acquired ACQUIRED" "iso8601 date range" :missing "--acquired is required"]}]
@@ -59,7 +60,7 @@
    :train       {:func #'lcmap-cli.training/train
                  :args (->options [:help :grid :tile :acquired :date])}
    :predict     {:func #'lcmap-cli.prediction/predict
-                 :args (->options [:help :grid :tile :dates])}
+                 :args (->options [:help :grid :tile :acquired :month :day])}
    :product      {:func #'lcmap-cli.products/product 
                   :args (->options [:help :grid :tile :product :years])}
    :product-chip {:func #'lcmap-cli.products/chip 
