@@ -185,11 +185,11 @@
                 :headers {"Content-Type" "application/json"}}))
 
 (defn predict
-  [{:keys [:grid :tx :ty :dates :chips]}]
+  [{:keys [:grid :tx :ty :month :day :acquired :chips]}]
   (http/client :post
                (keyword grid)
                :ccdc
                :annual-prediction
-               {:body (json/encode {:tx tx :ty ty :dates dates :chips chips})
+               {:body (json/encode {:tx tx :ty ty :month month :day day :acquired acquired :chips chips})
                 :headers {"Content-Type" "application/json"}}))
 
