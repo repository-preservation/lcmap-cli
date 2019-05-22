@@ -1,5 +1,6 @@
 (ns lcmap-cli.prediction-test
-  (:require [clojure.test :refer :all]
+  (:require [cheshire.core :as json]
+            [clojure.test :refer :all]
             [org.httpkit.fake :refer [with-fake-http]]
             [lcmap-cli.prediction :refer :all]
             [lcmap-cli.state :refer [shutdown]]))
@@ -12,11 +13,12 @@
                      :acquired "1980/2019"
                      :month "07"
                      :day "01"
+                     :tile "014027"
                      :chips [[0,0], [1,1]]
                      :response (atom {:status 200
                                       :headers {:content-type "application/json"}
-                                      :body "[\"some-value\"]"})})
-           ["some-value"])))
+                                      :body "\"some-value\""})})
+           "some-value")))
   
   (testing "(handler) with HTTP 500"
     (is (= (handler {:tx 0
@@ -25,6 +27,8 @@
                      :acquired "1980/2019"
                      :month "07"
                      :day "01"
+                     :tile "014027"
+                     :chips []
                      :response (atom {:status 500
                                       :headers {:content-type "application/json"}
                                       :body "[\"some-value\"]"})})
@@ -33,7 +37,8 @@
             :acquired "1980/2019"
             :month "07"
             :day "01"
-            :chips nil
+            :chips 0
+            :tile "014027"            
             :error "{:response {:status 500, :headers {:content-type \"application/json\"}, :body \"[\\\"some-value\\\"]\"}}"})))
 
   (testing "(handler) with HTTP 200 but decode failure"
@@ -81,7 +86,7 @@
 (deftest predict-test
   (testing "(predict)"
     (with-fake-http ["http://fake/annual-prediction"
-                     {:status 200 :body ""}
+                     {:status 200 :body "{\"tx\": 2565585, \"ty\": 3314805, \"month\":\"07\", \"day\": \"01\", \"grid\": \"fake-http\", \"acquired\": \"1980/2018\"}"}
 
                      "http://fake/grid/snap"
                      {:status 200 :body "{\"tile\":{\"proj-pt\":[-15585.0,14805.0],\"grid-pt\":[17.0,22.0]},\"chip\":{\"proj-pt\":[-15585.0,14805.0],\"grid-pt\":[850.0,1100.0]}}"}
@@ -96,12 +101,13 @@
                    :day "01"
                    :tile "017022"})
 
-      (def expected {:grid "fake-http"
+      (def expected {:tx 2565585
+                     :ty 3314805
+                     :grid "fake-http"
                      :acquired "1980/2018"
                      :month "07"
-                     :day "01"
-                     :tile "017022"})
+                     :day "01"})
 
-      (def results (predict inputs))
+      (def results (json/decode (predict inputs) true))
 
       (is (= expected results)))))

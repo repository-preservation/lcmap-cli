@@ -15,12 +15,28 @@
                (catch Exception e {:error (str e)}))]
     
     (cond (:error r)
-          {:tile tile :acquired acquired :month month :day day :chips chips :error (:error r)}
+          {:tx tx
+           :ty ty
+           :tile tile
+           :acquired acquired
+           :month month
+           :day day
+           :chips (count chips)
+           :error (:error r)}
 
           (contains? (set (range 200 300))(get-in r [:response :status]))
-          (-> (:response r) http/decode :body (merge :tile tile))
+          (-> (:response r)
+              http/decode
+              :body)
           
-          :else {:tile tile :acquired acquired :month month :day day :chips chips :error (str r)})))
+          :else {:tx tx
+                 :ty ty
+                 :tile tile
+                 :acquired acquired
+                 :month month
+                 :day day
+                 :chips (count chips)
+                 :error (str r)})))
 
 
 (defn tile-snap
