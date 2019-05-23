@@ -24,7 +24,7 @@
            :cy       [nil  "--cy CY" "chip y coordinate" :parse-fn numberize :missing "--cy is required"]
            :tile     [nil  "--tile TILE" "tile id" :missing "--tile is required"]
            :source   [nil  "--source SOURCE" :missing "--source is required"]
-           :date     [nil  "--date" :missing "--date is required"]
+           :date     [nil  "--date DATE" :missing "--date is required"]
            :names    [nil  "--names NAMES" "product names" :missing "--names are required"]
            :day      [nil  "--day DAY" "prediction day" :missing "--day is required"]
            :month    [nil  "--month MONTH" "prediction month" :missing "--month is required"]
