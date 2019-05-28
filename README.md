@@ -79,12 +79,12 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :chip "/chip"
                   :pixel "/pixel"
                   :segment "/segment"
-                  :annual-prediction "/annual-prediction"
+                  :prediction "/prediction"
                   :product "/product"
                   :raster "/raster"
 				  :tile-instance-count 1
                   :segment-instance-count 25
-                  :annual-prediction-instance-count 1
+                  :prediction-instance-count 1
                   :product-instance-count 1
                   :raster-instance-count 1
                   :segment-sleep-for 1000
@@ -102,12 +102,12 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :chip "/chip"
                   :pixel "/pixel"
                   :segment "/segment"
-                  :annual-prediction "/annual-prediction"
+                  :prediction "/prediction"
                   :product "/product"
                   :raster "/raster"
 				  :tile-instance-count 1
                   :segment-instance-count 1
-				  :annual-prediction-instance-count 1
+				  :prediction-instance-count 1
                   :product-instance-count 1
                   :raster-instance-count 1
                   :segment-sleep-for 1000
@@ -125,12 +125,12 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :chip "/chip"
                   :pixel "/pixel"
                   :segment "/segment"
-                  :annual-prediction "/annual-prediction"
+                  :prediction "/prediction"
                   :product "/product"
                   :raster "/raster"
 				  :tile-instance-count 1
                   :segment-instance-count 1
-				  :annual-prediction-instance-count 1
+				  :prediction-instance-count 1
                   :product-instance-count 1
                   :raster-instance-count 1
                   :segment-sleep-for 1000                   

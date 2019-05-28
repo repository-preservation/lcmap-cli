@@ -85,7 +85,7 @@
 
 (deftest predict-test
   (testing "(predict)"
-    (with-fake-http ["http://fake/annual-prediction"
+    (with-fake-http ["http://fake/prediction"
                      {:status 200 :body "{\"tx\": 2565585, \"ty\": 3314805, \"month\":\"07\", \"day\": \"01\", \"grid\": \"fake-http\", \"acquired\": \"1980/2018\"}"}
 
                      "http://fake/grid/snap"
