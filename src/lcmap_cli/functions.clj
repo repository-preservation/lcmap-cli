@@ -189,7 +189,7 @@
   (http/client :post
                (keyword grid)
                :ccdc
-               :gprediction
+               :prediction
                {:body (json/encode {:tx tx :ty ty :month month :day day :acquired acquired :chips chips})
                 :headers {"Content-Type" "application/json"}}))
 

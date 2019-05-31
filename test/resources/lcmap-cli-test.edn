@@ -19,6 +19,7 @@
                      :product-instance-count 1
                      :raster-instance-count 1
                      :segment-sleep-for 1000
+                     :prediction-sleep-for 1000
                      :prediction-timeout 2400000
                      :tile-timeout 2400000
                      :product-month "07"
