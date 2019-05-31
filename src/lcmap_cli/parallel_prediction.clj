@@ -46,7 +46,8 @@
 
 (defn tile
   [{g :grid t :tile m :month d :day a :acquired :as all}]
-  (let [xys        (f/chips (assoc all :dataset "ard"))
+  (let [txy        (f/tile-to-xy (assoc all :dataset "ard"))
+        xys        (f/chips (assoc all :dataset "ard"))
         chunk-size (get-in cfg/grids [(keyword g) :prediction-instance-count])
         in-chan    (async/chan)
         out-chan   (async/chan)
@@ -55,12 +56,12 @@
     
     (async/go (doseq [xy xys]
                 (Thread/sleep sleep-for)
-                (async/>! in-chan {:tx tx
-                                   :ty ty
+                (async/>! in-chan {:tx {:tx txy}
+                                   :ty {:ty txy}
                                    :cx (:cx xy)
                                    :cy (:cy xy)
-                                   :month month
-                                   :day day
+                                   :month m
+                                   :day d
                                    :acquired a
                                    :grid g})))
     (dotimes [i (count xys)]
