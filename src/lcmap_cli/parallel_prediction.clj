@@ -56,8 +56,8 @@
     
     (async/go (doseq [xy xys]
                 (Thread/sleep sleep-for)
-                (async/>! in-chan {:tx {:tx txy}
-                                   :ty {:ty txy}
+                (async/>! in-chan {:tx (:x txy)
+                                   :ty (:y txy)
                                    :cx (:cx xy)
                                    :cy (:cy xy)
                                    :month m
@@ -72,4 +72,4 @@
   
 (defn chip
   [{g :grid tx :tx ty :ty cx :cx cy :cy m :month d :day acquired :acquired :as all}]
-  (handler (assoc all :response (f/detect all))))
+  (handler (assoc all :response (f/predict all))))

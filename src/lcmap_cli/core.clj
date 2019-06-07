@@ -64,7 +64,7 @@
    :predict      {:func #'lcmap-cli.parallel-prediction/tile
                   :args (->options [:help :grid :acquired :tile :month :day])}
    :predict-chip {:func #'lcmap-cli.parallel-prediction/chip
-                  :args (->options [:help :tx :ty :cx :cy :grid :acquired :tile :month :day])}
+                  :args (->options [:help :tx :ty :cx :cy :grid :acquired :month :day])}
    :product      {:func #'lcmap-cli.products/product 
                   :args (->options [:help :grid :tile :names :years])}
    :product-chip {:func #'lcmap-cli.products/chip 
