@@ -1,15 +1,13 @@
 (ns lcmap-cli.prediction
-  (:require [cheshire.core :as json]
+  (:require [clojure.core.async :as async]
             [clojure.stacktrace :as st]
-            [clojure.walk :refer [keywordize-keys]]
             [lcmap-cli.config :as cfg]
             [lcmap-cli.functions :as f]
-            [lcmap-cli.http :as http]))
+            [lcmap-cli.http :as http]
+            [lcmap-cli.state :as state]))
 
-
-;; having trouble aligning the response from the data input due to transformation from tile to tx/ty
 (defn handler
-  [{:keys [:response :tx :ty :grid :acquired :month :day :tile :chips]}]
+  [{:keys [:response :tx :ty :cx :cy :grid :month :day :acquired]}]
 
   (let [r (try {:response @response}
                (catch Exception e {:error (str e)}))]
@@ -17,61 +15,61 @@
     (cond (:error r)
           {:tx tx
            :ty ty
-           :tile tile
-           :acquired acquired
+           :cx cx
+           :cy cy
            :month month
            :day day
-           :chips (count chips)
+           :acquired acquired
            :error (:error r)}
 
           (contains? (set (range 200 300))(get-in r [:response :status]))
-          (-> (:response r)
-              http/decode
-              :body)
+          (-> (:response r) http/decode :body)
           
-          :else {:tx tx
-                 :ty ty
-                 :tile tile
-                 :acquired acquired
-                 :month month
-                 :day day
-                 :chips (count chips)
-                 :error (str r)})))
+          :else
+          {:tx tx
+           :ty ty
+           :cx cx
+           :cy cy
+           :month month
+           :day day
+           :acquired acquired
+           :error (str r)})))
 
+(defn start-consumers
+  [number in-chan out-chan]
+  (dotimes [_ number]
+    (async/thread
+      (while (true? @state/run-threads?)
+        (let [input  (async/<!! in-chan)
+              result (handler (assoc input :response (f/predict input)))]
+          (async/>!! out-chan result))))))
 
-(defn tile-snap
-  [{:keys [:grid :dataset :tile] :as all}]
-
-  ;; f/snap returns this data
-  ;;
-  ;; {"chip": [{"grid-pt": [854.0, 1105.0], "proj-pt": [-3585.0, -195.0]}],
-  ;;  "tile": [{"grid-pt": [16.0, 23.0],    "proj-pt": [-165585.0, -135195.0]}]}
-
-  (let [xy   (f/tile-to-xy all)
-        data (merge {:tx (:x xy)
-                     :ty (:y xy)}
-                    all)]
+(defn tile
+  [{g :grid t :tile m :month d :day a :acquired :as all}]
+  (let [txy        (f/tile-to-xy (assoc all :dataset "ard"))
+        xys        (f/chips (assoc all :dataset "ard"))
+        chunk-size (get-in cfg/grids [(keyword g) :prediction-instance-count])
+        in-chan    (async/chan)
+        out-chan   (async/chan)
+        consumers  (start-consumers chunk-size in-chan out-chan)
+        sleep-for  (get-in cfg/grids [(keyword g) :prediction-sleep-for])]
     
-    (:tile (-> (merge xy all) f/snap json/decode keywordize-keys))))
-
-
-(defn chips
-  [{:keys [:grid :dataset]} {:keys [:grid-pt]}]
-  (let [h (first grid-pt)
-        v (second grid-pt)
-        t {:grid grid
-           :dataset dataset
-           :tile (f/tile-to-string h v)}]
-    (map vals (f/chips t))))
-
-
-(defn predict
-  [{:keys [:grid :acquired :month :day :tile] :as all}]
-
-  (let [a (assoc all :dataset "ard")
-        t (tile-snap a)
-        r (merge all {:tx    (-> t :proj-pt first)
-                      :ty    (-> t :proj-pt second)
-                      :chips (chips a t)})
-        p (f/predict r)]
-    (handler (assoc r :response p))))
+    (async/go (doseq [xy xys]
+                (Thread/sleep sleep-for)
+                (async/>! in-chan {:tx (:x txy)
+                                   :ty (:y txy)
+                                   :cx (:cx xy)
+                                   :cy (:cy xy)
+                                   :month m
+                                   :day d
+                                   :acquired a
+                                   :grid g})))
+    (dotimes [i (count xys)]
+      (f/output (async/<!! out-chan))))
+  
+    all)
+      
+  
+(defn chip
+  [{g :grid tx :tx ty :ty cx :cx cy :cy m :month d :day acquired :acquired :as all}]
+  (handler (assoc all :response (f/predict all))))

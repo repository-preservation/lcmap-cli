@@ -8,7 +8,7 @@
             [lcmap-cli.products :as products]
             [lcmap-cli.state :as state]
             [lcmap-cli.training]
-            [lcmap-cli.parallel-prediction]
+            [lcmap-cli.prediction]
             [lcmap-cli.numbers :refer [numberize]])
   (:gen-class :main true))
 
@@ -61,9 +61,9 @@
                   :args (->options [:help :grid :tile :acquired])}
    :train        {:func #'lcmap-cli.training/train
                   :args (->options [:help :grid :tile :acquired :date])}
-   :predict      {:func #'lcmap-cli.parallel-prediction/tile
+   :predict      {:func #'lcmap-cli.prediction/tile
                   :args (->options [:help :grid :acquired :tile :month :day])}
-   :predict-chip {:func #'lcmap-cli.parallel-prediction/chip
+   :predict-chip {:func #'lcmap-cli.prediction/chip
                   :args (->options [:help :tx :ty :cx :cy :grid :acquired :month :day])}
    :product      {:func #'lcmap-cli.products/product 
                   :args (->options [:help :grid :tile :names :years])}
