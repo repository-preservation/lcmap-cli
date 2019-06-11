@@ -16,10 +16,10 @@
                  [environ               "1.1.0"]]
   :main ^:skip-aot lcmap-cli.core
   :target-path "target/%s"
-  :repl-options {:init-ns user}
+  :repl-options {:init-ns console}
   :plugins [[lein-environ "1.1.0"]]
   :profiles {:uberjar {:aot :all}
-             :dev {:resource-paths ["dev"]
+             :dev {:resource-paths ["console" "dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.11"]
                                   [http-kit.fake "0.2.1"]]
                    :plugins [[lein-binplus "0.6.4"]]}
