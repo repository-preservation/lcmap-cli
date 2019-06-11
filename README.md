@@ -229,12 +229,12 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
    
    $ lcmap predict-chip --tx 123456 \
                         --ty 654321 \
-						--cx 123456 \
-						--cy 654321 \
-						--grid conus \
-						--acquired 1982/2018 \
-						--month 7 \
-						--day 1
+                        --cx 123456 \
+                        --cy 654321 \
+                        --grid conus \
+                        --acquired 1982/2018 \
+                        --month 7 \
+                        --day 1
    
    WIP
    
