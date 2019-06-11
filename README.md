@@ -87,6 +87,7 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :raster "/raster"
                   :segment-instance-count 25
                   :prediction-instance-count 1
+                  :prediction-sleep-for 1000
                   :product-instance-count 1
                   :raster-instance-count 1
                   :segment-sleep-for 1000
@@ -109,6 +110,7 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :raster "/raster"
                   :segment-instance-count 1
                   :prediction-instance-count 1
+                  :prediction-sleep-for 1000
                   :product-instance-count 1
                   :raster-instance-count 1
                   :segment-sleep-for 1000
@@ -131,6 +133,7 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :raster "/raster"
                   :segment-instance-count 1
                   :prediction-instance-count 1
+                  :prediction-sleep-for 1000
                   :product-instance-count 1
                   :raster-instance-count 1
                   :segment-sleep-for 1000
