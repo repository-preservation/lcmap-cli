@@ -70,9 +70,9 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
 ```edn
 
 {:http-options  {:timeout 2400000}
- :grids {:conus  {:ard "http://host:port/ard_cu_c01_v01"
-                  :aux "http://host:port/aux_cu_c01_v01"
-                  :ccdc "http://host:port/ard_cu_c01_v01_aux_cu_v01_ccdc_1_0"
+ :grids {:conus  {:ard "http://host:port/path"
+                  :aux "http://host:port/path"
+                  :ccdc "http://host:port/path"
                   :grid "/grid"
                   :snap "/grid/snap"
                   :near "/grid/near"
@@ -93,9 +93,9 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :segment-sleep-for 1000
                   :product-month "07"
                   :product-day "01"}
-         :alaska {:ard "http://host:port/ard_ak_c01_v01"
-                  :aux "http://host:port/aux_ak_v01"
-                  :ccdc "http://host:port/ard_ak_c01_v01_aux_ak_v01_ccdc_1_0"
+         :alaska {:ard "http://host:port/path"
+                  :aux "http://host:port/path"
+                  :ccdc "http://host:port/path"
                   :grid "/grid"
                   :snap "/grid/snap"
                   :near "/grid/near"
@@ -116,9 +116,9 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                   :segment-sleep-for 1000
                   :product-month "07"
                   :product-day "01"}
-         :hawaii {:ard "http://host:port/ard_hi_c01_v01"
-                  :aux "http://host:port/aux_hi_v01"
-                  :ccdc "http://host:port/ard_hi_c01_v01_aux_hi_v01_ccdc_1_0"
+         :hawaii {:ard "http://host:port/path"
+                  :aux "http://host:port/path"
+                  :ccdc "http://host:port/path"
                   :grid "/grid"
                   :snap "/grid/snap"
                   :near "/grid/near"
