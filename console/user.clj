@@ -1,18 +1,35 @@
-(ns console)
+(ns console
+  (:use [clojure.repl]))
 
 (defn workflow-defs [] {:one nil :two nil :three nil})
 (defn workflows [] (keys workflow-defs))
 (defn status [workflow] "workflow status")
 
-(defn jobs [] "jobs")
-(defn top [] "top")
-(defn ps [] "ps")
+(defn jobs
+  "list all running jobs"
+  []
+  "jobs")
 
-(defn services [] "list lcmap services")
-(defn scale [service level] "scale lcmap services")
+(defn services
+  "list all lcmap services"
+  []
+  "list lcmap services")
 
-(defn grids [] "grids")
-(defn grid [] "grid")
+(defn scale
+  "scale lcmap services"
+  [service level]
+  "scale lcmap services")
+
+(defn grids
+  "list all lcmap grids"
+  []
+  "grids")
+
+(defn grid
+  "show the grid definition"
+  [grid]
+  "grid")
+
 (defn snap [] "snap")
 (defn near [] "near")
 (defn registry [] "registry")
