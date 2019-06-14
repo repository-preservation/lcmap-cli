@@ -65,7 +65,7 @@ Not all commands accept all parameters.  Use lcmap <command> -h for usage
 | -h --help   | display help                                      |
 
 ## Configuration
-lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
+lcmap-cli requires n config file at ~/.usgs/lcmap-cli.edn.
 
 ```edn
 
@@ -219,7 +219,7 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
                  --acquired 1982/2018 \
                  --date 2001-07-01
 
-   {"acquired":"1982/2018","chips":22500,"date":"2001-07-01","tx":2234415,"ty":2864805}
+    {"acquired":"1982/2018","chips":22500,"date":"2001-07-01","tx":2234415,"ty":2864805}
 
    
    # Generating predicted probabilities
@@ -231,7 +231,7 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
 
     # successful predictions 
 	
-	{"acquired":"1982/2018","cx":2339415,"cy":2720805,"day":"1","month":"7","tx":2234415,"ty":2864805}
+    {"acquired":"1982/2018","cx":2339415,"cy":2720805,"day":"1","month":"7","tx":2234415,"ty":2864805}
     {"acquired":"1982/2018","cx":2336415,"cy":2729805,"day":"1","month":"7","tx":2234415,"ty":2864805}
     {"acquired":"1982/2018","cx":2336415,"cy":2723805,"day":"1","month":"7","tx":2234415,"ty":2864805}
 
@@ -250,11 +250,11 @@ lcmap-cli requires an config file at ~/.usgs/lcmap-cli.edn.
    
    # success
    
-   {"acquired":"1982/2018","cx":123456,"cy":654321,"day":"1","month":"7","tx":123456,"ty":654321}
+    {"acquired":"1982/2018","cx":123456,"cy":654321,"day":"1","month":"7","tx":123456,"ty":654321}
    
    # failure
    
-   {"tx":123456.0,"ty":654321.0,"cx":123456.0,"cy":654321.0,"month":"7","day":"1","acquired":"1982/2018","error":"{:response {:opts {:timeout 43200000, :body \"{\\\"tx\\\":123456.0,\\\"ty\\\":654321.0,\\\"month\\\":\\\"7\\\",\\\"day\\\":\\\"1\\\",\\\"acquired\\\":\\\"1982/2018\\\",\\\"cx\\\":123456.0,\\\"cy\\\":654321.0}\", :headers {\"Content-Type\" \"application/json\"}, :method :post, :url \"http://host/path/prediction\"}, :body \"{\\\"acquired\\\":\\\"1982/2018\\\",\\\"cx\\\":123456,\\\"cy\\\":654321,\\\"day\\\":\\\"1\\\",\\\"exception\\\":\\\"predictions exception: Input numpy.ndarray must be 2 dimensional\\\",\\\"month\\\":\\\"7\\\",\\\"tx\\\":123456,\\\"ty\\\":654321}\\n\", :headers {:connection \"keep-alive\", :content-length \"178\", :content-type \"application/json\", :date \"Thu, 13 Jun 2019 17:23:42 GMT\", :server \"nginx/1.12.2\"}, :status 500}}"}
+    {"tx":123456.0,"ty":654321.0,"cx":123456.0,"cy":654321.0,"month":"7","day":"1","acquired":"1982/2018","error":"{:response {:opts {:timeout 43200000, :body \"{\\\"tx\\\":123456.0,\\\"ty\\\":654321.0,\\\"month\\\":\\\"7\\\",\\\"day\\\":\\\"1\\\",\\\"acquired\\\":\\\"1982/2018\\\",\\\"cx\\\":123456.0,\\\"cy\\\":654321.0}\", :headers {\"Content-Type\" \"application/json\"}, :method :post, :url \"http://host/path/prediction\"}, :body \"{\\\"acquired\\\":\\\"1982/2018\\\",\\\"cx\\\":123456,\\\"cy\\\":654321,\\\"day\\\":\\\"1\\\",\\\"exception\\\":\\\"predictions exception: Input numpy.ndarray must be 2 dimensional\\\",\\\"month\\\":\\\"7\\\",\\\"tx\\\":123456,\\\"ty\\\":654321}\\n\", :headers {:connection \"keep-alive\", :content-length \"178\", :content-type \"application/json\", :date \"Thu, 13 Jun 2019 17:23:42 GMT\", :server \"nginx/1.12.2\"}, :status 500}}"}
 
    
 
