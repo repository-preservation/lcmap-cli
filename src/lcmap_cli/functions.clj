@@ -184,3 +184,12 @@
                {:body (json/encode {:tx tx :ty ty :acquired acquired :date date :chips chips})
                 :headers {"Content-Type" "application/json"}}))
 
+(defn predict
+  [{:keys [:grid :tx :ty :month :day :acquired :cx :cy] :as all}]
+  (http/client :post
+               (keyword grid)
+               :ccdc
+               :prediction
+               {:body (json/encode {:tx tx :ty ty :month month :day day :acquired acquired :cx cx :cy cy})
+                :headers {"Content-Type" "application/json"}}))
+

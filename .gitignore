@@ -15,3 +15,6 @@ pom.xml.asc
 *.tif
 *.xml
 *.txt
+*.~
+*~
+*\~
