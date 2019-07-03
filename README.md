@@ -263,34 +263,34 @@ lcmap-cli requires n config file at ~/.usgs/lcmap-cli.edn.
    # every chip in the requested tile.
    $ lcmap product --grid conus \
                    --tile 027008 \
-                   --names length-of-segment,time-since-change \
+                   --names cover,change \
                    --years 2002/2006 \
                    >> 2002_2006_product_success.txt 2>> 2002_2006_product_errors.txt;
 
    # example stdout output:
-   # {"product":["length-of-segment", "time-since-change"],"cx":1484415.0,"cy":2111805.0,"dates":["2002-07-01"]}
-   # {"product":["length-of-segment", "time-since-change"],"cx":1484415.0,"cy":2114805.0,"dates":["2002-07-01"]}
+   # {"product":["cover", "change"],"cx":1484415.0,"cy":2111805.0,"dates":["2002-07-01"]}
+   # {"product":["cover", "change"],"cx":1484415.0,"cy":2114805.0,"dates":["2002-07-01"]}
    # ...
 
    # example stderr output if there was a problem calculating product values for a chip
-   # {"failed_dates":[{"2002-07-01": "validation error"}],"product":"length-of-segment","cx":1484415.0,"cy":2114805.0,"dates":["2002-07-01"]}
+   # {"failed_dates":[{"2002-07-01": "validation error"}],"product":"cover","cx":1484415.0,"cy":2114805.0,"dates":["2002-07-01"]}
    # example stderr output if there was a problem parsing the maps request
-   # {"error":"problem processing /products request: 'helpful_error_message'", "dates":"2002/2006", "product":"length-of-segment", "tile":"027008", "grid":"conus"}
+   # {"error":"problem processing /products request: 'helpful_error_message'", "dates":"2002/2006", "product":"change", "tile":"027008", "grid":"conus"}
    
 
    # Creating Maps
    # Producing tile sized product maps
    $ lcmap raster --grid conus \
                   --tile 027008 \
-                  --names length-of-segment \
+                  --names cover \
                   --years 2002/2006 \
                   >> 2002_2006_maps_success.txt 2>> 2002_2006_raster_errors.txt;
 
    # example stdout output:
-   # {"tile":"027008","date":"2002-07-01","grid":"conus","tiley":2114805.0,"tilex":1484415.0,"product":["length-of-segment"],"resource":"maps","map_name":"LCMAP-CU-027008-2002-20190320-V01-SCSTAB.tif"}
+   # {"tile":"027008","date":"2002-07-01","grid":"conus","ty":2114805.0,"tx":1484415.0,"product":["cover"],"resource":"maps","map_name":"LCMAP-CU-027008-2002-20190320-V01-SCSTAB.tif, ....."}
 
    # example stderr output:
-   # {"error":"problem processing /maps request: 'helpful_error_message'", "date":"2002-07-01", "tile":"027008", "tilex":"111111", "tiley":"222222", "product":"length-of-segment"}
+   # {"error":"problem processing /maps request: 'helpful_error_message'", "date":"2002-07-01", "tile":"027008", "tx":"111111", "ty":"222222", "product":"change"}
       
 
 ```

@@ -1,4 +1,4 @@
-(defproject lcmap-cli "0.4.0"
+(defproject lcmap-cli "0.5.0"
   :description "LCMAP Devops Interface"
   :url "https://github.com/usgs-eros/lcmap-cli"
   :license {:name "Unlicense"

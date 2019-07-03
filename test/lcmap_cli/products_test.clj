@@ -84,7 +84,7 @@
                 products/post-request keys
                 cfg/http-options      {:timeout 9}]
 
-    (is (= '({:tile "027008", :date "2006--", :grid "conus", :tiley 4, :tilex 3, :product "tsc", :resource "raster", :http-options {:timeout 7200000}})
+    (is (= '({:tile "027008", :date "2006--", :grid "conus", :ty 4, :tx 3, :product "tsc", :resource "raster", :http-options {:timeout 7200000}})
        (products/raster {:grid "conus" :tile "027008" :names "tsc" :years "2006"})))))
 
 

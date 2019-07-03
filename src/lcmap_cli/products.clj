@@ -103,13 +103,13 @@
     (async/go
      (doseq [pd products-dates]
        (async/>! in-chan (hash-map :grid grid
-                                    :tile tile
-                                    :tilex tilex
-                                    :tiley tiley
-                                    :chips chip_xys
-                                    :date (last pd)
-                                    :product (first pd)
-                                    :resource "raster"))))
+                                   :tile tile
+                                   :tx tilex
+                                   :ty tiley
+                                   :chips chip_xys
+                                   :date (last pd)
+                                   :product (first pd)
+                                   :resource "raster"))))
 
     (doall (map output_fn products-dates))))
 
