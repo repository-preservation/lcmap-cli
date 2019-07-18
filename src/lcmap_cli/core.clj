@@ -71,6 +71,8 @@
                   :args (->options [:help :grid :names :cx :cy :years])}
    :raster       {:func #'lcmap-cli.products/raster 
                   :args (->options [:help :grid :tile :names :years])}
+   :bundle       {:func #'lcmap-cli.products/bundle
+                  :args (->options [:help :grid :tile :years])}
 })
 
 (defn usage [action options-summary]

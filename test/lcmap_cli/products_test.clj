@@ -87,4 +87,12 @@
     (is (= '({:tile "027008", :date "2006--", :grid "conus", :ty 4, :tx 3, :product "tsc", :resource "raster", :http-options {:timeout 7200000}})
        (products/raster {:grid "conus" :tile "027008" :names "tsc" :years "2006"})))))
 
+(deftest bundle-test
+  (with-redefs [cfg/bundle-instance-count (fn [i] 1)
+                functions/tile-to-xy  (fn [i] {:x 3 :y 4})
+                products/handler      (fn [a b] b)
+                products/post-request keys
+                cfg/http-options      {:timeout 9}]
 
+    (is (= '({:tile "027008", :date "2006--", :grid "conus", :ty 4, :tx 3, :resource "bundle", :http-options {:timeout 7200000}})
+       (products/bundle {:grid "conus" :tile "027008" :tar "foo.tar" :years "2006"})))))
