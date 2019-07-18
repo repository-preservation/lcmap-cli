@@ -38,6 +38,7 @@ Command line interface for the LCMAP system
 | lcmap product               | --grid --tile --names --years                       | generate product data for tile |
 | lcmap product-chip          | --grid --cx --cy --names --years                    | generate product data for chip |
 | lcmap raster                | --grid --tile --names --years                       | generate tile size map tiff    |
+| lcmap bundle                | --grid --tile --years                               | generate bundle and store it   |
 
 ### Parameters
 
@@ -85,8 +86,10 @@ lcmap-cli requires n config file at ~/.usgs/lcmap-cli.edn.
                   :prediction "/prediction"
                   :product "/product"
                   :raster "/raster"
+                  :bundle "/bundle"
                   :segment-instance-count 25
                   :prediction-instance-count 1
+                  :bundle-instance-count 1
                   :prediction-sleep-for 1000
                   :product-instance-count 1
                   :raster-instance-count 1
@@ -108,8 +111,10 @@ lcmap-cli requires n config file at ~/.usgs/lcmap-cli.edn.
                   :prediction "/prediction"
                   :product "/product"
                   :raster "/raster"
+                  :bundle "/bundle"
                   :segment-instance-count 1
                   :prediction-instance-count 1
+                  :bundle-instance-count 1
                   :prediction-sleep-for 1000
                   :product-instance-count 1
                   :raster-instance-count 1
@@ -131,8 +136,10 @@ lcmap-cli requires n config file at ~/.usgs/lcmap-cli.edn.
                   :prediction "/prediction"
                   :product "/product"
                   :raster "/raster"
+                  :bundle "/bundle"
                   :segment-instance-count 1
                   :prediction-instance-count 1
+                  :bundle-instance-count 1
                   :prediction-sleep-for 1000
                   :product-instance-count 1
                   :raster-instance-count 1
@@ -291,6 +298,19 @@ lcmap-cli requires n config file at ~/.usgs/lcmap-cli.edn.
 
    # example stderr output:
    # {"error":"problem processing /maps request: 'helpful_error_message'", "date":"2002-07-01", "tile":"027008", "tx":"111111", "ty":"222222", "product":"change"}
-      
+
+
+   # Creating Tar Files
+   $ lcmap bundle --grid conus \
+                  --tile 028008 \
+                  --years 2001/2017 \
+                  >> 2001_2017_bundle_success.txt 2>> 2001_2017_bundle_errors.txt
+
+   # example stdout output:
+   # {"tile":"028008","date":"2017-07-01","grid":"conus","ty":2114805.0,"tx":1634415.0,"resource":"bundle","status":"success","tar":"LCMAP_CU_028008_2017_20190718_CCDC.tar"}
+     
+   # example stderr output:
+   # {"resource":"bundle","http-options":{"timeout":7200000},"grid":"conus","error":{"inputs":{"tile":"028008","date":"2017-07-01","grid":"conus","ty":2114805.0,"tx":1634415.0,"resource":"bundle"},
+   #  "message":"problem creating data","details":"problem generating tile bundle for tile: 028008 date: 2017-07-01, ...}
 
 ```

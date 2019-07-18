@@ -37,6 +37,10 @@
   [grid]
   (:raster-instance-count ((keyword grid) grids)))
 
+(defn bundle-instance-count
+  [grid]
+  (:bundle-instance-count ((keyword grid) grids)))
+
 (defn product-mmdd
   [grid]
   (let [mm (:product-month ((keyword grid) grids))

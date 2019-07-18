@@ -93,7 +93,7 @@
         in-chan    (async/chan)
         out-chan   (async/chan)
         chip_xys   (chips (assoc all :dataset "ard"))
-        {tilex :x tiley :y} (tile-to-xy (assoc all :dataset "ard"))
+        {tx :x ty :y} (tile-to-xy (assoc all :dataset "ard"))
         dates      (date-range all)
         products   (string/split names #",")
         products-dates (combo/cartesian-product products dates)
@@ -104,8 +104,8 @@
      (doseq [pd products-dates]
        (async/>! in-chan (hash-map :grid grid
                                    :tile tile
-                                   :tx tilex
-                                   :ty tiley
+                                   :tx tx
+                                   :ty ty
                                    :chips chip_xys
                                    :date (last pd)
                                    :product (first pd)
@@ -113,3 +113,23 @@
 
     (doall (map output_fn products-dates))))
 
+(defn bundle
+  [{grid :grid tile :tile years :years :as all}]
+  (let [chunk-size (cfg/bundle-instance-count grid)
+        in-chan    (async/chan)
+        out-chan   (async/chan)
+        dates      (date-range all)
+        {tx :x ty :y} (tile-to-xy (assoc all :dataset "ard"))
+        consumers  (start-consumers chunk-size in-chan out-chan {:timeout 7200000})
+        output_fn  (fn [i] (let [result (async/<!! out-chan)] (f/output result) result))]
+
+    (async/go
+     (doseq [date dates]
+       (async/>! in-chan (hash-map :grid grid
+                                   :tile tile
+                                   :tx tx
+                                   :ty ty
+                                   :date date
+                                   :resource "bundle"))))
+
+    (doall (map output_fn dates))))
